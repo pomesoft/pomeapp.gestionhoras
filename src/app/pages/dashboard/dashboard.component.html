@@ -1,0 +1,79 @@
+<div class="row animated fadeIn fast" *ngIf="cargando">
+    <div class="col-12">
+        <div class="alert alert-info text-center">
+            <h4 class="alert-heading">Cargando</h4>
+            <i class="fa fa-spin fa-refresh fa-2x"></i>
+            <p class="mb-0">Por favor espere...</p>
+        </div>
+    </div>
+</div>
+
+
+<div class="animated fadeIn fast" *ngIf="!cargando">
+    <div class="row my-4">
+        <div class="col-md-6 col-6">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Total de Horas</h5>
+                    <canvas baseChart [data]="totalHoras" [type]="'bar'" [options]="chartOptions" height="50">
+                    </canvas>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 col-12">
+            <div class="card">
+                <div class="card-body">
+                    <h6 class="card-title">Período</h6>
+                    <div class="input-group">
+                        <div class="btn-group m-b-5" role="group" aria-label="Periodos">
+                            <button type="button" class="btn" (click)="onClickPeriodo(1)" [class.btn-info]="periodo==1"
+                                [class.btn-outline-info]="periodo!=1">
+                                30 días
+                            </button>
+                            <button type="button" class="btn" (click)="onClickPeriodo(2)" [class.btn-info]="periodo==2"
+                                [class.btn-outline-info]="periodo!=2">
+                                60 días
+                            </button>
+                            <button type="button" class="btn" (click)="onClickPeriodo(3)" [class.btn-info]="periodo==3"
+                                [class.btn-outline-info]="periodo!=3">
+                                90 días
+                            </button>
+                        </div>
+                    </div>
+                    <h6 class="card-title">Accesos</h6>
+                    <div class="input-group">
+                        <button type="button" class="btn waves-effect waves-light btn-rounded btn-outline-info"
+                            routerLink="registrohoras">
+                            <i class="mdi mdi-calendar-clock"></i>
+                            Registrar Horas
+                        </button>
+                        <button type="button" class="btn waves-effect waves-light btn-rounded btn-outline-info"
+                            routerLink="planning">
+                            <i class="mdi mdi-calendar-check"></i>
+                            Planning
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6 col-12">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Horas por Proyecto</h5>
+                    <canvas baseChart [data]="totalHorasXProyecto" [type]="'bar'" [options]="chartOptions" height="200">
+                    </canvas>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 col-12">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Horas por Profesional</h5>
+                    <canvas baseChart [data]="totalHorasXProfesional" [type]="'bar'" [options]="chartOptions">
+                    </canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

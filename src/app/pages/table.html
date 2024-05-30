@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    /* Estilos para dispositivos grandes (mayor a 768px) */
+    table.desktop {
+      display: table; /* Mostrar la tabla como una tabla normal */
+    }
+
+    /* Estilos para dispositivos pequeños (768px o menor) */
+    @media (max-width: 768px) {
+      table.desktop {
+        display: none; /* Ocultar la tabla en dispositivos pequeños */
+      }
+
+      table.mobile {
+        display: table; /* Mostrar la tabla como una tabla normal en dispositivos pequeños */
+      }
+    }
+  </style>
+</head>
+<body>
+
+<!-- Tabla para dispositivos grandes -->
+<table class="desktop">
+  <!-- Contenido de la tabla para dispositivos grandes -->
+  <tr>
+    <th>Encabezado 1</th>
+    <th>Encabezado 2</th>
+    <th>Encabezado 3</th>
+  </tr>
+  <tr>
+    <td>Dato 1</td>
+    <td>Dato 2</td>
+    <td>Dato 3</td>
+  </tr>
+  <!-- Más filas según sea necesario -->
+</table>
+
+<!-- Tabla para dispositivos pequeños (móviles) -->
+<table class="mobile">
+  <!-- Contenido de la tabla para dispositivos pequeños -->
+  <tr>
+    <td>Dato 1</td>
+  </tr>
+  <tr>
+    <td>Dato 2</td>
+  </tr>
+  <tr>
+    <td>Dato 3</td>
+  </tr>
+  <!-- Más filas según sea necesario -->
+</table>
+
+</body>
+</html>

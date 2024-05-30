@@ -1,0 +1,82 @@
+<!-- ============================================================== -->
+<!-- Topbar header - style you can find in pages.scss -->
+<!-- ============================================================== -->
+<header class="topbar">
+    <nav class="navbar top-navbar navbar-expand-md navbar-light">
+        <div class="navbar-collapse">
+            <!-- ============================================================== -->
+            <!-- toggle and nav items -->
+            <!-- ============================================================== -->
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item">
+                    <a class="nav-link nav-toggler hidden-md-up waves-effect waves-dark " href="javascript:void(0)"
+                        (click)="onClickAbrirOffcanvas(offcanvasMenu)">
+                        <i class="ti-menu"></i>
+                    </a>
+                </li>
+            </ul>
+            <!-- ============================================================== -->
+            <!-- User profile and search -->
+            <!-- ============================================================== -->
+            <ul class="navbar-nav my-lg-0">
+                <!-- ============================================================== -->
+                <!-- Profile -->
+                <!-- ============================================================== -->
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle waves-effect waves-dark" href="" data-toggle="dropdown"
+                        aria-haspopup="true" aria-expanded="false">
+                        <!-- <img [src]="usuario.imagenUrl" alt="user" class="profile-pic" /> -->
+                        <span class="h1">
+                            <i class="fa fa-user-circle-o"></i>
+                        </span>
+                    </a>
+                    <div class="dropdown-menu dropdown-menu-right animated fadeIn fast">
+                        <ul class="dropdown-user" *ngIf="usuario && usuario.LoginUsuario">
+                            <li>
+                                <div class="dw-user-box">
+                                    <div class="u-img">
+                                        <i class="fa fa-user-circle-o"></i>
+                                    </div>
+                                    <div class="u-text">
+                                        <h4>{{ usuario.LoginUsuario }}</h4>
+                                        <span class="text-muted font-medium font-10" *ngIf="usuario">
+                                            {{ usuario.NombreCompleto }}
+                                        </span>
+                                    </div>
+                                </div>
+                            </li>
+                            <li role="separator" class="divider"></li>
+                            <li>
+                                <a (click)="logout()" class="cursor">
+                                    <i class="fa fa-power-off"></i>
+                                    Cerrar Sesión
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </nav>
+</header>
+<!-- ============================================================== -->
+<!-- End Topbar header -->
+<!-- ============================================================== -->
+
+
+<ng-template #offcanvasMenu let-offcanvas>
+    <div class="offcanvas-header" style="background-color: #2a7eec !important;">
+		<h4 class="offcanvas-title m-t-20 m-b-20"></h4>
+		<button type="button" class="btn-close m-t-20 m-b-20" aria-label="Close" (click)="offcanvas.dismiss('Cross click')"></button>
+	</div>
+	<div class="offcanvas-body">
+		<app-sidebar-menu [esMobile]="true"></app-sidebar-menu>        
+		<div class="text-end m-t-10">
+			<button type="button" class="btn btn-outline-secondary btn-block" (click)="offcanvas.close('Close click')">
+                <i class="fa fa-times m-2"></i>
+                Cerrar menú
+            </button>
+		</div>
+	</div>
+    
+</ng-template>

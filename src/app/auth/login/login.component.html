@@ -1,0 +1,76 @@
+<!-- ============================================================== -->
+<!-- Main wrapper - style you can find in pages.scss -->
+<!-- ============================================================== -->
+<section id="wrapper" class="login-register login-sidebar"
+    style="background-image:url(../assets/images/background/login-register.jpg);">
+    <div class="login-box card pl-5">
+        <div class="card-body">
+            <form class="form-horizontal form-material" autocomplete="off" [formGroup]="loginForm" (ngSubmit)="login()"
+                id="loginform">
+
+                <div class="form-group row">
+                    <div class="col-sm-12 text-center">
+                        <a href="javascript:void(0)" class="text-center db">
+                            <img src="../assets/images/logo-icon.png"
+                                alt="Home" style="height: 120px;" />
+                            </a>
+                    </div>
+                </div>
+
+
+                <div class="form-group row">
+                    <div class="col-sm-12 text-center">
+                        <h4 class="font-bold">gestion@app</h4>
+                        <h6 class="font-bold"  *ngIf="ingresaUsuario">Ingresá Usuario y Contraseña</h6>                        
+                        <h6 class="font-bold"  *ngIf="!ingresaUsuario">Ingresá tu Contraseña</h6>                        
+                    </div>
+                </div>
+                
+
+                <div class="form-group row">
+                    <div class="col-sm-12" *ngIf="ingresaUsuario">
+                        <input class="form-control" type="email" placeholder="Email" formControlName="usuario">
+                    </div>
+                    <div class="col-sm-12" *ngIf="!ingresaUsuario && usuario">
+                        <span class="text-muted">Usuario: </span>
+                        <span class="h5 font-bold">{{usuario.LoginUsuario}}</span> 
+                    </div>
+                    <div class="col-xs-12">
+                        <input class="form-control" type="password" placeholder="Contraseña" formControlName="clave">
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <div class="col-md-12">
+                        <div class="checkbox checkbox-primary pull-left p-t-0">
+                            <input id="checkbox-signup" type="checkbox" class="filled-in chk-col-light-blue"
+                                formControlName="remember">
+                            <label for="checkbox-signup"> Recordar usuario </label>
+                        </div>
+                    </div>
+                    <div class="col-md-12 text-center m-t-5">
+                        <button class="btn btn-info btn-lg btn-block text-uppercase btn-rounded"
+                            type="submit">Ingresar</button>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <div class="col-sm-12 text-center">
+                        <p>¿No tienes una cuenta aún?</p>
+                        <a href="#" class="text-info m-l-5" (click)="mostrarRegistro($event)"><b>Registra tu Usuario</b></a>
+                    </div>
+                </div>
+
+                <div class="form-group m-b-0">
+                    <div class="col-sm-12 text-center">
+                        <p>¿Te olvidaste la contraseña?</p>
+                        <a href="#" class="text-info m-l-5" (click)="mostrarRestablecer($event)"><b>Restablecer Contraseña</b></a>
+                    </div>
+                </div>
+
+            </form>
+        </div>
+    </div>
+</section>
+<!-- ============================================================== -->
+<!-- End Wrapper -->
+<!-- ============================================================== -->

@@ -1,0 +1,20 @@
+
+### USUARIOS
+GET https://testrescta.pomeapp.ar/backend/api/usuario
+
+###
+GET https://testrescta.pomeapp.ar/backend/api/usuario/1
+
+###
+POST https://testrescta.pomeapp.ar/backend/api/Usuario/Login
+content-type: application/json; charset=utf-8
+
+{
+    "Usuario": "lego",
+    "Clave": "123456"
+}
+
+### 
+POST https://testrescta.pomeapp.ar/backend/api/usuario/eliminar?id=11
+
+

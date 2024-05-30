@@ -1,0 +1,85 @@
+<form autocomplete="off" [formGroup]="formulario" (ngSubmit)="onClickGuardar()">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h4 class="modal-title" id="formModalLabel1">Datos de {{tituloFormulario}}</h4>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"  (click)="onClickCerrar()"><span
+                    aria-hidden="true">&times;</span></button>                    
+        </div>
+        <div class="modal-body">
+
+            <div class="form-group row">
+                <label class="col-sm-3 text-right control-label col-form-label">Rol</label>
+                <div class="col-sm-9">
+                    <select class="custom-select col-12"
+                        id="idRol"
+                        formControlName="idRol"
+                        (change)="onChangeRol($event)">
+                        <option value="0"></option>
+                        <option value="1">Administrador</option>
+                        <option value="2">Profesional</option>
+                    </select>        
+                </div>
+            </div>
+
+            
+            <div class="form-group row">
+                <label class="col-sm-2 text-right control-label col-form-label">Login</label>
+                <div class="col-sm-4">
+                    <input type="text" class="form-control" placeholder="Login" formControlName="loginUsuario"
+                        [class.is-invalid]="loginUsuarioNoValido">
+                    <small *ngIf="loginUsuarioNoValido" class="text-danger">
+                        Debe ingresar Login del usuario para continuar
+                    </small>
+                </div>
+                <label class="col-sm-2 text-right control-label col-form-label">Habilitado</label>
+                <div class="col-sm-4">
+                    <select class="custom-select col-12"
+                        id="habilitado"
+                        formControlName="habilitado"
+                        (change)="onChangeHabilitado($event)">
+                        <option value="0">NO</option>
+                        <option value="1">SI</option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-sm-2 text-right control-label col-form-label">Apellido</label>
+                <div class="col-sm-4">
+                    <input type="text" class="form-control" placeholder="Apellido" formControlName="apellido">
+                </div>
+                <label class="col-sm-2 text-right control-label col-form-label">Nombre</label>
+                <div class="col-sm-4">
+                    <input type="text" class="form-control" placeholder="Nombre" formControlName="nombre">
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-sm-3 text-right control-label col-form-label">Email</label>
+                <div class="col-sm-9">
+                    <input type="text" class="form-control" placeholder="Email" formControlName="email">
+                </div>
+            </div>
+     
+            <div class="form-group row">
+                <label class="col-sm-3 text-right control-label col-form-label">Teléfono celular</label>
+                <div class="col-sm-9">
+                    <input type="text" class="form-control" placeholder="Teléfono celular" formControlName="celular">
+                </div>
+            </div>
+                
+        </div>
+        <div class="modal-footer">
+            <button type="submit" class="btn btn-success" *ngIf="!procesando">
+                <i class="fa fa-save m-2"></i>
+                Grabar
+            </button>
+            <button type="button" class="btn btn-default" disabled *ngIf="procesando">
+                <i class="fa fa-spinner fa-sync m-2"></i>
+                Procesando...
+            </button>
+            <button type="button" class="btn btn-default" (click)="onClickCerrar()">
+                <i class="fa fa-times m-2"></i>
+                Cancelar
+            </button>
+        </div>
+    </div>
+</form>

@@ -1,0 +1,108 @@
+@import '~bs-stepper/dist/css/bs-stepper.min.css';
+
+.fast{
+    -webkit-animation-duration: 0.3s;
+    animation-duration: 0.3s;
+    -webkit-animation-fill-mode:both;
+    animation-fill-mode:both
+}
+
+#themecolors .selector, .cursor {
+    cursor: pointer;
+}
+
+
+#google-btn {
+    align-items: center;
+    display: flex;
+    justify-content: center;
+    text-align: center;
+}
+
+.img-avatar {
+    height: 200px;
+    width: 200px;
+}
+
+.w100 {
+    width: 100px;
+}
+
+.w140 {
+    width: 140px;
+}
+
+.w200 {
+    width: 200px;
+}
+
+.avatar {
+    border-radius: 100%;
+    width: 30px;
+}
+
+.oculto {
+    display: none;
+}
+
+.fondo-modal-imagen {
+    background-color: rgba(0, 0, 0, 0.4);
+    left: 0px;
+    height: 100%;
+    position: fixed;
+    top: 0px;
+    width: 100%;
+    z-index: 9999;
+}
+
+.cropped {
+    width: '100%';
+    /* width of container */
+    height: auto;
+    /* height of container */
+    overflow: hidden;
+  }
+
+
+  .details-panel {
+    width: 50% !important;
+    background-color: red;
+}
+
+/* Estilos para dispositivos grandes (mayor a 768px) */
+table.desktop {
+    display: table; /* Mostrar la tabla como una tabla normal */
+}
+table.mobile {
+    display: none; /* Mostrar la tabla como una tabla normal en dispositivos pequeños */
+}
+
+  /* Estilos para dispositivos pequeños (768px o menor) */
+@media (max-width: 768px) {
+    table.desktop {
+        display: none; /* Ocultar la tabla en dispositivos pequeños */
+    }
+
+    table.mobile {
+        display: table; /* Mostrar la tabla como una tabla normal en dispositivos pequeños */
+    }
+}
+
+/* Estilos para dispositivos grandes (mayor a 768px) */
+div.desktop {
+    display: table; /* Mostrar la tabla como una tabla normal */
+}
+div.mobile {
+    display: none; /* Mostrar la tabla como una tabla normal en dispositivos pequeños */
+}
+
+  /* Estilos para dispositivos pequeños (768px o menor) */
+@media (max-width: 768px) {
+    div.desktop {
+        display: none; /* Ocultar la tabla en dispositivos pequeños */
+    }
+
+    div.mobile {
+        display: table; /* Mostrar la tabla como una tabla normal en dispositivos pequeños */
+    }
+}

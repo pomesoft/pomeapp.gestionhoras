@@ -1,0 +1,53 @@
+<div class="row animated fadeIn fast" *ngIf="cargando">
+    <div class="col-12">
+        <div class="alert alert-info text-center">
+            <h4 class="alert-heading">Cargando</h4>
+            <i class="fa fa-spin fa-refresh fa-4x"></i>
+            <p class="mb-0">Por favor espere...</p>
+        </div>
+    </div>
+</div>
+
+<div class="row animated fadeIn fast" *ngIf="error">
+    <div class="col-12">
+        <div class="alert alert-danger text-center">
+            <h4 class="alert-heading">Ocurrió un error</h4>
+            <i class="fa fa-exclamation-triangle fa-4x"></i>
+            <p class="mb-0">Ocurrió un error reintente en unos minutos, si el error persiste contactarse con soporte.
+            </p>
+        </div>
+    </div>
+</div>
+
+<div class="animated fadeIn fast" *ngIf="!cargando">
+    <div class="card">
+        <div class="card-body">
+            <!-- Tab navs -->
+            <ul class="nav nav-tabs customtab" role="tablist">
+                <li class="nav-item"> 
+                    <a class="nav-link active" data-toggle="tab" href="#planificadas" role="tab">
+                        <span class="hidden-sm-up"><i class="ti-home"></i></span> 
+                        <div class="card-title h5 desktop">{{tituloFormulario}} Planificadas</div>
+                        <div class="card-title h6 mobile">{{tituloFormulario}} Planificadas</div>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" data-toggle="tab" href="#manual" role="tab">
+                        <span class="hidden-sm-up"><i class="ti-user"></i></span>
+                        <div class="card-title h5 desktop">{{tituloFormulario}} Manual</div>
+                        <div class="card-title h6 mobile">{{tituloFormulario}} Manual</div>
+                    </a>
+                </li>
+            </ul>
+            <!-- Tab panes -->
+            <div class="tab-content">
+                <div class="tab-pane p-20 active" id="planificadas" role="tabpanel">
+                    <app-registrohorasplanificadas></app-registrohorasplanificadas>
+                </div>
+                <div class="tab-pane p-20" id="manual" role="tabpanel">
+                    <app-registrohorasmanual></app-registrohorasmanual>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
