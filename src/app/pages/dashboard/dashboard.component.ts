@@ -68,14 +68,38 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterContentInit {
         ],
     };
 
+    evolucionHoras: ChartData<'line'> = {
+        labels: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 1, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30],
+        datasets: [
+            {
+                label: 'Planificadas',
+                data: [0, 0, 8, 8, 8, 8, 8, 0, 0, 8, 8, 8, 8, 8, 0, 0, 8, 8, 8, 8,8, 8, 8, 8, 8, 8, 8, 8, 8,0],
+                backgroundColor: 'rgba(255, 159, 64, 0.2)',
+                borderColor: 'rgba(255, 159, 64, 1)',
+                borderWidth: 2,
+                fill: false,
+                tension: 0.7
+            },
+            {
+                label: 'Registradas',
+                data: [8, 7, 6, 5, 8, 13, 4, 0, 0, 6, 0,0,0,0,0,0,16,16,26,0,0,0,0,0,0,0,0,0,0,0],
+                backgroundColor: "rgba(57, 227, 126, 0.2)",
+                borderColor: "rgba(57, 227, 126, 1)",
+                borderWidth: 1,
+                fill: false,
+                tension: 0.5
+            }
+        ]
+    };
+
     totalHorasXProyecto: ChartData<'bar'> = {
         labels: [
-            'Proyecto #001 Cliente 1',
-            'Proyecto #002 Cliente 1',
-            'Proyecto #001 Cliente 2',
-            'Proyecto #001 Cliente 3',
-            'Proyecto #001 Cliente 4',
-            'Proyecto #001 Cliente 5',
+            'Proyecto #001 Cliente 1: 160 horas',
+            'Proyecto #002 Cliente 1: 160 horas',
+            'Proyecto #001 Cliente 2: 156 horas',
+            'Proyecto #001 Cliente 3: 20 horas',
+            'Proyecto #001 Cliente 4: 10 horas',
+            'Proyecto #001 Cliente 5: 0 horas',
         ],
         datasets: [
             {
@@ -100,7 +124,7 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterContentInit {
                 borderRadius: 10,
                 barPercentage: 0.3,
             }, {
-                data: [60, 20, 160, 0, 156, 10],
+                data: [160, 160, 156, 20, 10, 0],
                 backgroundColor: [
                     "rgba(57, 227, 126, 0.2)",
                     "rgba(57, 227, 126, 0.2)",
@@ -124,12 +148,30 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterContentInit {
         ],
     };
 
+    totalHorasRegistradasXProyecto: ChartData<'pie'> = {
+        labels: [
+            'Proyecto #001 Cliente 1',
+            'Proyecto #002 Cliente 1',
+            'Proyecto #001 Cliente 2',
+            'Proyecto #001 Cliente 3',
+            'Proyecto #001 Cliente 4',
+            'Proyecto #001 Cliente 5',
+        ],
+        datasets: [
+            {
+                data: [160, 160, 156, 20, 10, 0],
+                borderWidth: 1,
+                borderRadius: 10,
+            }
+        ],
+    };
+
     totalHorasXProfesional: ChartData<'bar'> = {
         labels: [
-            'Profgesional 1',
-            'Profgesional 2',
-            'Profgesional 3',
-            'Profgesional 4',                        
+            'NOMBRE 1 APELLIDO 1',
+            'NOMBRE 2 APELLIDO 2',
+            'NOMBRE 3 APELLIDO 3',
+            'NOMBRE 4 APELLIDO 4',                        
         ],
         datasets: [
             {
@@ -170,15 +212,31 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterContentInit {
         ],
     };
 
+    chartPlugins={
+        legend: {
+            display: false
+        },
+        tooltip: {
+            callbacks: {
+                label: function(context) {
+                    let label = context.label || '';
+                    if (label) {
+                        label += ': ';
+                    }
+                    label += context.raw + ' horas';
+                    return label;
+                }
+            }
+        }
+    };
 
     chartOptions: ChartConfiguration['options'] = {
-        plugins: {
-            legend: {
-                display: false
-            },
-        },
+        plugins: this.chartPlugins,
         indexAxis: 'y',
+    };
 
+    chartPieOptions: ChartConfiguration['options'] = {
+        plugins: this.chartPlugins,
     };
 
     constructor(

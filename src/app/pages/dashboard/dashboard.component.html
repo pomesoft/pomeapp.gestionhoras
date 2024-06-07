@@ -10,59 +10,111 @@
 
 
 <div class="animated fadeIn fast" *ngIf="!cargando">
-    <div class="row my-4">
-        <div class="col-md-6 col-6">
+
+    <div class="row">
+        <div class="col-12">
             <div class="card">
                 <div class="card-body">
-                    <h5 class="card-title">Total de Horas</h5>
-                    <canvas baseChart [data]="totalHoras" [type]="'bar'" [options]="chartOptions" height="50">
-                    </canvas>
+                    <div class="card-title h4">Registro de Horas</div>
+                    <hr />
+
+                    <div class="d-flex justify-content-center">
+
+                        <div class="d-flex flex-row border rounded m-r-20" style="border-color: rgba(255, 159, 64, 1);">
+                            <div class="p-10" style="background-color: rgba(255, 159, 64, 0.2);">
+                                <h3 class="box text-muted m-b-0">
+                                    <i class="mdi mdi-alarm-check"></i>
+                                </h3>
+                            </div>
+                            <div class="align-self-center m-l-10 m-r-10 ">
+                                <h3 class="m-b-0" style="color: rgba(255, 159, 64, 1);;">650</h3>
+                                <h6 class="text-muted m-b-0">Planificadas</h6>
+                            </div>
+                        </div>
+
+                        <div class="d-flex flex-row border rounded m-r-20"  style="border-color: rgba(57, 227, 126, 1);">
+                            <div class="p-10" style="background-color: rgba(57, 227, 126, 0.2);">
+                                <h3 class="box text-muted m-b-0">
+                                    <i class="mdi mdi-alarm-check"></i>
+                                </h3>
+                            </div>
+                            <div class="align-self-center m-l-10 m-r-10 ">
+                                <h3 class="m-b-0" style="color: rgba(57, 227, 126, 1);">400</h3>
+                                <h6 class="text-muted m-b-0">Registradas</h6>
+                            </div>
+                        </div>
+
+                        <div class="input-group m-l-20">
+                            <div class="btn-group" role="group" aria-label="Periodos">
+                                <button type="button" class="btn" (click)="onClickPeriodo(1)"
+                                    [class.btn-secondary]="periodo==1" [class.btn-outline-secondary]="periodo!=1">
+                                    30 días
+                                </button>
+                                <button type="button" class="btn" (click)="onClickPeriodo(2)"
+                                    [class.btn-secondary]="periodo==2" [class.btn-outline-secondary]="periodo!=2">
+                                    60 días
+                                </button>
+                                <button type="button" class="btn" (click)="onClickPeriodo(3)"
+                                    [class.btn-secondary]="periodo==3" [class.btn-outline-secondary]="periodo!=3">
+                                    90 días
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="input-group m-l-20">
+                            <div class="btn-group" role="group" aria-label="Acciones">
+                                <button type="button" class="btn btn-outline-secondary"
+                                    routerLink="registrohoras">
+                                    <i class="mdi mdi-calendar-clock"></i>
+                                    Registro de Horas
+                                </button>
+                                <button type="button" class="btn btn-outline-secondary"
+                                    routerLink="planificacion">
+                                    <i class="mdi mdi-calendar-check"></i>
+                                    Planificación
+                                </button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
-        <div class="col-md-6 col-12">
+    </div>
+
+    <div class="row">
+        <div class="col-md-12 col-12">
             <div class="card">
                 <div class="card-body">
-                    <h6 class="card-title">Período</h6>
-                    <div class="input-group">
-                        <div class="btn-group m-b-5" role="group" aria-label="Periodos">
-                            <button type="button" class="btn" (click)="onClickPeriodo(1)" [class.btn-info]="periodo==1"
-                                [class.btn-outline-info]="periodo!=1">
-                                30 días
-                            </button>
-                            <button type="button" class="btn" (click)="onClickPeriodo(2)" [class.btn-info]="periodo==2"
-                                [class.btn-outline-info]="periodo!=2">
-                                60 días
-                            </button>
-                            <button type="button" class="btn" (click)="onClickPeriodo(3)" [class.btn-info]="periodo==3"
-                                [class.btn-outline-info]="periodo!=3">
-                                90 días
-                            </button>
+                    <!-- <h5 class="card-title">Total de Horas del Período</h5> -->
+                    <div class="row">
+                        <div class="col-md-3 col-12">
+                            <canvas baseChart [data]="totalHoras" [type]="'bar'" [options]="chartOptions"
+                                height="170"></canvas>
                         </div>
-                    </div>
-                    <h6 class="card-title">Accesos</h6>
-                    <div class="input-group">
-                        <button type="button" class="btn waves-effect waves-light btn-rounded btn-outline-info"
-                            routerLink="registrohoras">
-                            <i class="mdi mdi-calendar-clock"></i>
-                            Registrar Horas
-                        </button>
-                        <button type="button" class="btn waves-effect waves-light btn-rounded btn-outline-info"
-                            routerLink="planning">
-                            <i class="mdi mdi-calendar-check"></i>
-                            Planning
-                        </button>
+                        <div class="col-md-9 col-12">
+                            <canvas baseChart [data]="evolucionHoras" [type]="'line'" height="50"></canvas>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
 
-        <div class="col-md-6 col-12">
+        <div class="col-md-12 col-12">
             <div class="card">
-                <div class="card-body">
+                <div class="card-body">                                        
                     <h5 class="card-title">Horas por Proyecto</h5>
-                    <canvas baseChart [data]="totalHorasXProyecto" [type]="'bar'" [options]="chartOptions" height="200">
-                    </canvas>
+                    <div class="row">
+                        <div class="col-8">
+                            <canvas baseChart [data]="totalHorasXProyecto" [type]="'bar'" [options]="chartOptions" height="100">
+                            </canvas>
+                        </div>
+                        <div class="col-4">
+                            <div style="width: 200px; height: 200px; margin: auto;">
+                                <canvas baseChart [data]="totalHorasRegistradasXProyecto" [type]="'pie'" [options]="chartPieOptions" height="80"  >
+                                </canvas>
+                            </div>                            
+                        </div>
+                    </div>                    
                 </div>
             </div>
         </div>

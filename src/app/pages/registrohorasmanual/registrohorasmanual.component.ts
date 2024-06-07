@@ -11,7 +11,7 @@ import { SwalhelperService } from '../../services/swalhelper.service';
 import { ProyectoService } from '../../services/proyecto.service';
 import { HelpersService } from '../../services/helpers.service';
 
-import { Proyecto, TipoTarea } from '../../models/entity.models';
+import { Proyecto, TipoProyecto } from '../../models/entity.models';
 
 @Component({
     selector: 'app-registrohorasmanual',
@@ -29,29 +29,71 @@ export class RegistrohorasmanualComponent implements OnInit, OnDestroy {
 
     fecha: NgbDateStruct;
 
+    profesionales: string[] = [];
+    clientes: string[] = [];
     proyectos: string[] = [];
 
-    tiposTarea: TipoTarea[] = [];
+    tiposProyecto: TipoProyecto[] = [];
 
 
+    get clienteNoValido() {
+        return this.formulario.get('cliente').invalid && this.formulario.get('cliente').touched;
+    }
     get proyectoNoValido() {
-        return this.formulario.get('proyecto').invalid && this.formulario.get('proyecto').touched
+        return this.formulario.get('proyecto').invalid && this.formulario.get('proyecto').touched;
+    }
+    get tipoProyectoNoValido() {
+        return this.formulario.get('tipoProyecto').invalid && this.formulario.get('tipoProyecto').touched;
     }
     get tareaNoValido() {
-        return this.formulario.get('tarea').invalid && this.formulario.get('tarea').touched
-    }
-    get tipoTareaNoValido() {
-        return this.formulario.get('tipoTarea').invalid && this.formulario.get('tipoTarea').touched
+        return this.formulario.get('tarea').invalid && this.formulario.get('tarea').touched;
     }
     get fechaNoValida() {
-        return this.formulario.get('fecha').invalid && this.formulario.get('fecha').touched
+        return this.formulario.get('fecha').invalid && this.formulario.get('fecha').touched;
     }
     get horasNoValida() {
-        return this.formulario.get('horas').invalid && this.formulario.get('horas').touched
+        return this.formulario.get('horas').invalid && this.formulario.get('horas').touched;
     }
 
 
-    @ViewChild('instanceclienteDebito', { static: true }) instanceclienteDebito: NgbTypeahead;
+    @ViewChild('instanceProfesional', { static: true }) instanceProfesional: NgbTypeahead;
+    focus$ = new Subject<string>();
+    click$ = new Subject<string>();
+
+    searchProfesional: OperatorFunction<string, readonly string[]> = (text$: Observable<string>) => {
+        const debouncedText$ = text$.pipe(debounceTime(200), distinctUntilChanged());
+        //const clicksWithClosedPopup$ = this.click$.pipe(filter(() => !this.instance.isPopupOpen()));
+        const inputFocus$ = this.focus$;
+
+        //, clicksWithClosedPopup$
+        return merge(debouncedText$, inputFocus$).pipe(
+            map((term) => {
+                var datos = (term === '' ? this.profesionales : this.profesionales.filter((v) => v.toLowerCase().indexOf(term.toLowerCase()) > -1)).slice(0, 10);
+                return [...new Set(datos)];
+            }),
+        );
+    };
+
+    @ViewChild('instanceCliente', { static: true }) instanceCliente: NgbTypeahead;
+    focusCliente$ = new Subject<string>();
+    clickCliente$ = new Subject<string>();
+
+    searchCliente: OperatorFunction<string, readonly string[]> = (text$: Observable<string>) => {
+        const debouncedText$ = text$.pipe(debounceTime(200), distinctUntilChanged());
+        const clicksWithClosedPopup$ = this.clickCliente$.pipe(filter(() => false));
+        const inputFocus$ = this.focusCliente$;
+
+        return merge(debouncedText$, inputFocus$, clicksWithClosedPopup$)
+            .pipe(
+                map((term) => {
+                    var datos = (term === '' ? this.clientes : this.clientes.filter((v) => v.toLowerCase().indexOf(term.toLowerCase()) > -1)).slice(0, 10);
+                    return [...new Set(datos)];
+                }),
+            );
+    };
+
+
+    @ViewChild('instanceProyecto', { static: true }) instanceProyecto: NgbTypeahead;
     focusProyecto$ = new Subject<string>();
     clickProyecto$ = new Subject<string>();
 
@@ -81,11 +123,13 @@ export class RegistrohorasmanualComponent implements OnInit, OnDestroy {
     ) {
 
         this.crearFormulario();
+        this.setearEventosControles();
     }
 
     ngOnInit(): void {
-        this.proyectos = this.proyectoService.proyectos.map(item => item.Descripcion);
-        this.tiposTarea = this.proyectoService.tiposTarea;
+        this.profesionales = this.proyectoService.profesionales.map(item => item.Apellido + '' + item.Nombre);
+        this.clientes = this.proyectoService.clientes.map(item => item.Nombre);
+        this.tiposProyecto = this.proyectoService.tiposProyecto;
 
     }
 
@@ -104,12 +148,14 @@ export class RegistrohorasmanualComponent implements OnInit, OnDestroy {
 
         this.formulario = this.formBuilder.group({
             id: [-1],
+            profesional: ['APELLIDO 1 NOMBRE 1', Validators.required],
             proyecto: ['', Validators.required],
+            tipoProyecto: [''],
+            cliente: [''],
             tarea: ['', Validators.required],
-            tipoTarea: [0, Validators.required],
             fechaNgDateStruct: [this.fecha, Validators.required],
             fecha: [this.helpersService.parserNgDateStruct(this.fecha)],
-            horas: [0, Validators.required],
+            horas: [0, [Validators.required, Validators.min(1)]],
         });
         Object.keys(this.formulario.controls).forEach(key => {
             if (key != 'id' && key != 'cotizacion') {
@@ -153,6 +199,11 @@ export class RegistrohorasmanualComponent implements OnInit, OnDestroy {
 
     }
 
+    onClickAgregar(
+        controlName: string,
+    ) {
+        this.swalService.setSwalFireOk(`Se podrá agregar un nuevo ${controlName}`);
+    }
 
     onClickLimpiarTypeahead(
         controlName: string,
@@ -160,4 +211,31 @@ export class RegistrohorasmanualComponent implements OnInit, OnDestroy {
         this.formulario.get(controlName).setValue('', { onlySelf: true, });
     }
 
+
+    setearEventosControles() {
+
+        this.formulario.get('cliente').valueChanges.subscribe(valor => {
+            this.proyectos = this.proyectoService.proyectos
+                .filter(item => item.Cliente.Nombre === valor)
+                .map(item => item.Descripcion);
+
+            this.formulario.patchValue({
+                proyecto: this.proyectos.length == 1 ? this.proyectos[0] : '',
+            }, {
+                emitEvent: true
+            });
+        });
+
+        this.formulario.get('proyecto').valueChanges.subscribe(valor => {
+
+            var _listaux = this.proyectoService.proyectos.filter(item => item.Descripcion === valor);
+            this.formulario.patchValue({
+                tipoProyecto: _listaux.length == 1 ? _listaux[0].TipoDescripcion : '',
+            }, {
+                emitEvent: false
+            });
+
+        });
+
+    }
 }

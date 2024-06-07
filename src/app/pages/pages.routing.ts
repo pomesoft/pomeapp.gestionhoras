@@ -25,7 +25,7 @@ const routes: Routes = [
             //{ path: 'account-settings', component: AccountSettingsComponent, data: { titulo: 'Ajustes de cuenta' } },
             { path: 'reportehoras', component: ReporteshorasComponent, data: { titulo: 'Reporte de Horas' } },
             { path: 'registrohoras', component: RegistrohorasComponent, data: { titulo: 'Registro de Horas' } },
-            { path: 'planning', component: PlanningComponent, data: { titulo: 'Planning' } },
+            { path: 'planificacion', component: PlanningComponent, data: { titulo: 'Planning' } },
             { path: 'configuracion', component: ConfiguracionComponent, data: { titulo: 'Configuración' } },
             { path: 'usuarios', component: UsuariosComponent, data: { titulo: 'Usuarios' }},
         ]

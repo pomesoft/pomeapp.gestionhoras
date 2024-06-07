@@ -59,11 +59,13 @@ export class RegisterComponent {
             return;
         }
 
-        const valido = await this.usuarioService.registroUsuario({
-            Usuario: this.registerForm.get('email').value,
-            Clave: this.registerForm.get('password').value,
-            IdCliente: this.idCliente,
-        });
+        // const valido = await this.usuarioService.registroUsuario({
+        //     Usuario: this.registerForm.get('email').value,
+        //     Clave: this.registerForm.get('password').value,
+        //     IdCliente: this.idCliente,
+        // });
+
+        const valido = true;
 
         if (valido) {
             this.mostrarNoHabilitado = true;

@@ -69,7 +69,7 @@ export interface Producto {
     Descripcion: string;
 }
 
-export interface TipoTarea {
+export interface TipoProyecto {
     Id: number;
     Descripcion: string;
 }
@@ -77,13 +77,16 @@ export interface TipoTarea {
 export interface Tarea {
     Id: number;
     Descripcion: string;
-    Tipo: TipoTarea;
-    TipoDescripcion: string;
     Profesional: Profesional;
     FechaInicio: Date;
     FechaFin: Date;
     Entregado?: boolean;
     FechaEntrega?: Date;
+    HorasPlanificadas?: number;
+    Periodo?: number;
+    FechaRegistro?: string;
+    HorasRegistro?: number;
+
 }
 
 export interface Profesional {
@@ -92,14 +95,22 @@ export interface Profesional {
     Nombre: string;
 }
 
+export interface Cliente {
+    Id: number;
+    Nombre: string;
+}
+
 
 export interface Proyecto {
     Id: number;
     Descripcion: string;
+    Cliente?: Cliente;
+    Tipo?: TipoProyecto;
+    TipoDescripcion?: string;
     Producto?: Producto;
     ProductoDescripcion?: string;
-    FechaInicio: Date;
-    FechaFin: Date;
-    Tareas: Tarea[];
+    FechaInicio?: Date;
+    FechaFin?: Date;
+    Tareas?: Tarea[];
     TareasFULL?: Tarea[];
 }

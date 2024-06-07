@@ -23,10 +23,393 @@
     <div class="col-12">
         <div class="card">
             <div class="card-body">
-                <div class="card-title h3 desktop">{{tituloFormulario}}</div>
+                <div class="card-title h4 desktop">{{tituloFormulario}}</div>
                 <div class="card-title h5 mobile">{{tituloFormulario}}</div>
                 <hr />
+
+                
+
+                <div class="row mb-2">
+                    <div class="col col-md-12">
+                        <div class="form-group row" style="margin-bottom: 5px !important;">
+                            <label class="col-md-2 control-label col-form-label text-center"></label>
+                            <div class="col-md-6">
+                                <div class="input-group">
+                                    <span class="input-group-addon ">
+                                        <i class="fa fa-user-o"></i>
+                                    </span>
+                                    <input id="typeahead-focus" type="text" class="form-control" [(ngModel)]="profesional"
+                                        [ngbTypeahead]="searchProfesional" (focus)="focus$.next($any($event).target.value)"
+                                        (click)="click$.next($any($event).target.value)" #instance="ngbTypeahead" />
+                                    <span class="input-group-addon" role="button" data-toggle="tooltip" data-placement="top"
+                                        title="Limpiar profesional" (click)="onClickLimpiarProfesional($event)">
+                                        <i class="fa fa-times"></i>
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="col-12 col-md-4 p-t-5">
+                                <div class="input-group">
+                                    <button type="button" class="btn btn-rounded btn-outline-secondary waves-effect waves-light "
+                                        (click)="onClickListarProyectos($event)">
+                                        <i class="fa fa-check "></i>
+                                        Listar proyectos
+                                    </button>                                    
+                                    <button type="button" class="btn btn-rounded btn-outline-success waves-effect waves-light   "
+                                        (click)="onClickGuardar($event)">
+                                        <i class="fa fa-save "></i>
+                                        Guardar
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- <div class="row mb-2">
+                            <div class="col-12 col-md-8">
+                                
+                            </div>
+                            <div class="col-md-4">
+                                <div class="input-group">
+                                    <div class="btn-group m-b-5" role="group" aria-label="Periodos">
+                                        <button type="button" class="btn" (click)="onClickPeriodo(1)" [class.btn-info]="periodo==1"
+                                            [class.btn-outline-info]="periodo!=1">
+                                            Hoy
+                                        </button>
+                                        <button type="button" class="btn" (click)="onClickPeriodo(2)" [class.btn-info]="periodo==2"
+                                            [class.btn-outline-info]="periodo!=2">
+                                            Semana actual
+                                        </button>
+                                        <button type="button" class="btn" (click)="onClickPeriodo(3)" [class.btn-info]="periodo==3"
+                                            [class.btn-outline-info]="periodo!=3">
+                                            Mes actual
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div> -->
+                
+                        <div class="row">
+                            <div class="col-md-4 col-12" style="padding: 0px !important;">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <div class="d-flex flex-row m-b-5">
+                                            <div class="flex-grow-1">
+                                                <span class="h5 card-title">Proyectos asignados</span>
+                                            </div>
+                                            <div>
+                                                <button type="button" class="btn btn-rounded btn-outline-secondary waves-effect waves-light "
+                                                    (click)="onClickAbrirModal($event, modalDatosProyecto)">
+                                                    <i class="fa fa-plus "></i>
+                                                    Asignar
+                                                </button>
+                                            </div>
+                                        </div>
+                                        <form>
+                                            <div class="input-group">
+                                                <input type="text" class="form-control w-30"
+                                                    placeholder="Ingreso texto a buscar y presione enter......" [formControl]="filtro">
+                                                <span class="input-group-addon" role="button" data-toggle="tooltip" data-placement="top"
+                                                    title="Buscar" (click)="refreshDatos()">
+                                                    <i class="fa fa-search"></i>
+                                                </span>
+                                                <span class="input-group-addon" role="button" data-toggle="tooltip" data-placement="top"
+                                                    title="Borrar" (click)="filtro.reset('')">
+                                                    <i class="fa fa-times"></i>
+                                                </span>
+                                            </div>
+                                        </form>
+                                        <div class="list-group">
+                                            <a href="#" *ngFor="let proyecto of listado$ | async;"
+                                                class="list-group-item list-group-item-action"
+                                                [class.active]="proyectoSeleccionado && proyecto.Id==proyectoSeleccionado.Id"
+                                                (click)="onClickSeleccionarProyecto($event, proyecto)">
+                
+                                                <div class="d-flex flex-row">
+                                                    <div class="flex-grow-1">
+                                                        <ngb-highlight [result]="proyecto.Cliente.Nombre"
+                                                            [term]="filtro.value"></ngb-highlight>&nbsp;-&nbsp;
+                                                        <ngb-highlight [result]="proyecto.Descripcion"
+                                                            [term]="filtro.value"></ngb-highlight>
+                                                    </div>
+                                                    <div>
+                                                        <span class="h5 text-muted"><i class="mdi mdi-arrow-right-bold"></i></span>
+                                                    </div>
+                                                </div>
+                
+                
+                                            </a>
+                
+                                        </div>
+                                    </div>
+                                </div>
+                
+                            </div>
+                            <div class="col-md-8 col-12" style="padding: 0px !important;">
+                
+                                <div class="card">
+                                    <div class="card-body"  *ngIf="proyectoSeleccionado">
+                                        <div class="d-flex flex-row m-b-5">
+                                            <div class="flex-grow-1">
+                                                <span class="h6 card-title">
+                                                    {{proyectoSeleccionado.Cliente.Nombre}} - 
+                                                    {{proyectoSeleccionado.Descripcion}} - 
+                                                    {{proyectoSeleccionado.Tipo.Descripcion}}
+                                                </span>
+                                            </div>
+                                            <div>
+                                                <button type="button" class="btn btn-rounded btn-outline-secondary waves-effect waves-light "
+                                                    (click)="onClickAbrirModal($event, modalDatosTarea)">
+                                                    <i class="fa fa-plus "></i>
+                                                    Asignar
+                                                </button>
+                                            </div>
+                                        </div>
+                                        
+
+                                        <ul class="list-group">
+                                            <li class="list-group-item border border-bottom">
+                
+                                                <div class="d-flex flex-row">
+                                                    <div class="flex-grow-1" style="width: 50% !important;">
+                                                        <h6>Tarea as asignadas</h6>
+                                                    </div>
+                                                    <div class="p-l-10" style="width: 20% !important;">
+                                                        <h6>Horas</h6>
+                                                    </div>
+                                                    <div class="p-l-10" style="width: 30% !important;">
+                                                        <h6>Período</h6>
+                                                    </div>
+                                                </div>
+                
+                                            </li>
+
+                                            <li class="list-group-item border border-bottom"
+                                                *ngFor="let tarea of proyectoSeleccionado.Tareas; index as i; trackBy: trackByFn">
+                
+                                                <div class="d-flex flex-row">
+                                                    <div class="flex-grow-1" style="width: 50% !important;">
+                                                        {{tarea.Descripcion}}
+                                                    </div>
+                                                    <div class="p-l-10" style="width: 20% !important;">
+                                                        <div class="input-group">
+                                                            <span class="input-group-addon">
+                                                                <i class="fa fa-clock-o"></i>
+                                                            </span>
+                                                            <input type="number" class="form-control"
+                                                                [(ngModel)]="proyectoSeleccionado.Tareas[i].HorasRegistro"
+                                                                (focus)="onFocusHoras($event)">
+                                                        </div>
+                                                    </div>
+                                                    <div class="p-l-10" style="width: 30% !important;">
+                                                        <div class="input-group">
+                                                            <select class="custom-select" [(ngModel)]="proyectoSeleccionado.Tareas[i].Periodo">
+                                                                <option value="1">SIN DEFINIR</option>
+                                                                <option value="2">POR SEMANA</option>
+                                                                <option value="3">POR QUINCENA</option>
+                                                                <option value="4">POR MES</option>
+                                                            </select>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                
+                                            </li>
+                                        </ul>
+                
+                                    </div>
+                                </div>
+                
+                
+                
+                            </div>
+                        </div>
+                
+                        <div class="row mb-2" *ngIf="hayDatos">
+                            <div class="col-12 col-md-10">
+                
+                            </div>
+                            <div class="col-12 col-md-2">
+                                <button type="button" class="btn btn-rounded btn-outline-success waves-effect waves-light "
+                                    (click)="onClickGuardar($event)">
+                                    <i class="fa fa-save "></i>
+                                    Guardar
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 </div>
+
+
+<ng-template #modalDatosProyecto let-modal>
+    <form autocomplete="off" [formGroup]="formularioProyecto" (ngSubmit)="onClickGuardarProyecto()">
+        <div class="modal-header">
+            <h4 class="modal-title" id="modal-basic-title">Nueva asignación de proyecto</h4>
+            <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('CancelarProyecto')"></button>
+        </div>
+        <div class="modal-body">		
+            <div class="modal-content w-100 border">
+                <div class="modal-body">
+
+                    <div class="form-group row">
+
+                        <label class="col-sm-2 control-label col-form-label text-right">Cliente:</label>
+                        <div class="col-sm-10 control-label col-form-label">
+                            <div class="input-group">
+                                <span class="input-group-addon">
+                                    <i class="fa  fa-list-alt"></i>
+                                </span>
+                                <input id="clienteTypeahead" type="text" class="form-control"
+                                    formControlName="cliente" placeholder="Seleccione un cliente"
+                                    [class.is-invalid]="clienteNoValido" [ngbTypeahead]="searchCliente"
+                                    (focus)="focusCliente$.next($any($event).target.value)"
+                                    (click)="clickCliente$.next($any($event).target.value)"
+                                    #instanceCliente="ngbTypeahead" />
+                                <span class="input-group-addon" role="button"
+                                    (click)="onClickLimpiarTypeahead('cliente')">
+                                    <i class="fa fa-times"></i>
+                                </span>
+                                <span class="input-group-addon" role="button"
+                                    (click)="onClickAgregar('Cliente')">
+                                    <i class="fa fa-plus m-r-5"></i>Agregar
+                                </span>
+                            </div>
+                            <small *ngIf="clienteNoValido" class="text-danger">
+                                Debe seleccionar un cliente
+                            </small>
+                        </div>
+
+
+                        <label class="col-sm-2 control-label col-form-label text-right">Proyecto:</label>
+                        <div class="col-sm-10 control-label col-form-label">
+                            <div class="input-group">
+                                <span class="input-group-addon">
+                                    <i class="fa  fa-list-alt"></i>
+                                </span>
+                                <input id="proyectoTypeahead" type="text" class="form-control"
+                                    formControlName="proyecto" placeholder="Seleccione un proyecto"
+                                    [class.is-invalid]="proyectoNoValido" [ngbTypeahead]="searchProyecto"
+                                    (focus)="focusProyecto$.next($any($event).target.value)"
+                                    (click)="clickProyecto$.next($any($event).target.value)"
+                                    #instanceProyecto="ngbTypeahead" />
+                                <span class="input-group-addon" role="button"
+                                    (click)="onClickLimpiarTypeahead('proyecto')">
+                                    <i class="fa fa-times"></i>
+                                </span>
+                                <span class="input-group-addon" role="button"
+                                    (click)="onClickAgregar('Proyecto')">
+                                    <i class="fa fa-plus m-r-5"></i>Agregar
+                                </span>
+                            </div>
+                            <small *ngIf="proyectoNoValido" class="text-danger">
+                                Debe seleccionar un proyecto
+                            </small>
+                        </div>
+
+                        <label class="col-sm-2 control-label col-form-label text-right">Tipo:</label>
+                        <div class="col-sm-10 control-label col-form-label">
+                            <div class="input-group">
+                                <span class="input-group-addon">
+                                    <i class="fa fa-pencil-square-o"></i>
+                                </span>
+                                <input type="text" class="form-control" placeholder="Tipo de proyecto"
+                                    formControlName="tipoProyecto">
+                            </div>
+                            <small *ngIf="tipoProyectoNoValido" class="text-danger">
+                                Debe indicar tipo de proyecto
+                            </small>
+                        </div>
+                    </div>
+                </div>
+            </div>        
+        </div>
+        <div class="modal-footer">
+            <button type="submit" class="btn btn-rounded btn-outline-success waves-effect waves-light">
+                <i class="fa fa-save "></i>
+                Asignar Proyecto
+            </button>
+            <button type="button" class="btn btn-rounded btn-outline-secondary waves-effect waves-light" (click)="modal.dismiss('CancelarProyecto')">
+                <i class="fa fa-close "></i>
+                Cancelar
+            </button>
+        </div>
+    </form>
+</ng-template>
+
+<ng-template #modalDatosTarea let-modal>
+
+    <form autocomplete="off" [formGroup]="formularioTarea" (ngSubmit)="onClickGuardarTarea()">
+
+        <div class="modal-header">
+            <h4 class="modal-title" id="modal-basic-title">Nueva asignación de tarea</h4>
+            <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('CancelarProyecto')"></button>
+        </div>
+        <div class="modal-body">		
+            <div class="modal-content w-100 border">
+                <div class="modal-body">
+
+                    <div class="form-group row">
+
+                        <label class="col-sm-2 control-label col-form-label text-right">Tarea:</label>
+                        <div class="col-sm-10 control-label col-form-label">
+                            <div class="input-group">
+                                <span class="input-group-addon">
+                                    <i class="fa fa-pencil-square-o"></i>
+                                </span>
+                                <input type="text" class="form-control" placeholder="Ingrese al tarea"
+                                    formControlName="tarea" [class.is-invalid]="tareaNoValido">
+                            </div>
+                            <small *ngIf="tareaNoValido" class="text-danger">
+                                Debe ingresar tarea
+                            </small>
+                        </div>
+
+
+
+                        <label class="col-sm-2 control-label col-form-label text-right">Horas:</label>
+                        <div class="col-sm-3 control-label col-form-label">
+                            <div class="input-group">
+                                <span class="input-group-addon">
+                                    <i class="fa fa-clock-o"></i>
+                                </span>
+                                <input type="number" class="form-control" id="horas" formControlName="horas"
+                                    [class.is-invalid]="horasNoValida">
+                            </div>
+                            <small *ngIf="horasNoValida" class="text-danger">
+                                Debe ingresar horas
+                            </small>
+                        </div>
+
+                        <label class="col-sm-2 control-label col-form-label text-right">Período:</label>
+                        <div class="col-sm-5 control-label col-form-label">
+                            <div class="input-group">
+                                <span class="input-group-addon">
+                                    <i class="fa fa-calendar-o"></i>
+                                </span>
+                                <select class="form-control custom-select" id="perido" formControlName="periodo">
+                                    <option value="1">SIN DEFINIR</option>
+                                    <option value="2">POR SEMANA</option>
+                                    <option value="3">POR QUINCENA</option>
+                                    <option value="4">POR MES</option>
+                                </select>
+                            </div>
+                        </div>
+
+                    </div>
+
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="submit" class="btn btn-rounded btn-outline-success waves-effect waves-light">
+                <i class="fa fa-save "></i>
+                Asignar Proyecto
+            </button>
+            <button type="button" class="btn btn-rounded btn-outline-secondary waves-effect waves-light" (click)="modal.dismiss('CancelarTarea')">
+                <i class="fa fa-close "></i>
+                Cancelar
+            </button>
+        </div>
+
+    </form>
+</ng-template>

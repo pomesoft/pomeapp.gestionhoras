@@ -139,15 +139,17 @@ export class UsuarioComponent implements OnInit, OnDestroy {
             },
         };
 
-        this.usuarioService.guardarUsuario(user)
-            .subscribe({
-                next: (response: Usuario) => {
-                    this.store.dispatch(cargarUsuarios());
-                    this.swalService.setToastOK();
-                    this.modalService.dismissAll();
-                },
-                error: (error) => this.swalService.setToastError(error)
-            });
+        this.swalService.setToastOK();
+
+        // this.usuarioService.guardarUsuario(user)
+        //     .subscribe({
+        //         next: (response: Usuario) => {
+        //             this.store.dispatch(cargarUsuarios());
+        //             this.swalService.setToastOK();
+        //             this.modalService.dismissAll();
+        //         },
+        //         error: (error) => this.swalService.setToastError(error)
+        //     });
 
     }
 

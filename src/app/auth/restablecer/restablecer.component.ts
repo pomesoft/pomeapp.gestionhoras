@@ -55,7 +55,7 @@ export class RestablecerComponent {
                     if (idUsuario > 0) {
                         this.cargarDatos(idUsuario);
                     }
-                    
+
                 }
             }
         });
@@ -97,11 +97,13 @@ export class RestablecerComponent {
             return;
         }
 
-        const valido = await this.usuarioService.restablecerClaveUsuario({
-            Usuario: this.registerForm.get('email').value,
-            Clave: this.registerForm.get('email').value,
-            ClaveNueva: this.registerForm.get('password').value,
-        });
+        // const valido = await this.usuarioService.restablecerClaveUsuario({
+        //     Usuario: this.registerForm.get('email').value,
+        //     Clave: this.registerForm.get('email').value,
+        //     ClaveNueva: this.registerForm.get('password').value,
+        // });
+
+        const valido = true;
 
         if (valido) {
             this.mostrarNoHabilitado = true;

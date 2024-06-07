@@ -3,6 +3,49 @@
         <div class="modal-body">
 
             <div class="form-group row">
+
+                <label class="col-sm-3 control-label col-form-label text-right">Profesional:</label>
+                <div class="col-sm-9 control-label col-form-label">
+                    <div class="input-group">
+                        <span class="input-group-addon ">
+                            <i class="fa fa-user-o"></i>
+                        </span>
+                        <input id="typeahead-focus" type="text" class="form-control" formControlName="profesional"
+                            placeholder="Seleccione un profesional" [ngbTypeahead]="searchProfesional"
+                            (focus)="focus$.next($any($event).target.value)"
+                            (click)="click$.next($any($event).target.value)" #instanceProfesional="ngbTypeahead" />
+                        <span class="input-group-addon" role="button" (click)="onClickLimpiarTypeahead('profesional')">
+                            <i class="fa fa-times"></i>
+                        </span>
+                        <span class="input-group-addon" role="button" (click)="onClickAgregar('Profesional')">
+                            <i class="fa fa-plus m-r-5"></i>Agregar
+                        </span>
+                    </div>
+                </div>
+
+                <label class="col-sm-3 control-label col-form-label text-right">Cliente:</label>
+                <div class="col-sm-9 control-label col-form-label">
+                    <div class="input-group">
+                        <span class="input-group-addon">
+                            <i class="fa  fa-list-alt"></i>
+                        </span>
+                        <input id="clienteTypeahead" type="text" class="form-control" formControlName="cliente"
+                            placeholder="Seleccione un cliente" [class.is-invalid]="clienteNoValido"
+                            [ngbTypeahead]="searchCliente" (focus)="focusCliente$.next($any($event).target.value)"
+                            (click)="clickCliente$.next($any($event).target.value)" #instanceCliente="ngbTypeahead" />
+                        <span class="input-group-addon" role="button" (click)="onClickLimpiarTypeahead('cliente')">
+                            <i class="fa fa-times"></i>
+                        </span>
+                        <span class="input-group-addon" role="button" (click)="onClickAgregar('Cliente')">
+                            <i class="fa fa-plus m-r-5"></i>Agregar
+                        </span>
+                    </div>
+                    <small *ngIf="clienteNoValido" class="text-danger">
+                        Debe seleccionar un cliente
+                    </small>
+                </div>
+
+
                 <label class="col-sm-3 control-label col-form-label text-right">Proyecto:</label>
                 <div class="col-sm-9 control-label col-form-label">
                     <div class="input-group">
@@ -12,13 +55,30 @@
                         <input id="proyectoTypeahead" type="text" class="form-control" formControlName="proyecto"
                             placeholder="Seleccione un proyecto" [class.is-invalid]="proyectoNoValido"
                             [ngbTypeahead]="searchProyecto" (focus)="focusProyecto$.next($any($event).target.value)"
-                            (click)="clickProyecto$.next($any($event).target.value)" #instanceproyecto="ngbTypeahead" />
-                        <span class="input-group-addon" (click)="onClickLimpiarTypeahead('proyecto')">
+                            (click)="clickProyecto$.next($any($event).target.value)" #instanceProyecto="ngbTypeahead" />
+                        <span class="input-group-addon" role="button" (click)="onClickLimpiarTypeahead('proyecto')">
                             <i class="fa fa-times"></i>
+                        </span>
+                        <span class="input-group-addon" role="button" (click)="onClickAgregar('Proyecto')">
+                            <i class="fa fa-plus m-r-5"></i>Agregar
                         </span>
                     </div>
                     <small *ngIf="proyectoNoValido" class="text-danger">
                         Debe seleccionar un proyecto
+                    </small>
+                </div>
+
+                <label class="col-sm-3 control-label col-form-label text-right">Tipo de Proyecto:</label>
+                <div class="col-sm-9 control-label col-form-label">
+                    <div class="input-group">
+                        <span class="input-group-addon">
+                            <i class="fa fa-pencil-square-o"></i>
+                        </span>
+                        <input type="text" class="form-control" placeholder="Tipo de proyecto"
+                            formControlName="tipoProyecto">
+                    </div>
+                    <small *ngIf="tipoProyectoNoValido" class="text-danger">
+                        Debe indicar tipo de proyecto
                     </small>
                 </div>
 
@@ -29,31 +89,12 @@
                         <span class="input-group-addon">
                             <i class="fa fa-pencil-square-o"></i>
                         </span>
-                        <input type="text" class="form-control" placeholder="Abreviado" formControlName="tarea"
+                        <input type="text" class="form-control" placeholder="Ingrese al tarea" formControlName="tarea"
                             [class.is-invalid]="tareaNoValido">
                         <small *ngIf="tareaNoValido" class="text-danger">
                             Debe ingresar tarea
                         </small>
                     </div>
-                </div>
-
-
-                <label class="col-sm-3 control-label col-form-label text-right">Tipo de Tarea:</label>
-                <div class="col-sm-9 control-label col-form-label">
-                    <div class="input-group">
-                        <span class="input-group-addon">
-                            <i class="fa fa-pencil-square-o"></i>
-                        </span>
-                        <select class="custom-select col-6" id="tarea" formControlName="tipoTarea" autofocus
-                            [class.is-invalid]="tipoTareaNoValido">
-                            <option *ngFor="let item of tiposTarea" [value]="item.Id">
-                                {{item.Descripcion}}
-                            </option>
-                        </select>
-                    </div>
-                    <small *ngIf="tipoTareaNoValido" class="text-danger">
-                        Debe indicar tipo de tarea
-                    </small>
                 </div>
 
 
@@ -63,10 +104,8 @@
                         <span class="input-group-addon" (click)="dteFecha.toggle()">
                             <i class="fa fa-calendar"></i>
                         </span>
-                        <input id="fechaNgDateStruct" class="form-control" placeholder="dd/mm/yyyy"
-                            name="dteFecha" formControlName="fecha"
-                            [class.is-invalid]="fechaNoValida" 
-                            ngbDatepicker 
+                        <input id="fechaNgDateStruct" class="form-control" placeholder="dd/mm/yyyy" name="dteFecha"
+                            formControlName="fecha" [class.is-invalid]="fechaNoValida" ngbDatepicker
                             #dteFecha="ngbDatepicker" />
                     </div>
                     <small *ngIf="fechaNoValida" class="text-danger">
@@ -81,8 +120,8 @@
                         <span class="input-group-addon">
                             <i class="fa fa-clock-o"></i>
                         </span>
-                        <input type="number" class="form-control" id="horas"
-                            formControlName="horas" [class.is-invalid]="horasNoValida">
+                        <input type="number" class="form-control" id="horas" formControlName="horas"
+                            [class.is-invalid]="horasNoValida">
                     </div>
                     <small *ngIf="horasNoValida" class="text-danger">
                         Debe ingresar horas
@@ -93,25 +132,26 @@
 
         </div>
         <div class="modal-footer">
+            <button type="submit" class="btn btn-outline-success ">
+                <i class="fa fa-save m-2"></i>
+                Guardar horas
+            </button>
+            <button type="button" class="btn btn-default" disabled *ngIf="procesando">
+                <i class="fa fa-spinner fa-sync m-2"></i>
+                Procesando...
+            </button>
+            <!-- <button type="button" class="btn btn-default" (click)="onClickCerrar()">
+                <i class="fa fa-times m-2"></i>
+                Cancelar
+            </button> -->
             <div class="row">
-                <div class="col-12 col-lg-9">
-                    
+                <div class="col-12 col-lg-6">
+
                 </div>
-                <div class="col-12 col-lg-3 p-t-5">
-                    <button type="submit" class="btn btn-outline-success btn-block">
-                        <i class="fa fa-save m-2"></i>
-                        Grabar
-                    </button>
-                    <button type="button" class="btn btn-default" disabled *ngIf="procesando">
-                        <i class="fa fa-spinner fa-sync m-2"></i>
-                        Procesando...
-                    </button>
-                    <!-- <button type="button" class="btn btn-default" (click)="onClickCerrar()">
-                        <i class="fa fa-times m-2"></i>
-                        Cancelar
-                    </button> -->  
-                </div>            
-            </div>            
+                <div class="col-12 col-lg-6 p-t-5">
+
+                </div>
+            </div>
         </div>
     </div>
 </form>

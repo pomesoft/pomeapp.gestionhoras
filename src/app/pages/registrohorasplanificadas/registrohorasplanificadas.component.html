@@ -1,155 +1,184 @@
-<div class="row mb-2">                    
-    <div class="col col-lg-12">
+<div class="row mb-2">
+    <div class="col col-md-12">
         <div class="form-group row" style="margin-bottom: 5px !important;">
-            <label class="col-lg-2 control-label col-form-label text-center">Profesional:</label>
-            <div class="col-lg-7">
+            <label class="col-md-2 control-label col-form-label text-center">Profesional:</label>
+            <div class="col-md-6">
                 <div class="input-group">
-                    <div class="input-group">
-                        <span class="input-group-addon ">
-                            <i class="fa fa-user-o"></i>
-                        </span>
-                        <input id="typeahead-focus" type="text" class="form-control" [(ngModel)]="profesional"
-                            [ngbTypeahead]="searchProfesional" (focus)="focus$.next($any($event).target.value)"
-                            (click)="click$.next($any($event).target.value)" #instance="ngbTypeahead" />
-                        <span class="input-group-btn">
-                            <button type="button" class="btn waves-effect waves-light btn-rounded btn-outline-info"
-                                data-toggle="tooltip" data-placement="top" title="Limpiar profesional"
-                                (click)="onClickLimpiarProfesional($event)">
-                                <i class="fa fa-times"></i>
-                            </button>
-                            <button type="button" class="btn waves-effect waves-light btn-rounded btn-outline-info"
-                                (click)="onClickListarTareas($event)">
-                                <i class="fa fa-check "></i> 
-                                Listar tareas
-                            </button>
-                        </span>
+                    <span class="input-group-addon ">
+                        <i class="fa fa-user-o"></i>
+                    </span>
+                    <input id="typeahead-focus" type="text" class="form-control" [(ngModel)]="profesional"
+                        [ngbTypeahead]="searchProfesional" (focus)="focus$.next($any($event).target.value)"
+                        (click)="click$.next($any($event).target.value)" #instance="ngbTypeahead" />
+                    <span class="input-group-addon" role="button" data-toggle="tooltip" data-placement="top"
+                        title="Limpiar profesional" (click)="onClickLimpiarProfesional($event)">
+                        <i class="fa fa-times"></i>
+                    </span>
+                </div>
+            </div>
+            <div class="col-12 col-md-4 p-t-5">
+                <div class="input-group">
+                    <button type="button" class="btn btn-rounded btn-outline-secondary waves-effect waves-light "
+                        (click)="onClickListarProyectos($event)">
+                        <i class="fa fa-check "></i>
+                        Listar proyectos
+                    </button>
+                    <button type="button" class="btn btn-rounded btn-outline-success waves-effect waves-light"
+                        (click)="onClickGuardar($event)">
+                        <i class="fa fa-save"></i>
+                        Guardar
+                    </button>
+                </div>
+            </div>
+        </div>
+        <!-- <div class="row mb-2">
+            <div class="col-12 col-md-8">
+                
+            </div>
+            <div class="col-md-4">
+                <div class="input-group">
+                    <div class="btn-group m-b-5" role="group" aria-label="Periodos">
+                        <button type="button" class="btn" (click)="onClickPeriodo(1)" [class.btn-info]="periodo==1"
+                            [class.btn-outline-info]="periodo!=1">
+                            Hoy
+                        </button>
+                        <button type="button" class="btn" (click)="onClickPeriodo(2)" [class.btn-info]="periodo==2"
+                            [class.btn-outline-info]="periodo!=2">
+                            Semana actual
+                        </button>
+                        <button type="button" class="btn" (click)="onClickPeriodo(3)" [class.btn-info]="periodo==3"
+                            [class.btn-outline-info]="periodo!=3">
+                            Mes actual
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div> -->
+
+        <div class="row">
+            <div class="col-md-5 col-12" style="padding: 0px !important;">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Proyectos</h5>
+                        <form>
+                            <div class="input-group">
+                                <input type="text" class="form-control w-30"
+                                    placeholder="Ingreso texto a buscar y presione enter......" [formControl]="filtro">
+                                <span class="input-group-addon" role="button" data-toggle="tooltip" data-placement="top"
+                                    title="Buscar" (click)="refreshDatos()">
+                                    <i class="fa fa-search"></i>
+                                </span>
+                                <span class="input-group-addon" role="button" data-toggle="tooltip" data-placement="top"
+                                    title="Borrar" (click)="filtro.reset('')">
+                                    <i class="fa fa-times"></i>
+                                </span>
+                            </div>
+                        </form>
+                        <div class="list-group">
+                            <a href="#" *ngFor="let proyecto of listado$ | async;"
+                                class="list-group-item list-group-item-action"
+                                [class.active]="proyectoSeleccionado && proyecto.Id==proyectoSeleccionado.Id"
+                                (click)="onClickSeleccionarProyecto($event, proyecto)">
+
+                                <div class="d-flex flex-row">
+                                    <div class="flex-grow-1">
+                                        <ngb-highlight [result]="proyecto.Cliente.Nombre"
+                                            [term]="filtro.value"></ngb-highlight>&nbsp;-&nbsp;
+                                        <ngb-highlight [result]="proyecto.Descripcion"
+                                            [term]="filtro.value"></ngb-highlight>
+                                    </div>
+                                    <div>
+                                        <span class="h5 text-muted"><i class="mdi mdi-arrow-right-bold"></i></span>
+                                    </div>
+                                </div>
+
+
+                            </a>
+
+                        </div>
                     </div>
                 </div>
 
             </div>
-        </div>
-        <div class="row mb-2">
-            <div class="col-12 col-lg-9">
-                <form>
-                    <div class="input-group">
-                        <input type="text" class="form-control w-30" 
-                                placeholder="Ingreso texto a buscar y presione enter......" 
-                                [formControl]="filtro" >
-                        <span class="input-group-btn">
-                            <button class="btn btn-outline-info" type="button" data-toggle="tooltip"
-                                data-placement="top" title="Buscar"
-                                (click)="refreshDatos()">
-                                <i class="fa fa-search"></i>
-                            </button>
-                            <button class="btn btn-outline-info" type="button" data-toggle="tooltip"
-                                data-placement="top" title="Borrar"
-                                (click)="filtro.reset('')">
-                                <i class="fa fa-times"></i>
-                            </button>                            
-                        </span>
-                    </div>
-                </form>
-            </div>
-            <div class="col-12 col-lg-3 p-t-5">
-                <button type="button" class="btn btn-rounded btn-outline-success btn-block waves-effect waves-light "
-                    (click)="onClickGuardar($event)">
-                    <i class="fa fa-save "></i> 
-                    Guardar
-                </button>
-            </div>            
-        </div>
-        <div class="table-responsive ">                            
-            <table class="table">
-                <thead>
-                    <tr>
-                        <th style="width: 5%;"></th>
-                        <th style="width: 30%;">Tarea</th>
-                        <th style="width: 30%;">Tipo</th>
-                        <th style="width: 15%;">Fecha</th>
-                        <th style="width: 15%;">Horas</th>
-                        <th style="width: 5%;"></th>
-                    </tr>
-                </thead>
-                <tbody>
-                    
-                    <ng-container *ngFor="let proyecto of listado$ | async;">
-                        <tr class="table-info">
-                            <td colspan="2">
-                                <ngb-highlight [result]="proyecto.Descripcion" [term]="filtro.value"></ngb-highlight>
-                            </td>
-                            <td>Producto: <ngb-highlight [result]="proyecto.ProductoDescripcion" [term]="filtro.value"></ngb-highlight></td>
-                            <td  colspan="2">Desde: {{proyecto.FechaInicio | date : 'dd/MM/yyyy'}} - Hasta: {{proyecto.FechaFin | date : 'dd/MM/yyyy'}}</td>
-                            <td>
-                                <a href="#" class="btn btn-outline-info btn-rounded btn-sm" data-toggle="tooltip" data-placement="top" title="Editar"
-                                    (click)="onClickAbrirProyectoModal($event)">
-                                    <span class="h5 text-info"><i class="mdi mdi-pencil-box-outline"></i></span>
-                                </a>
-                            </td>
-                        </tr>
+            <div class="col-md-7 col-12" style="padding: 0px !important;">
+
+                <div class="card">
+                    <div class="card-body"  *ngIf="proyectoSeleccionado">
+                        <h6 class="card-title">
+                            {{proyectoSeleccionado.Cliente.Nombre}} - 
+                            {{proyectoSeleccionado.Descripcion}} - 
+                            {{proyectoSeleccionado.Tipo.Descripcion}}
+                        </h6>
                         
-                        <ng-container *ngIf="proyecto.Tareas.length>0">
-                            <tr>
-                                <td></td>
-                                <td colspan="4">
-                                    <table class="table">
-                                        <!-- <thead>
-                                            <tr>
-                                                <th style="width: 30%;">Tarea</th>
-                                                <th style="width: 30%;">Tipo</th>
-                                                <th style="width: 15%;">Fecha</th>
-                                                <th style="width: 15%;">Horas</th>
-                                            </tr>
-                                        </thead> -->
-                                        <tbody>
-                                            <tr *ngFor="let tarea of proyecto.Tareas">
-                                                <td style="width: 30%;"> {{tarea.Id}} - <ngb-highlight [result]="tarea.Descripcion" [term]="filtro.value"></ngb-highlight></td>
-                                                <td style="width: 30%;"><ngb-highlight [result]="tarea.Tipo.Descripcion" [term]="filtro.value"></ngb-highlight></td>
-                                                <td style="width: 15%;">{{proyecto.FechaInicio | date : 'dd/MM/yyyy'}}</td>
-                                                <td style="width: 15%;">
-                                                    <input class="form-control" type="number">
-                                                </td>
-                                            </tr>
-                                        </tbody>
-                                    
-                                    </table>
-                                </td>
-                            </tr>
-                        </ng-container>
-                        
-                    </ng-container>
-                    
-                </tbody>
-            </table>
-            <!-- <div class="d-flex justify-content-between p-2">
-                <ngb-pagination
-                    [collectionSize]="total"
-                    [(page)]="page"                                    
-                    [pageSize]="pageSize"
-                    [maxSize]="5"
-                    [rotate]="true"
-                    [boundaryLinks]="true"
-                    (pageChange)="refreshDatos()"
-                >
-                </ngb-pagination>
-            
-                <select class="form-select" style="width: auto" [(ngModel)]="pageSize" (ngModelChange)="refreshData()">
-                    <option [ngValue]="10">10 items por página</option>
-                    <option [ngValue]="25">25 items por página</option>
-                    <option [ngValue]="50">50 items por página</option>
-                </select>
-            </div> -->
-        </div>
-        <div class="row mb-2" *ngIf="hayDatos">
-            <div class="col-12 col-lg-9">
+
+                        <ul class="list-group" >
+                            <li class="list-group-item border border-bottom">
                 
+                                <div class="d-flex flex-row">
+                                    <div class="flex-grow-1 w-50">
+                                        <h6>Tarea</h6>
+                                    </div>
+                                    <div class="p-l-10 w-25">
+                                        <h6>Fecha</h6>
+                                    </div>
+                                    <div class="p-l-10 w-25">
+                                        <h6>Horas</h6>
+                                    </div>
+                                </div>
+
+                            </li>
+
+                            <li class="list-group-item border border-bottom"
+                                *ngFor="let tarea of proyectoSeleccionado.Tareas; index as i; trackBy: trackByFn">
+
+                                <div class="d-flex flex-row">
+                                    <div class="flex-grow-1 w-50">
+                                        {{tarea.Descripcion}}
+                                    </div>
+                                    <div class="w-25">
+                                        <div class="input-group">
+                                            <span class="input-group-addon" (click)="dteFecha.toggle()">
+                                                <i class="fa fa-calendar"></i>
+                                            </span>
+                                            <input id="fechaNgDateStruct" class="form-control" placeholder="dd/mm/yyyy"
+                                                name="dteFecha" ngbDatepicker #dteFecha="ngbDatepicker"
+                                                [(ngModel)]="proyectoSeleccionado.Tareas[i].FechaRegistro" />
+                                        </div>
+                                    </div>
+                                    <div class="p-l-10 p-r-10 w-25">
+                                        <div class="input-group">
+                                            <span class="input-group-addon">
+                                                <i class="fa fa-clock-o"></i>
+                                            </span>
+                                            <input type="number" class="form-control"
+                                                [(ngModel)]="proyectoSeleccionado.Tareas[i].HorasRegistro"
+                                                (focus)="onFocusHoras($event)">
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </li>
+                        </ul>
+
+                    </div>
+                </div>
+
+
+
             </div>
-            <div class="col-12 col-lg-3 p-t-5">
-                <button type="button" class="btn btn-rounded btn-outline-info btn-block waves-effect waves-light "
+        </div>
+
+        <div class="row mb-2" *ngIf="hayDatos">
+            <div class="col-12 col-md-10">
+
+            </div>
+            <div class="col-12 col-md-2">
+                <button type="button" class="btn btn-rounded btn-outline-success waves-effect waves-light "
                     (click)="onClickGuardar($event)">
-                    <i class="fa fa-save "></i> 
+                    <i class="fa fa-save "></i>
                     Guardar
                 </button>
-            </div>            
+            </div>
         </div>
     </div>
 </div>

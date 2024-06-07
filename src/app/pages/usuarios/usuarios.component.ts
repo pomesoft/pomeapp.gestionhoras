@@ -76,19 +76,19 @@ export class UsuariosComponent implements OnInit, OnDestroy {
 
     ngOnInit(): void {
 
-        this.usuariosSubs = this.store.select('usuarios')
-            .subscribe(({ usuarios, loading, error }) => {
-                this.cargando = loading;
-                this.error = error;
-                this.listadoFULL = usuarios;
-                this.total = this.listadoFULL.length;
-            });
+        // this.usuariosSubs = this.store.select('usuarios')
+        //     .subscribe(({ usuarios, loading, error }) => {
+        //         this.cargando = loading;
+        //         this.error = error;
+        //         this.listadoFULL = usuarios;
+        //         this.total = this.listadoFULL.length;
+        //     });
 
-        this.store.dispatch(cargarUsuarios());
+        // this.store.dispatch(cargarUsuarios());
     }
 
     ngOnDestroy(): void {
-        this.usuariosSubs.unsubscribe();
+        //this.usuariosSubs.unsubscribe();
     }
 
     async cargarDatos() {
