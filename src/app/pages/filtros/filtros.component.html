@@ -1,79 +1,123 @@
-<div class="offcanvas-header">    
-    <h3 class="box-title m-b-0">Filtrar Operaciones</h3>    
+<div class="offcanvas-header">
+    <h3 class="box-title m-b-0">Filtrar Operaciones</h3>
     <button type="button" class="btn-close" aria-label="Close" (click)="onClickCerrar()"></button>
 </div>
 <div class="offcanvas-body">
-    <form  autocomplete="off" [formGroup]="formulario" (ngSubmit)="onClickSubmit()">    
-        
+    <form autocomplete="off" [formGroup]="formulario" (ngSubmit)="onClickSubmit()">
+
         <div class="form-group row">
-                        
+
             <div class="btn-group m-b-5" role="group" aria-label="Periodos">
-                <button type="button" class="btn" (click)="onClickPeriodo(1)"
-                    [class.btn-secondary]="periodo==1"
+                <button type="button" class="btn" (click)="onClickPeriodo(1)" [class.btn-secondary]="periodo==1"
                     [class.btn-outline-secondary]="periodo!=1">
                     7 días
                 </button>
-                <button type="button" class="btn" (click)="onClickPeriodo(2)"
-                    [class.btn-secondary]="periodo==2"
+                <button type="button" class="btn" (click)="onClickPeriodo(2)" [class.btn-secondary]="periodo==2"
                     [class.btn-outline-secondary]="periodo!=2">
                     30 días
                 </button>
-                <button type="button" class="btn" (click)="onClickPeriodo(3)"
-                    [class.btn-secondary]="periodo==3"
+                <button type="button" class="btn" (click)="onClickPeriodo(3)" [class.btn-secondary]="periodo==3"
                     [class.btn-outline-secondary]="periodo!=3">
                     90 días
                 </button>
-                <button type="button" class="btn" (click)="onClickPeriodo(4)"
-                    [class.btn-secondary]="periodo==4"
+                <button type="button" class="btn" (click)="onClickPeriodo(4)" [class.btn-secondary]="periodo==4"
                     [class.btn-outline-secondary]="periodo!=4">
                     Personalizado
                 </button>
             </div>
             <ng-container *ngIf="periodo==4">
                 <label class="col-3 control-label col-form-label">Desde:</label>
-                <div class="col-9 m-b-5">  
+                <div class="col-9 m-b-5">
                     <div class="input-group">
                         <span class="input-group-addon" (click)="dteFechaDesde.toggle()">
                             <i class="fa fa-calendar"></i>
                         </span>
-                        <input class="form-control" placeholder="dd/mm/aaaa" 
-                                name="dteFechaDesde"
-                                formControlName="fechaDesdeNgDate" 
-                                ngbDatepicker
-                                #dteFechaDesde="ngbDatepicker" />
-                    </div>                    
+                        <input class="form-control" placeholder="dd/mm/aaaa" name="dteFechaDesde"
+                            formControlName="fechaDesdeNgDate" ngbDatepicker #dteFechaDesde="ngbDatepicker" />
+                    </div>
                 </div>
                 <label class="col-3 control-label col-form-label">Hasta:</label>
-                <div class="col-9 m-b-5">  
+                <div class="col-9 m-b-5">
                     <div class="input-group">
                         <span class="input-group-addon" (click)="dteFechaHasta.toggle()">
                             <i class="fa fa-calendar"></i>
-                        </span>                        
-                        <input class="form-control" placeholder="dd/mm/aaaa" 
-                                name="dteFechaHasta"
-                                formControlName="fechaHastaNgDate" 
-                                ngbDatepicker
-                                #dteFechaHasta="ngbDatepicker" />
+                        </span>
+                        <input class="form-control" placeholder="dd/mm/aaaa" name="dteFechaHasta"
+                            formControlName="fechaHastaNgDate" ngbDatepicker #dteFechaHasta="ngbDatepicker" />
                     </div>
                 </div>
             </ng-container>
-            
+
+            <div class="col-12 m-b-5">
+                <div class="input-group">
+                    <span class="input-group-addon">
+                        <i class="fa  fa-list-alt"></i>
+                    </span>
+                    <input id="profesionalTypeahead" type="text" class="form-control" formControlName="profesional"
+                        placeholder="Profesional" [ngbTypeahead]="searchProfesional"
+                        (focus)="focusProfesional$.next($any($event).target.value)"
+                        (click)="clickProfesional$.next($any($event).target.value)"
+                        #instanceProfesional="ngbTypeahead" />
+                    <span class="input-group-addon" role="button" (click)="onClickLimpiarTypeahead('profesional')">
+                        <i class="fa fa-times"></i>
+                    </span>
+                </div>
+            </div>
+
+
+            <div class="col-12 m-b-5">
+                <div class="input-group">
+                    <span class="input-group-addon">
+                        <i class="fa fa-user-o"></i>
+                    </span>
+                    <input id="clienteTypeahead-focus" type="text" class="form-control" formControlName="cliente"
+                        placeholder="Cliente" [ngbTypeahead]="searchCliente"
+                        (focus)="focusCliente$.next($any($event).target.value)"
+                        (click)="clickCliente$.next($any($event).target.value)" #instancecliente="ngbTypeahead" />
+                    <span class="input-group-addon" (click)="onClickLimpiarTypeahead('cliente')">
+                        <i class="fa fa-times"></i>
+                    </span>
+                </div>
+            </div>
+
+            <div class="col-12 m-b-5">
+                <div class="input-group">
+                    <span class="input-group-addon">
+                        <i class="fa  fa-list-alt"></i>
+                    </span>
+                    <input id="proyectoTypeahead" type="text" class="form-control" formControlName="proyecto"
+                        placeholder="Proyecto" [ngbTypeahead]="searchProyecto"
+                        (focus)="focusProyecto$.next($any($event).target.value)"
+                        (click)="clickProyecto$.next($any($event).target.value)" #instanceProyecto="ngbTypeahead" />
+                    <span class="input-group-addon" role="button" (click)="onClickLimpiarTypeahead('proyecto')">
+                        <i class="fa fa-times"></i>
+                    </span>
+                </div>
+            </div>
+
             <div class="btn-group m-b-5" role="group" aria-label="TiposFiltro">
-                <button type="button" class="btn" (click)="onClickTiposFiltro(2)"
-                    [class.btn-secondary]="tipoFiltro==2"
-                    [class.btn-outline-secondary]="tipoFiltro!=2">
+                <button type="button" class="btn" (click)="onClickTiposFiltro(0)"
+                    [class.btn-secondary]="tipoProyecto==0" [class.btn-outline-secondary]="tipoProyecto!=0">
                     Todos
                 </button>
                 <button type="button" class="btn" (click)="onClickTiposFiltro(1)"
-                    [class.btn-secondary]="tipoFiltro==1"
-                    [class.btn-outline-secondary]="tipoFiltro!=1">
-                    Listar solo Débitos y Crédito
-                </button>                
-            </div>            
+                    [class.btn-secondary]="tipoProyecto==1" [class.btn-outline-secondary]="tipoProyecto!=1">
+                    MENSUALIZADO
+                </button>
+                <button type="button" class="btn" (click)="onClickTiposFiltro(2)"
+                    [class.btn-secondary]="tipoProyecto==2" [class.btn-outline-secondary]="tipoProyecto!=2">
+                    ENTREGABLE
+                </button>
+            </div>
+
+
         </div>
 
+
+
         <div class="text-end">
-            <button type="button" class="btn btn-outline-success waves-effect waves-light m-r-10" (click)="onClickSubmit()">
+            <button type="button" class="btn btn-outline-success waves-effect waves-light m-r-10"
+                (click)="onClickSubmit()">
                 <i class="fa fa-check"></i>
                 Aplicar filtros
             </button>
@@ -84,5 +128,4 @@
         </div>
 
     </form>
-</div>    
-
+</div>

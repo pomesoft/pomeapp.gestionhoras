@@ -26,6 +26,47 @@
                 <div class="card-title h3 desktop">{{tituloFormulario}}</div>
                 <div class="card-title h5 mobile">{{tituloFormulario}}</div>
                 <hr />
+
+                <!-- Nav tabs -->
+                <div class="vtabs customvtab w-100">
+                    <ul class="nav nav-tabs tabs-vertical p-t-20" role="tablist" style="width: 200px !important;">
+                        <li class="nav-item"> 
+                            <a class="nav-link" data-toggle="tab" href="#rolesusuario" role="tab">
+                                <span role="button">Funciones Asociadas</span> 
+                            </a> 
+                        </li>
+                        <li class="nav-item"> 
+                            <a class="nav-link active" data-toggle="tab" href="#profesionales" role="tab">
+                                <span role="button">Profesionales</span> 
+                            </a> 
+                        </li>
+                        <li class="nav-item"> 
+                            <a class="nav-link" data-toggle="tab" href="#clientes" role="tab">
+                                <span role="button">Clientes</span> 
+                            </a> 
+                        </li>
+                        <li class="nav-item"> 
+                            <a class="nav-link" data-toggle="tab" href="#proyectos" role="tab">
+                                <span role="button">Proyectos</span> 
+                            </a> 
+                        </li>                        
+                    </ul>
+                    <!-- Tab panes -->
+                    <div class="tab-content" style="padding: 0px !important;">                        
+                        <div class="tab-pane" id="rolesusuario" role="tabpanel">
+                            <app-funciones></app-funciones>
+                        </div>
+                        <div class="tab-pane active" id="profesionales" role="tabpanel">
+                            <app-profesionales></app-profesionales>
+                        </div>
+                        <div class="tab-pane" id="clientes" role="tabpanel">
+                            <app-clientes></app-clientes>
+                        </div>
+                        <div class="tab-pane" id="proyectos" role="tabpanel">
+                            <app-proyectos></app-proyectos>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

@@ -24,6 +24,65 @@
             <!-- User profile and search -->
             <!-- ============================================================== -->
             <ul class="navbar-nav my-lg-0">
+
+                <!-- ============================================================== -->
+                <!-- Notificaciones -->
+                <!-- ============================================================== -->
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle waves-effect waves-dark" href="" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> 
+                        <span class="h3" ><i class="fa fa-bell"></i></span>
+                        <div class="notify"> <span class="heartbit"></span> <span class="point"></span> </div>
+                    </a>
+                    <div class="dropdown-menu dropdown-menu-right mailbox animated bounceInDown">
+                        <ul>
+                            <li>
+                                <div class="drop-title">Horas pendientes de carga</div>
+                            </li>
+                            <li>
+                                <div class="message-center">
+                                    <a  (click)="onClickCargarHoras($event, -1, 4)">
+                                        <div class="btn btn-outline-info">
+                                            <span class="h5"><i class="mdi mdi-calendar-clock"></i></span>
+                                        </div>
+                                        <div class="mail-contnet m-l-10">
+                                            <span class="mail-desc">
+                                                <strong>CLIENTE 4 - PROYECTO #004</strong><br/>
+                                                TRADUCCIÓN PROTOCOLO
+                                            </span>
+                                            <span class="time">Fecha: 28/06/2024</span>
+                                        </div>
+                                    </a>
+                                    <a (click)="onClickCargarHoras($event, -1,6)">
+                                        <div class="btn btn-outline-info">
+                                            <span class="h5"><i class="mdi mdi-calendar-clock"></i></span>
+                                        </div>
+                                        <div class="mail-contnet m-l-10">
+                                            <span class="mail-desc">
+                                                <strong>CLIENTE 2 - PROYECTO #006</strong><br/>
+                                                HACER REGISTRO
+                                            </span>
+                                            <span class="time">Fecha: 28/06/2024</span>
+                                        </div>
+                                    </a>
+                                    <a href="#">
+                                        <div class="btn btn-outline-info">
+                                            <span class="h4"><i class="mdi mdi-share"></i></span>
+                                        </div>
+                                        <div class="mail-contnet m-l-10">
+                                            <span class="mail-desc">
+                                                <strong>...</strong><br/>
+                                                ...
+                                            </span>
+                                            <span class="time">...</span>
+                                        </div>
+                                    </a>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </li>
+
+
                 <!-- ============================================================== -->
                 <!-- Profile -->
                 <!-- ============================================================== -->

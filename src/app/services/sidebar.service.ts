@@ -8,7 +8,7 @@ export class SidebarService {
     menu: any[] = [
         { titulo: 'Inicio', icono: 'mdi mdi-gauge', url: '' },
         { titulo: 'Registro de Horas', icono: 'mdi mdi-calendar-clock', url: 'registrohoras' },
-        { titulo: 'Planificación', icono: 'mdi mdi-calendar-check', url: 'planificacion' },
+        { titulo: 'Asignación', icono: 'mdi mdi-calendar-check', url: 'asignacion' },
         { titulo: 'Reporte de Horas', icono: 'mdi mdi-clipboard-text', url: 'reportehoras' },
         { titulo: 'Configuración', icono: 'mdi mdi-settings', url: 'configuracion' },
         { titulo: 'Usuarios', icono: 'mdi mdi-account-multiple', url: 'usuarios' },

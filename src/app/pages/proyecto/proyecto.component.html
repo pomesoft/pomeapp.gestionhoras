@@ -1,0 +1,81 @@
+<form autocomplete="off" [formGroup]="formulario" (ngSubmit)="onClickGuardar()">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h4 class="modal-title" id="formModalLabel1">Datos de {{tituloFormulario}}</h4>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="onClickCerrar()"><span
+                    aria-hidden="true">&times;</span></button>
+        </div>
+        <div class="modal-body">
+            <div class="form-group row">
+
+
+                <label class="col-sm-3 control-label col-form-label text-right">Descripcion</label>
+                <div class="col-sm-9">
+                    <div class="input-group">
+                        <span class="input-group-addon">
+                            <i class="fa  fa-list-alt"></i>
+                        </span>
+                        <input type="text" class="form-control" placeholder="Ingrese descripcion"
+                            formControlName="descripcion" [class.is-invalid]="descripcionNoValido">
+                    </div>
+                    <small *ngIf="descripcionNoValido" class="text-danger">
+                        Debe ingresar descripcion para continuar
+                    </small>
+                </div>
+
+                <label class="col-sm-3 control-label col-form-label text-right">Cliente:</label>
+                <div class="col-sm-9 control-label col-form-label">
+                    <div class="input-group">
+                        <span class="input-group-addon">
+                            <i class="fa fa-user"></i>
+                        </span>
+                        <input id="clienteTypeahead" type="text" class="form-control" formControlName="cliente"
+                            placeholder="Seleccione un cliente" [class.is-invalid]="clienteNoValido"
+                            [ngbTypeahead]="searchCliente" (focus)="focusCliente$.next($any($event).target.value)"
+                            (click)="clickCliente$.next($any($event).target.value)" #instanceCliente="ngbTypeahead" />
+                        <span class="input-group-addon" role="button" (click)="onClickLimpiarTypeahead('cliente')">
+                            <i class="fa fa-times"></i>
+                        </span>
+                        <span class="input-group-addon" role="button" (click)="onClickAgregar('Cliente')">
+                            <i class="fa fa-plus m-r-5"></i>Agregar
+                        </span>
+                    </div>
+                    <small *ngIf="clienteNoValido" class="text-danger">
+                        Debe seleccionar un cliente
+                    </small>
+                </div>
+
+                <label class="col-sm-3 control-label col-form-label text-right">Tipo de Proyecto:</label>
+                <div class="col-sm-9 control-label col-form-label">
+                    <div class="input-group">
+                        <span class="input-group-addon">
+                            <i class="fa fa-calendar-o"></i>
+                        </span>
+                        <select class="form-control custom-select" id="perido" formControlName="idTipoProyecto">
+                            <option value="0"></option>
+                            <option *ngFor="let tipo of tiposProyecto" [value]="tipo.Id">{{tipo.Descripcion}}</option>
+
+                        </select>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+
+        <div class="modal-footer">
+            <button type="submit" class="btn btn-success" *ngIf="!procesando">
+                <i class="fa fa-save m-2"></i>
+                Grabar
+            </button>
+            <button type="button" class="btn btn-default" disabled *ngIf="procesando">
+                <i class="fa fa-spinner fa-sync m-2"></i>
+                Procesando...
+            </button>
+            <button type="button" class="btn btn-default" (click)="onClickCerrar()">
+                <i class="fa fa-times m-2"></i>
+                Cancelar
+            </button>
+        </div>
+    </div>
+</form>

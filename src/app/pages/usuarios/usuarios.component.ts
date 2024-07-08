@@ -45,8 +45,7 @@ export class UsuariosComponent implements OnInit, OnDestroy {
                 item.Nombre && item.Nombre.toLowerCase().includes(term) ||
                 item.Email && item.Email.toLowerCase().includes(term) ||
                 item.Celular && item.Celular.toLowerCase().includes(term) ||
-                item.LoginUsuario && item.LoginUsuario.toLowerCase().includes(term)||
-                item.ClienteList && item.ClienteList.toLowerCase().includes(term)
+                item.LoginUsuario && item.LoginUsuario.toLowerCase().includes(term)
             );
         });
     }

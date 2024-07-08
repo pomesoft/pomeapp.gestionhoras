@@ -17,6 +17,7 @@ import { UsuarioService } from '../../services/usuario.service';
 import { DataFiltro, FechaNgDateStruct } from '../../models/entity.models';
 import { CustomAdapterService } from '../../services/custom-adapter.service';
 import { CustomDateParserFormatterService } from '../../services/custom-date-parser-formatter.service';
+import { ProyectoService } from '../../services/proyecto.service';
 
 @Component({
     selector: 'app-filtros',
@@ -35,21 +36,80 @@ export class FiltrosComponent implements OnInit, OnDestroy, AfterViewInit {
 
     formulario: FormGroup;
 
+    clientes: string[] = [];
+    proyectos: string[] = [];
+    profesionales: string[] = [];
 
     get periodo() {
         return this.formulario.get('periodo').value;
     }
 
-    get tipoFiltro() {
-        return this.formulario.get('tipoFiltro').value;
+    get tipoProyecto() {
+        return this.formulario.get('tipoProyecto').value;
     }
-    
+
+
+    @ViewChild('instancecliente', { static: true }) instancecliente: NgbTypeahead;
+    focusCliente$ = new Subject<string>();
+    clickCliente$ = new Subject<string>();
+
+    searchCliente: OperatorFunction<string, readonly string[]> = (text$: Observable<string>) => {
+        const debouncedText$ = text$.pipe(debounceTime(200), distinctUntilChanged());
+        const clicksWithClosedPopup$ = this.clickCliente$.pipe(filter(() => !this.instancecliente.isPopupOpen()));
+        const inputFocus$ = this.focusCliente$;
+
+        return merge(debouncedText$, inputFocus$, clicksWithClosedPopup$)
+            .pipe(
+                map((term) =>
+                    (term === '' ? this.clientes : this.clientes.filter((v) => v.toLowerCase().indexOf(term.toLowerCase()) > -1)).slice(0, 10),
+                ),
+            );
+    };
+
+    @ViewChild('instanceProyecto', { static: true }) instanceProyecto: NgbTypeahead;
+    focusProyecto$ = new Subject<string>();
+    clickProyecto$ = new Subject<string>();
+
+    searchProyecto: OperatorFunction<string, readonly string[]> = (text$: Observable<string>) => {
+        const debouncedText$ = text$.pipe(debounceTime(200), distinctUntilChanged());
+        const clicksWithClosedPopup$ = this.clickProyecto$.pipe(filter(() => false));
+        const inputFocus$ = this.focusProyecto$;
+
+        return merge(debouncedText$, inputFocus$, clicksWithClosedPopup$)
+            .pipe(
+                map((term) => {
+                    var datos = (term === '' ? this.proyectos : this.proyectos.filter((v) => v.toLowerCase().indexOf(term.toLowerCase()) > -1)).slice(0, 10);
+                    return [...new Set(datos)];
+                }),
+            );
+    };
+
+
+    @ViewChild('instanceProfesional', { static: true }) instanceProfesional: NgbTypeahead;
+    focusProfesional$ = new Subject<string>();
+    clickProfesional$ = new Subject<string>();
+
+    searchProfesional: OperatorFunction<string, readonly string[]> = (text$: Observable<string>) => {
+        const debouncedText$ = text$.pipe(debounceTime(200), distinctUntilChanged());
+        const clicksWithClosedPopup$ = this.clickProfesional$.pipe(filter(() => false));
+        const inputFocus$ = this.focusProfesional$;
+
+        return merge(debouncedText$, inputFocus$, clicksWithClosedPopup$)
+            .pipe(
+                map((term) => {
+                    var datos = (term === '' ? this.profesionales : this.profesionales.filter((v) => v.toLowerCase().indexOf(term.toLowerCase()) > -1)).slice(0, 10);
+                    return [...new Set(datos)];
+                }),
+            );
+    };
+
     constructor(
         private store: Store<AppState>,
         private formBuilder: FormBuilder,
         private offcanvasService: NgbOffcanvas,
         private calendar: NgbCalendar,
         public swalService: SwalhelperService,
+        private proyectoService: ProyectoService,
         private usuarioService: UsuarioService,
 
     ) {
@@ -58,8 +118,17 @@ export class FiltrosComponent implements OnInit, OnDestroy, AfterViewInit {
 
     async ngOnInit(): Promise<void> {
 
+        this.clientes = this.proyectoService.clientes.map(item => item.Nombre);
+        this.proyectos = this.proyectoService.proyectos.map(item => item.Descripcion);
+        this.profesionales = this.proyectoService.profesionales.map(item => item.Apellido.concat(" ", item.Nombre));
 
-
+        this.filtrosSubs = this.store.select('filtros')
+            .subscribe(({ filtros }) => {
+                this.cargarDatos()
+                    .then(resp => {
+                        this.setearFormulario(filtros);
+                    });
+            });
     }
 
     ngAfterViewInit() {
@@ -69,7 +138,7 @@ export class FiltrosComponent implements OnInit, OnDestroy, AfterViewInit {
 
         await this.cargarMonedas()
             .then(result => {
-                
+
             })
             .catch(err => {
                 this.swalService.setToastError(`Ocurrió un error al cargar los datos`)
@@ -99,13 +168,14 @@ export class FiltrosComponent implements OnInit, OnDestroy, AfterViewInit {
         };
 
         this.formulario = this.formBuilder.group({
-            proyecto: [''],
-            tarea: [''],
             profesional: [''],
+            cliente: [''],
+            proyecto: [''],
+            tipoProyecto: [0],
+            tarea: [''],
             periodo: [1],
-            tipoFiltro: [1],
             fechaDesdeNgDate: [this.fecha],
-            fechaHastaNgDate: [this.fecha],            
+            fechaHastaNgDate: [this.fecha],
         });
     }
 
@@ -146,12 +216,19 @@ export class FiltrosComponent implements OnInit, OnDestroy, AfterViewInit {
             fechaHasta = this.fecha;
         }
 
-
         this.formulario.reset({
             fechaDesdeNgDate: fechaDesde,
             fechaHastaNgDate: fechaHasta,
+            profesional: filtros.Profesional,
+            cliente: filtros.Cliente,
+            proyecto: filtros.Proyecto,
+            tipoProyecto: filtros.IdTipoProyecto,
+            tarea: filtros.IdProfesional,
+            periodo: filtros.Periodo,
         })
     }
+
+
 
 
     onClickSubmit() {
@@ -169,19 +246,34 @@ export class FiltrosComponent implements OnInit, OnDestroy, AfterViewInit {
         const fechaNgHasta = this.formulario.get('fechaHastaNgDate').value;
         const _fechaHasta: string = fechaNgHasta.year + '-' + this.pad(fechaNgHasta.month, 2) + '-' + this.pad(fechaNgHasta.day, 2);
 
-        
+
         let _idProfesional = -1;
         if (this.formulario.get('profesional').value) {
-            _idProfesional = +this.formulario.get('profesional').value.substring(1, this.formulario.get('profesional').value.replace('(', '').replace(')', '').indexOf('-'));
+            var _profesional = this.proyectoService.profesionales.filter(item => item.Apellido.concat(" ", item.Nombre) == this.formulario.get('profesional').value);
+            if (_profesional && _profesional.length > 0)
+                _idProfesional = _profesional[0].Id;
+        }
+        let _idCliente = -1;
+        if (this.formulario.get('cliente').value) {
+            var _cliente = this.proyectoService.clientes.filter(item => item.Nombre == this.formulario.get('cliente').value);
+            if (_cliente && _cliente.length > 0)
+                _idCliente = _cliente[0].Id;
         }
         let _idProyecto = -1;
         if (this.formulario.get('proyecto').value) {
-            _idProyecto = +this.formulario.get('proyecto').value.substring(1, this.formulario.get('proyecto').value.replace('(', '').replace(')', '').indexOf('-'));
+            var _proyecto = this.proyectoService.proyectos.filter(item => item.Descripcion == this.formulario.get('proyecto').value);
+            if (_proyecto && _proyecto.length > 0)
+                _idProyecto = _proyecto[0].Id;
         }
 
         let filtros: DataFiltro = {
             IdProfesional: _idProfesional,
+            Profesional: this.formulario.get('profesional').value || '',
+            IdCliente: _idCliente,
+            Cliente: this.formulario.get('cliente').value || '',
             IdProyecto: _idProyecto,
+            Proyecto: this.formulario.get('proyecto').value || '',
+            IdTipoProyecto: this.formulario.get('tipoProyecto').value,
             Periodo: this.formulario.get('periodo').value,
             FechaDesde: _fechaDesde,
             FechaHasta: _fechaHasta,
@@ -224,7 +316,7 @@ export class FiltrosComponent implements OnInit, OnDestroy, AfterViewInit {
     }
 
     onClickTiposFiltro(value: number) {
-        this.formulario.get('tipoFiltro').setValue(value, {
+        this.formulario.get('tipoProyecto').setValue(value, {
             onlySelf: true,
         });
     }

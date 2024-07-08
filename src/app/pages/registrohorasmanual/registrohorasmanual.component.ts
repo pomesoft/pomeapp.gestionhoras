@@ -45,8 +45,8 @@ export class RegistrohorasmanualComponent implements OnInit, OnDestroy {
     get tipoProyectoNoValido() {
         return this.formulario.get('tipoProyecto').invalid && this.formulario.get('tipoProyecto').touched;
     }
-    get tareaNoValido() {
-        return this.formulario.get('tarea').invalid && this.formulario.get('tarea').touched;
+    get rolFuncionNoValido() {
+        return this.formulario.get('rolFuncion').invalid && this.formulario.get('rolFuncion').touched;
     }
     get fechaNoValida() {
         return this.formulario.get('fecha').invalid && this.formulario.get('fecha').touched;
@@ -152,13 +152,14 @@ export class RegistrohorasmanualComponent implements OnInit, OnDestroy {
             proyecto: ['', Validators.required],
             tipoProyecto: [''],
             cliente: [''],
-            tarea: ['', Validators.required],
+            rolFuncion: [0, Validators.required],
+            detalle: [''],
             fechaNgDateStruct: [this.fecha, Validators.required],
             fecha: [this.helpersService.parserNgDateStruct(this.fecha)],
             horas: [0, [Validators.required, Validators.min(1)]],
         });
         Object.keys(this.formulario.controls).forEach(key => {
-            if (key != 'id' && key != 'cotizacion') {
+            if (key != 'id' && key != 'cotizacion' && key != 'rolFuncion' && key != 'horas') {
                 const yourControl = this.formulario.get(key);
                 yourControl.valueChanges.subscribe(() => {
                     if (yourControl.value) {
@@ -209,6 +210,11 @@ export class RegistrohorasmanualComponent implements OnInit, OnDestroy {
         controlName: string,
     ) {
         this.formulario.get(controlName).setValue('', { onlySelf: true, });
+    }
+
+    onFocus(event: FocusEvent) {
+        const input = event.target as HTMLInputElement;
+        input.select();
     }
 
 

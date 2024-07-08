@@ -30,61 +30,7 @@
                 
 
                 <div class="row mb-2">
-                    <div class="col col-md-12">
-                        <div class="form-group row" style="margin-bottom: 5px !important;">
-                            <label class="col-md-2 control-label col-form-label text-center"></label>
-                            <div class="col-md-6">
-                                <div class="input-group">
-                                    <span class="input-group-addon ">
-                                        <i class="fa fa-user-o"></i>
-                                    </span>
-                                    <input id="typeahead-focus" type="text" class="form-control" [(ngModel)]="profesional"
-                                        [ngbTypeahead]="searchProfesional" (focus)="focus$.next($any($event).target.value)"
-                                        (click)="click$.next($any($event).target.value)" #instance="ngbTypeahead" />
-                                    <span class="input-group-addon" role="button" data-toggle="tooltip" data-placement="top"
-                                        title="Limpiar profesional" (click)="onClickLimpiarProfesional($event)">
-                                        <i class="fa fa-times"></i>
-                                    </span>
-                                </div>
-                            </div>
-                            <div class="col-12 col-md-4 p-t-5">
-                                <div class="input-group">
-                                    <button type="button" class="btn btn-rounded btn-outline-secondary waves-effect waves-light "
-                                        (click)="onClickListarProyectos($event)">
-                                        <i class="fa fa-check "></i>
-                                        Listar proyectos
-                                    </button>                                    
-                                    <button type="button" class="btn btn-rounded btn-outline-success waves-effect waves-light   "
-                                        (click)="onClickGuardar($event)">
-                                        <i class="fa fa-save "></i>
-                                        Guardar
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                        <!-- <div class="row mb-2">
-                            <div class="col-12 col-md-8">
-                                
-                            </div>
-                            <div class="col-md-4">
-                                <div class="input-group">
-                                    <div class="btn-group m-b-5" role="group" aria-label="Periodos">
-                                        <button type="button" class="btn" (click)="onClickPeriodo(1)" [class.btn-info]="periodo==1"
-                                            [class.btn-outline-info]="periodo!=1">
-                                            Hoy
-                                        </button>
-                                        <button type="button" class="btn" (click)="onClickPeriodo(2)" [class.btn-info]="periodo==2"
-                                            [class.btn-outline-info]="periodo!=2">
-                                            Semana actual
-                                        </button>
-                                        <button type="button" class="btn" (click)="onClickPeriodo(3)" [class.btn-info]="periodo==3"
-                                            [class.btn-outline-info]="periodo!=3">
-                                            Mes actual
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div> -->
+                    <div class="col col-md-12">                       
                 
                         <div class="row">
                             <div class="col-md-4 col-12" style="padding: 0px !important;">
@@ -100,7 +46,7 @@
                                                     <i class="fa fa-plus "></i>
                                                     Asignar
                                                 </button>
-                                            </div>
+                                            </div>                                            
                                         </div>
                                         <form>
                                             <div class="input-group">
@@ -156,20 +102,26 @@
                                             </div>
                                             <div>
                                                 <button type="button" class="btn btn-rounded btn-outline-secondary waves-effect waves-light "
-                                                    (click)="onClickAbrirModal($event, modalDatosTarea)">
+                                                    (click)="onClickAbrirModal($event, modalDatosRolFunciona)">
                                                     <i class="fa fa-plus "></i>
                                                     Asignar
                                                 </button>
                                             </div>
+                                            <div class="m-l-10">
+                                                <button type="button" class="btn btn-rounded btn-outline-success waves-effect waves-light   "
+                                                    (click)="onClickGuardar($event)">
+                                                    <i class="fa fa-save "></i>
+                                                    Guardar
+                                                </button>
+                                            </div>
                                         </div>
-                                        
 
                                         <ul class="list-group">
                                             <li class="list-group-item border border-bottom">
                 
                                                 <div class="d-flex flex-row">
                                                     <div class="flex-grow-1" style="width: 50% !important;">
-                                                        <h6>Tarea as asignadas</h6>
+                                                        <h6>Roles Asignados</h6>
                                                     </div>
                                                     <div class="p-l-10" style="width: 20% !important;">
                                                         <h6>Horas</h6>
@@ -182,11 +134,11 @@
                                             </li>
 
                                             <li class="list-group-item border border-bottom"
-                                                *ngFor="let tarea of proyectoSeleccionado.Tareas; index as i; trackBy: trackByFn">
+                                                *ngFor="let rolFuncion of proyectoSeleccionado.RolesAsignados; index as i; trackBy: trackByFn">
                 
                                                 <div class="d-flex flex-row">
                                                     <div class="flex-grow-1" style="width: 50% !important;">
-                                                        {{tarea.Descripcion}}
+                                                        {{rolFuncion.Rol.Descripcion}}
                                                     </div>
                                                     <div class="p-l-10" style="width: 20% !important;">
                                                         <div class="input-group">
@@ -194,13 +146,13 @@
                                                                 <i class="fa fa-clock-o"></i>
                                                             </span>
                                                             <input type="number" class="form-control"
-                                                                [(ngModel)]="proyectoSeleccionado.Tareas[i].HorasRegistro"
+                                                                [(ngModel)]="proyectoSeleccionado.RolesAsignados[i].HorasAsignadas"
                                                                 (focus)="onFocusHoras($event)">
                                                         </div>
                                                     </div>
                                                     <div class="p-l-10" style="width: 30% !important;">
                                                         <div class="input-group">
-                                                            <select class="custom-select" [(ngModel)]="proyectoSeleccionado.Tareas[i].Periodo">
+                                                            <select class="custom-select" [(ngModel)]="proyectoSeleccionado.RolesAsignados[i].Periodo">
                                                                 <option value="1">SIN DEFINIR</option>
                                                                 <option value="2">POR SEMANA</option>
                                                                 <option value="3">POR QUINCENA</option>
@@ -257,7 +209,7 @@
                         <div class="col-sm-10 control-label col-form-label">
                             <div class="input-group">
                                 <span class="input-group-addon">
-                                    <i class="fa  fa-list-alt"></i>
+                                    <i class="fa  fa-user"></i>
                                 </span>
                                 <input id="clienteTypeahead" type="text" class="form-control"
                                     formControlName="cliente" placeholder="Seleccione un cliente"
@@ -336,7 +288,7 @@
     </form>
 </ng-template>
 
-<ng-template #modalDatosTarea let-modal>
+<ng-template #modalDatosRolFunciona let-modal>
 
     <form autocomplete="off" [formGroup]="formularioTarea" (ngSubmit)="onClickGuardarTarea()">
 
@@ -357,23 +309,34 @@
 
                     <div class="form-group row">
 
-                        <label class="col-sm-2 control-label col-form-label text-right">Tarea:</label>
-                        <div class="col-sm-10 control-label col-form-label">
+                        <label class="col-sm-3 control-label col-form-label text-right">Función Asociada:</label>
+                        <div class="col-sm-9 control-label col-form-label">
                             <div class="input-group">
                                 <span class="input-group-addon">
                                     <i class="fa fa-pencil-square-o"></i>
                                 </span>
-                                <input type="text" class="form-control" placeholder="Ingrese al tarea"
-                                    formControlName="tarea" [class.is-invalid]="tareaNoValido">
+                                <select class="form-control custom-select" id="rolFuncion" formControlName="rolFuncion">
+                                    <option value="1">EXPERTO REGULATORIO</option>
+                                    <option value="2">EXPERTO FARMACOVIGILANCIA</option>
+                                    <option value="3">EXPERTO MEDICO</option>
+                                    <option value="4">EXPERTO COMPLIANCE</option>
+                                    <option value="5">EXPERTO LEGAL</option>
+                                    <option value="6">PROJECT MANAGER</option>
+                                    <option value="7">ANALISTA SENIOR</option>
+                                    <option value="8">ANALISTA JUNIOR</option>
+                                    <option value="9">TECNICO ADMINISTRATIVO</option>
+                                    <option value="10">GESTORÍA</option>
+                                </select>
+                                
                             </div>
-                            <small *ngIf="tareaNoValido" class="text-danger">
-                                Debe ingresar tarea
+                            <small *ngIf="rolFuncionNoValido" class="text-danger">
+                                Debe seleccioinar función asociada
                             </small>
                         </div>
 
 
 
-                        <label class="col-sm-2 control-label col-form-label text-right">Horas:</label>
+                        <label class="col-sm-3 control-label col-form-label text-right">Horas Asignadas:</label>
                         <div class="col-sm-3 control-label col-form-label">
                             <div class="input-group">
                                 <span class="input-group-addon">
@@ -388,7 +351,7 @@
                         </div>
 
                         <label class="col-sm-2 control-label col-form-label text-right">Período:</label>
-                        <div class="col-sm-5 control-label col-form-label">
+                        <div class="col-sm-4 control-label col-form-label">
                             <div class="input-group">
                                 <span class="input-group-addon">
                                     <i class="fa fa-calendar-o"></i>

@@ -14,7 +14,14 @@ export class ConfiguracionComponent {
 
     countdown$ = timer(500);
 
-    tituloFormulario: string = "Configuración";
+    tituloFormulario: string = "Configuración del sistema";
+
+
+    menu: any[] = [
+        { titulo: 'Profesionales', href: 'profesionales', component: 'app-profesionales' },
+        { titulo: 'Clientes', href: 'clientes', component: 'app-clientes' },
+        { titulo: 'Proyectos', href: 'proyectos' , component: 'app-proyectos'},
+    ];
 
     constructor() {
 

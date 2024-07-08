@@ -12,8 +12,7 @@
     <div class="col-12">
         <div class="card">
             <div class="card-body">
-                <div class="card-title h3 desktop">Listado de Usuarios</div>
-                <div class="card-title h5 mobile">Listado de Usuarios</div>
+                <div class="card-title h3">Listado de Usuarios</div>
                 <hr />
                 <div class="row mb-2">                    
                     <div class="col col-md-12">
@@ -67,10 +66,9 @@
                                     <tr>
                                         <th style="width: 10%;"></th>
                                         <th style="width: 15%;">Login</th>
-                                        <th style="width: 20%;">Nombre</th>
+                                        <th style="width: 30%;">Nombre</th>
                                         <th style="width: 20%;">Rol</th>
-                                        <th style="width: 20%;">Cliente</th>
-                                        <th style="width: 15%;">Celular</th>
+                                        <th style="width: 25%;">Función</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -88,17 +86,14 @@
                                         <td style="width: 15%;">
                                             <ngb-highlight [result]="item.LoginUsuario" [term]="filtro.value"></ngb-highlight>
                                         </td>
-                                        <td style="width: 20%;">
+                                        <td style="width: 30%;">
                                             <ngb-highlight [result]="item.NombreCompleto" [term]="filtro.value"></ngb-highlight>
                                         </td>
                                         <td style="width: 20%;">
                                             <ngb-highlight [result]="item.Rol.Descripcion" [term]="filtro.value"></ngb-highlight>
                                         </td>
-                                        <td style="width: 20%;">
-                                            <ngb-highlight [result]="item.ClienteList" [term]="filtro.value"></ngb-highlight>
-                                        </td>
-                                        <td style="width: 15%;">
-                                            <ngb-highlight [result]="item.Celular" [term]="filtro.value"></ngb-highlight>
+                                        <td style="width: 25%;">
+                                            <ngb-highlight [result]="item.Funcion.Descripcion" [term]="filtro.value"></ngb-highlight>
                                         </td>
                                     </tr>                                       
                                 </tbody>

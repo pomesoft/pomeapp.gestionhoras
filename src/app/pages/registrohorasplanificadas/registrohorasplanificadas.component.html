@@ -1,8 +1,8 @@
 <div class="row mb-2">
     <div class="col col-md-12">
         <div class="form-group row" style="margin-bottom: 5px !important;">
-            <label class="col-md-2 control-label col-form-label text-center">Profesional:</label>
-            <div class="col-md-6">
+            <label class="col-md-2 control-label col-form-label text-center">Usuario:</label>
+            <div class="col-md-7">
                 <div class="input-group">
                     <span class="input-group-addon ">
                         <i class="fa fa-user-o"></i>
@@ -16,14 +16,9 @@
                     </span>
                 </div>
             </div>
-            <div class="col-12 col-md-4 p-t-5">
+            <div class="col-12 col-md-3 p-t-5">
                 <div class="input-group">
-                    <button type="button" class="btn btn-rounded btn-outline-secondary waves-effect waves-light "
-                        (click)="onClickListarProyectos($event)">
-                        <i class="fa fa-check "></i>
-                        Listar proyectos
-                    </button>
-                    <button type="button" class="btn btn-rounded btn-outline-success waves-effect waves-light"
+                    <button type="button" class="btn btn-rounded btn-block btn-outline-success waves-effect waves-light"
                         (click)="onClickGuardar($event)">
                         <i class="fa fa-save"></i>
                         Guardar
@@ -31,39 +26,52 @@
                 </div>
             </div>
         </div>
-        <!-- <div class="row mb-2">
-            <div class="col-12 col-md-8">
-                
-            </div>
+        <div class="form-group row" style="margin-bottom: 5px !important;">
+
+            <label class="col-md-2 control-label col-form-label text-center">Cliente:</label>
             <div class="col-md-4">
                 <div class="input-group">
-                    <div class="btn-group m-b-5" role="group" aria-label="Periodos">
-                        <button type="button" class="btn" (click)="onClickPeriodo(1)" [class.btn-info]="periodo==1"
-                            [class.btn-outline-info]="periodo!=1">
-                            Hoy
-                        </button>
-                        <button type="button" class="btn" (click)="onClickPeriodo(2)" [class.btn-info]="periodo==2"
-                            [class.btn-outline-info]="periodo!=2">
-                            Semana actual
-                        </button>
-                        <button type="button" class="btn" (click)="onClickPeriodo(3)" [class.btn-info]="periodo==3"
-                            [class.btn-outline-info]="periodo!=3">
-                            Mes actual
-                        </button>
-                    </div>
+                    <span class="input-group-addon ">
+                        <i class="fa fa-user"></i>
+                    </span>
+                    <input id="clienteTypeahead" type="text" class="form-control" [(ngModel)]="cliente"
+                        placeholder="Seleccione un cliente" #instanceCliente="ngbTypeahead" 
+                        [ngbTypeahead]="searchCliente" (focus)="focusCliente$.next($any($event).target.value)"
+                        (click)="clickCliente$.next($any($event).target.value)" (ngModelChange)="onChangeCliente($event)"/>
+                    <span class="input-group-addon" role="button" (click)="onClickLimpiarCliente($event)">
+                        <i class="fa fa-times"></i>
+                    </span>
                 </div>
             </div>
-        </div> -->
+
+            <label class="col-md-1 control-label col-form-label text-center">Proyecto</label>
+            <div class="col-md-5">
+                <div class="input-group">
+                    <span class="input-group-addon ">
+                        <i class="fa fa-list-alt"></i>
+                    </span>
+                    <input id="proyectoTypeahead" type="text" class="form-control" [(ngModel)]="proyecto"
+                            placeholder="Seleccione un proyecto"  #instanceProyecto="ngbTypeahead"
+                            [ngbTypeahead]="searchProyecto" (focus)="focusProyecto$.next($any($event).target.value)"
+                            (click)="clickProyecto$.next($any($event).target.value)"  (ngModelChange)="onChangeProyecto($event)" />
+                        <span class="input-group-addon" role="button" (click)="onClickLimpiaProyecto($event)">
+                            <i class="fa fa-times"></i>
+                        </span>
+                </div>
+            </div>
+
+        </div>
+        
 
         <div class="row">
-            <div class="col-md-5 col-12" style="padding: 0px !important;">
+            <!-- <div class="col-md-3 col-12" style="padding: 0px !important;">
                 <div class="card">
                     <div class="card-body">
                         <h5 class="card-title">Proyectos</h5>
                         <form>
                             <div class="input-group">
                                 <input type="text" class="form-control w-30"
-                                    placeholder="Ingreso texto a buscar y presione enter......" [formControl]="filtro">
+                                    placeholder="Buscar..." [formControl]="filtro">
                                 <span class="input-group-addon" role="button" data-toggle="tooltip" data-placement="top"
                                     title="Buscar" (click)="refreshDatos()">
                                     <i class="fa fa-search"></i>
@@ -76,14 +84,14 @@
                         </form>
                         <div class="list-group">
                             <a href="#" *ngFor="let proyecto of listado$ | async;"
-                                class="list-group-item list-group-item-action"
+                                class="list-group-item list-group-item-action  border"
                                 [class.active]="proyectoSeleccionado && proyecto.Id==proyectoSeleccionado.Id"
                                 (click)="onClickSeleccionarProyecto($event, proyecto)">
 
-                                <div class="d-flex flex-row">
+                                <div class="d-flex flex-row ">
                                     <div class="flex-grow-1">
                                         <ngb-highlight [result]="proyecto.Cliente.Nombre"
-                                            [term]="filtro.value"></ngb-highlight>&nbsp;-&nbsp;
+                                            [term]="filtro.value"></ngb-highlight><br/>
                                         <ngb-highlight [result]="proyecto.Descripcion"
                                             [term]="filtro.value"></ngb-highlight>
                                     </div>
@@ -91,16 +99,12 @@
                                         <span class="h5 text-muted"><i class="mdi mdi-arrow-right-bold"></i></span>
                                     </div>
                                 </div>
-
-
                             </a>
-
                         </div>
                     </div>
                 </div>
-
-            </div>
-            <div class="col-md-7 col-12" style="padding: 0px !important;">
+            </div> -->
+            <div class="col-12" style="padding: 0px !important;">
 
                 <div class="card">
                     <div class="card-body"  *ngIf="proyectoSeleccionado">
@@ -115,13 +119,16 @@
                             <li class="list-group-item border border-bottom">
                 
                                 <div class="d-flex flex-row">
-                                    <div class="flex-grow-1 w-50">
-                                        <h6>Tarea</h6>
+                                    <div style="width: 30%;">
+                                        <h6>Función Asociada</h6>
                                     </div>
-                                    <div class="p-l-10 w-25">
+                                    <div style="width: 45%;">
+                                        <h6>Detalle y Producto</h6>
+                                    </div>
+                                    <div class="p-l-10" style="width: 15%;">
                                         <h6>Fecha</h6>
                                     </div>
-                                    <div class="p-l-10 w-25">
+                                    <div class="p-l-10" style="width: 10%;">
                                         <h6>Horas</h6>
                                     </div>
                                 </div>
@@ -129,34 +136,34 @@
                             </li>
 
                             <li class="list-group-item border border-bottom"
-                                *ngFor="let tarea of proyectoSeleccionado.Tareas; index as i; trackBy: trackByFn">
+                                *ngFor="let rolFuncion of proyectoSeleccionado.RolesAsignados; index as i; trackBy: trackByFn">
 
                                 <div class="d-flex flex-row">
-                                    <div class="flex-grow-1 w-50">
-                                        {{tarea.Descripcion}}
+                                    <div style="width: 30%;">
+                                        {{rolFuncion.Rol.Descripcion}}
                                     </div>
-                                    <div class="w-25">
+                                    <div class="p-l-10 p-r-10" style="width: 45%;">
+                                        <textarea class="form-control" rows="2" (focus)="onFocus($event)"></textarea>
+                                    </div>                                    
+                                    <div style="width: 15%;">
                                         <div class="input-group">
                                             <span class="input-group-addon" (click)="dteFecha.toggle()">
                                                 <i class="fa fa-calendar"></i>
                                             </span>
                                             <input id="fechaNgDateStruct" class="form-control" placeholder="dd/mm/yyyy"
                                                 name="dteFecha" ngbDatepicker #dteFecha="ngbDatepicker"
-                                                [(ngModel)]="proyectoSeleccionado.Tareas[i].FechaRegistro" />
+                                                [(ngModel)]="proyectoSeleccionado.RolesAsignados[i].RegistroFecha" />
                                         </div>
                                     </div>
-                                    <div class="p-l-10 p-r-10 w-25">
-                                        <div class="input-group">
-                                            <span class="input-group-addon">
-                                                <i class="fa fa-clock-o"></i>
-                                            </span>
-                                            <input type="number" class="form-control"
-                                                [(ngModel)]="proyectoSeleccionado.Tareas[i].HorasRegistro"
-                                                (focus)="onFocusHoras($event)">
+                                    <div class="p-l-10 p-r-10"  style="width: 10%;">
+                                        <div class="input-group">                                            
+                                            <input type="number" id="inputHoras_{{rolFuncion.Id}}" class="form-control"
+                                                [(ngModel)]="proyectoSeleccionado.RolesAsignados[i].RegistroHoras"
+                                                (focus)="onFocus($event)"
+                                                (keypress)="onKeyPressInputHoras($event, rolFuncion.Id)">
                                         </div>
                                     </div>
-                                </div>
-
+                                </div>                                
                             </li>
                         </ul>
 
@@ -169,15 +176,17 @@
         </div>
 
         <div class="row mb-2" *ngIf="hayDatos">
-            <div class="col-12 col-md-10">
+            <div class="col-12 col-md-9">
 
             </div>
-            <div class="col-12 col-md-2">
-                <button type="button" class="btn btn-rounded btn-outline-success waves-effect waves-light "
-                    (click)="onClickGuardar($event)">
-                    <i class="fa fa-save "></i>
-                    Guardar
-                </button>
+            <div class="col-12 col-md-3">
+                <div class="input-group">
+                    <button type="button" class="btn btn-rounded btn-block btn-outline-success waves-effect waves-light"
+                        (click)="onClickGuardar($event)">
+                        <i class="fa fa-save"></i>
+                        Guardar
+                    </button>
+                </div>
             </div>
         </div>
     </div>

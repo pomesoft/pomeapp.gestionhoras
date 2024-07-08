@@ -8,16 +8,47 @@
         <div class="modal-body">
 
             <div class="form-group row">
-                <label class="col-sm-3 text-right control-label col-form-label">Rol</label>
-                <div class="col-sm-9">
+                <label class="col-sm-4 text-right control-label col-form-label">Rol</label>
+                <div class="col-sm-8">
                     <select class="custom-select col-12"
                         id="idRol"
                         formControlName="idRol"
-                        (change)="onChangeRol($event)">
-                        <option value="0"></option>
-                        <option value="1">Administrador</option>
-                        <option value="2">Profesional</option>
-                    </select>        
+                        (change)="onChangeRol($event)"
+                        [class.is-invalid]="idRolNoValido">
+                        <option value="0">Seleccione un rol</option>
+                        <option value="1">ADMINISTRADOR</option>
+                        <option value="2">PROYECT LEADER</option>
+                        <option value="3">USUARIO</option>
+                    </select>                    
+                    <small *ngIf="idRolNoValido" class="text-danger">
+                        Debe ingresar rol del usuario
+                    </small>        
+                </div>
+            </div>
+
+            <div class="form-group row">
+                <label class="col-sm-4 text-right control-label col-form-label">Función Asociada</label>
+                <div class="col-sm-8">
+                    <select class="custom-select col-12"
+                        id="idFuncion"
+                        formControlName="idFuncion"
+                        (change)="onChangeRol($event)"
+                        [class.is-invalid]="idFuncionNoValido">
+                        <option value="0">Seleccione una función asociada</option>
+                        <option value="1">EXPERTO REGULATORIO</option>
+                        <option value="2">EXPERTO FARMACOVIGILANCIA</option>
+                        <option value="3">EXPERTO MEDICO</option>
+                        <option value="4">EXPERTO COMPLIANCE</option>
+                        <option value="5">EXPERTO LEGAL</option>
+                        <option value="6">PROJECT MANAGER</option>
+                        <option value="7">ANALISTA SENIOR</option>
+                        <option value="8">ANALISTA JUNIOR</option>
+                        <option value="9">TECNICO ADMINISTRATIVO</option>
+                        <option value="10">GESTORÍA</option>
+                    </select>                    
+                    <small *ngIf="idFuncionNoValido" class="text-danger">
+                        Debe ingresar función del usuario
+                    </small>
                 </div>
             </div>
 
@@ -28,7 +59,7 @@
                     <input type="text" class="form-control" placeholder="Login" formControlName="loginUsuario"
                         [class.is-invalid]="loginUsuarioNoValido">
                     <small *ngIf="loginUsuarioNoValido" class="text-danger">
-                        Debe ingresar Login del usuario para continuar
+                        Debe ingresar login del usuario 
                     </small>
                 </div>
                 <label class="col-sm-2 text-right control-label col-form-label">Habilitado</label>
@@ -45,17 +76,29 @@
             <div class="form-group row">
                 <label class="col-sm-2 text-right control-label col-form-label">Apellido</label>
                 <div class="col-sm-4">
-                    <input type="text" class="form-control" placeholder="Apellido" formControlName="apellido">
+                    <input type="text" class="form-control" placeholder="Apellido" formControlName="apellido" 
+                        [class.is-invalid]="apellidoNoValido">
+                    <small *ngIf="apellidoNoValido" class="text-danger">
+                        Debe ingresar apellido del usuario
+                    </small>
                 </div>
                 <label class="col-sm-2 text-right control-label col-form-label">Nombre</label>
                 <div class="col-sm-4">
-                    <input type="text" class="form-control" placeholder="Nombre" formControlName="nombre">
+                    <input type="text" class="form-control" placeholder="Nombre" formControlName="nombre"
+                        [class.is-invalid]="nombreNoValido">
+                    <small *ngIf="nombreNoValido" class="text-danger">
+                        Debe ingresar nombre del usuario
+                    </small>
                 </div>
             </div>
             <div class="form-group row">
                 <label class="col-sm-3 text-right control-label col-form-label">Email</label>
                 <div class="col-sm-9">
-                    <input type="text" class="form-control" placeholder="Email" formControlName="email">
+                    <input type="text" class="form-control" placeholder="Email" formControlName="email"
+                        [class.is-invalid]="emailNoValido">
+                    <small *ngIf="emailNoValido" class="text-danger">
+                        Debe ingresar email del usuario
+                    </small>
                 </div>
             </div>
      

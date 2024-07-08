@@ -1,0 +1,88 @@
+<div class="row animated fadeIn fast" *ngIf="cargando">
+    <div class="col-12">
+        <div class="alert alert-info text-center">
+            <h4 class="alert-heading">Cargando</h4>
+            <i class="fa fa-spin fa-refresh fa-2x"></i>
+            <p class="mb-0">Por favor espere...</p>
+        </div>
+    </div>
+</div>
+
+<div class="row animated fadeIn fast" *ngIf="!cargando">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <div class="card-title h6">{{tituloFormulario}}</div>
+                <div class="row mb-2">
+                    <div class="col-12 col-md-6">
+                        <form>
+                            <div class="input-group">
+                                <input type="text" class="form-control w-50"
+                                    placeholder="Ingreso texto a buscar y presione enter......" [formControl]="filtro">
+                                <span class="input-group-btn">
+                                    <button class="btn btn-outline-info" type="button" data-toggle="tooltip"
+                                        data-placement="top" title="Buscar" (click)="refreshDatos()">
+                                        <i class="fa fa-search"></i>
+                                    </button>
+                                    <button class="btn btn-outline-info" type="button" data-toggle="tooltip"
+                                        data-placement="top" title="Borrar" (click)="filtro.reset('')">
+                                        <i class="fa fa-times"></i>
+                                    </button>
+                                </span>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="col-12 col-md-2">
+                        <button type="button" class="btn btn-outline-info btn-block"
+                            (click)="onClickAbriModal($event, modalDatos, -1)">
+                            <i class="fa fa-plus-square"></i>
+                            Agregar
+                        </button>
+                    </div>
+
+                    <div class="col-12 col-md-4 p-2">
+                    </div>
+
+                </div>
+                <div class="table-responsive ">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th style="width: 10%;"></th>
+                                <th style="width: 25%;">Apellido</th>
+                                <th style="width: 25%;">Nombre</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let item of listado$ | async;">
+                                <td style="width: 10%;">
+                                    <a href="#" class="btn btn-outline-info btn-rounded btn-xs" data-toggle="tooltip"
+                                        data-placement="top" title="Editar"
+                                        (click)="onClickAbriModal($event, modalDatos, item.Id)">
+                                        <span class="h5 text-info"><i class="fa fa-pencil-square-o"></i></span>
+                                    </a>
+                                    <a href="#" class="btn btn-outline-danger btn-rounded btn-sm m-l-5" data-toggle="tooltip"
+                                        data-placement="top" title="Editar"
+                                        (click)="onClickEliminar($event, item)">
+                                        <span class="h5 text-danger"><i class="fa fa-minus-square-o"></i></span>
+                                    </a>
+                                </td>
+                                <td style="width: 25%;">
+                                    <ngb-highlight [result]="item.Apellido" [term]="filtro.value"></ngb-highlight>
+                                </td>
+                                <td style="width: 25%;">
+                                    <ngb-highlight [result]="item.Nombre" [term]="filtro.value"></ngb-highlight>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<ng-template #modalDatos let-modal>
+    <app-profesional></app-profesional>
+</ng-template>

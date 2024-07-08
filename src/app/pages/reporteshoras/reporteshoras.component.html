@@ -27,8 +27,288 @@
                 <div class="card-title h5 mobile">{{tituloFormulario}}</div>
                 <hr />
 
-                alalaall
+                <div class="row">
+
+                    <div class="col-md-9">
+                        <div class="row">
+                            <div class="col-12 col-md-9">
+                                <form>
+                                    <div class="input-group">
+                                        <input type="text" class="form-control w-20" 
+                                                placeholder="Ingreso texto a buscar y presione enter......" 
+                                                [formControl]="filtro" >
+                                        <span class="input-group-btn">
+                                            <button class="btn btn-outline-secondary" type="button" data-toggle="tooltip"
+                                                data-placement="top" title="Buscar"
+                                                (click)="refreshDatos()">
+                                                <i class="fa fa-search"></i>
+                                            </button>
+                                            <button class="btn btn-outline-secondary" type="button" data-toggle="tooltip"
+                                                data-placement="top" title="Borrar búsqueda"
+                                                (click)="filtro.reset('')">
+                                                <i class="fa fa-times"></i>
+                                            </button>                                    
+                                        </span>
+                                    </div>
+                                </form>
+                            </div>                            
+                            <div class="col-6 col-md-3">
+                                <button type="button" class="btn btn-outline-secondary btn-block"
+                                    (click)="onClickAbrirOffcanvas(offcanvasFiltros)">
+                                    <i class="fa fa-list-alt"></i>
+                                    Filtros
+                                </button>                        
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-12 col-md-3">
+                        <div class="border border-info rounded">
+                            <div class="d-flex flex-row b-b">
+                                <div class="bg-info-subtle p-r-10 p-l-10">
+                                    <h2 class="text-info box m-b-0">
+                                        <i class="fa fa-clock-o"></i>
+                                    </h2>
+                                </div>
+                                <div class="m-l-10 align-self-center">
+                                    <h4 class="m-b-0">{{totalHoras | number :'1.0-0'}}</h4>
+                                    <span class="text-secondary m-b-0">Total de Horas</span>
+                                </div>                                
+                            </div>                          
+                        </div>
+                    </div>
+
+                </div>
+                
+
+                <div class="row">
+                    <div class="col-12 col-md-9">
+                        <div class="d-flex gap-2 justify-content-start" >
+                            <span  *ngFor="let item of labelsFiltros" 
+                                class="badge d-flex align-items-center p-2 pe-2 text-light-emphasis bg-light-subtle border border-dark-subtle rounded-pill">
+                                {{item}}
+                            </span>
+                          </div>
+                    </div>                    
+                </div>
+
+                <ul class="nav nav-tabs customtab" role="tablist">
+                    <li class="nav-item"> 
+                        <a class="nav-link active" data-toggle="tab" href="#totales" role="tab">
+                            <span class="hidden-sm-up"><i class="ti-home"></i></span> 
+                            <div class="card-title h6">Totales agrupados</div>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" data-toggle="tab" href="#listado" role="tab">
+                            <span class="hidden-sm-up"><i class="ti-user"></i></span>
+                            <div class="card-title h6">Listado detallado</div>
+                        </a>
+                    </li>
+                </ul>
+
+                <!-- Tab panes -->
+                <div class="tab-content">
+                    <div class="tab-pane active" id="totales" role="tabpanel">
+                        
+                        <div class="row">
+                            <div class="col-12 col-md-6 col-xl-4 p-1">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <div class="d-flex flex-row m-b-5">
+                                            <div class="flex-grow-1">
+                                                <span class="h6 card-title">
+                                                    Total de horas por profesional
+                                                </span>
+                                            </div>
+                                        </div>                                       
+
+                                        <ul class="list-group">
+                                            <li class="list-group-item list-group-item-action border border-bottom">
+                
+                                                <div class="d-flex flex-row">
+                                                    <div class="flex-grow-1" style="width: 70% !important;">
+                                                        <h6>Profesional</h6>
+                                                    </div>
+                                                    <div style="width: 30% !important;">
+                                                        <h6>Horas</h6>
+                                                    </div>
+                                                </div>
+                
+                                            </li>
+
+
+                                            <ng-container *ngFor="let item of totalXProfesional ">
+
+                                                <li class="list-group-item list-group-item-action border border-bottom">
+                
+                                                    <div class="d-flex flex-row">
+                                                        <div class="flex-grow-1" style="width: 70% !important;">
+                                                            <ngb-highlight [result]="item.Descripcion" [term]="filtro.value"></ngb-highlight>
+                                                        </div>
+                                                        <div class="p-l-10 text-right" style="width: 20% !important;">
+                                                            <ngb-highlight [result]="item.Valor" [term]="filtro.value"></ngb-highlight>
+                                                        </div>
+                                                    </div>
+                    
+                                                </li>
+
+                                            </ng-container>
+                                            
+                                        </ul>                
+                                    </div>
+                                </div>                                
+                            </div>
+
+
+                            <div class="col-12 col-md-6 col-xl-4 p-1">
+
+                                <div class="card">
+                                    <div class="card-body">
+                                        <div class="d-flex flex-row m-b-5">
+                                            <div class="flex-grow-1">
+                                                <span class="h6 card-title">
+                                                    Total de horas por cliente
+                                                </span>
+                                            </div>
+                                        </div>                                       
+
+                                        <ul class="list-group">
+                                            <li class="list-group-item list-group-item-action border border-bottom">
+                
+                                                <div class="d-flex flex-row">
+                                                    <div class="flex-grow-1" style="width: 70% !important;">
+                                                        <h6>Cliente</h6>
+                                                    </div>
+                                                    <div style="width: 30% !important;">
+                                                        <h6>Horas</h6>
+                                                    </div>
+                                                </div>
+                
+                                            </li>
+
+
+                                            <ng-container *ngFor="let item of totalXCliente ">
+
+                                                <li class="list-group-item list-group-item-action border border-bottom">
+                
+                                                    <div class="d-flex flex-row">
+                                                        <div class="flex-grow-1" style="width: 70% !important;">
+                                                            <ngb-highlight [result]="item.Descripcion" [term]="filtro.value"></ngb-highlight>
+                                                        </div>
+                                                        <div class="p-l-10 text-right" style="width: 20% !important;">
+                                                            <ngb-highlight [result]="item.Valor" [term]="filtro.value"></ngb-highlight>
+                                                        </div>
+                                                    </div>
+                    
+                                                </li>
+
+                                            </ng-container>
+                                            
+                                        </ul>                
+                                    </div>
+                                </div>
+
+                            </div>
+
+
+                            <div class="col-12 col-md-6 col-xl-4 p-1">
+
+                                <div class="card">
+                                    <div class="card-body">
+                                        <div class="d-flex flex-row m-b-5">
+                                            <div class="flex-grow-1">
+                                                <span class="h6 card-title">
+                                                    Total de horas por proyecto
+                                                </span>
+                                            </div>
+                                        </div>                                       
+
+                                        <ul class="list-group">
+                                            <li class="list-group-item list-group-item-action border border-bottom">
+                
+                                                <div class="d-flex flex-row">
+                                                    <div class="flex-grow-1" style="width: 70% !important;">
+                                                        <h6>Proyecto</h6>
+                                                    </div>
+                                                    <div style="width: 30% !important;">
+                                                        <h6>Horas</h6>
+                                                    </div>
+                                                </div>
+                
+                                            </li>
+
+
+                                            <ng-container *ngFor="let item of totalXProyecto ">
+
+                                                <li class="list-group-item list-group-item-action border border-bottom">
+                
+                                                    <div class="d-flex flex-row">
+                                                        <div class="flex-grow-1" style="width: 70% !important;">
+                                                            <ngb-highlight [result]="item.Descripcion" [term]="filtro.value"></ngb-highlight>
+                                                        </div>
+                                                        <div class="p-l-10 text-right" style="width: 20% !important;">
+                                                            <ngb-highlight [result]="item.Valor" [term]="filtro.value"></ngb-highlight>
+                                                        </div>
+                                                    </div>
+                    
+                                                </li>
+
+                                            </ng-container>
+                                            
+                                        </ul>                
+                                    </div>
+                                </div>
+                                                                
+                            </div>
+                        </div>
+                        
+                    </div>
+                    <div class="tab-pane" id="listado" role="tabpanel">
+                        
+                        <div class="table-responsive ">                            
+                            <table class="table table-hover table-striped ">
+                                <thead>
+                                    <tr class="table-active">
+                                        <th style="width: 20%;">Profesional</th>
+                                        <th style="width: 20%;">Cliente</th>
+                                        <th style="width: 15%;">Proyecto</th>
+                                        <th style="width: 10%;">Tipo</th>
+                                        <th style="width: 20%;">Tarea</th>
+                                        <th style="width: 10%;">Fecha</th>
+                                        <th style="width: 10%;">Horas</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+        
+                                    <ng-container *ngFor="let item of listado$ | async;">
+                                        <tr>
+                                            <td>
+                                                <ngb-highlight [result]="item.Profesional.Nombre" [term]="filtro.value"></ngb-highlight>&nbsp;
+                                                <ngb-highlight [result]="item.Profesional.Apellido" [term]="filtro.value"></ngb-highlight>
+                                            </td>
+                                            <td><ngb-highlight [result]="item.Cliente.Nombre" [term]="filtro.value"></ngb-highlight></td>
+                                            <td><ngb-highlight [result]="item.Proyecto.Descripcion" [term]="filtro.value"></ngb-highlight></td>
+                                            <td><ngb-highlight [result]="item.Proyecto.TipoDescripcion" [term]="filtro.value"></ngb-highlight></td>
+                                            <td><ngb-highlight [result]="item.Tarea.Descripcion" [term]="filtro.value"></ngb-highlight></td>
+                                            <td><ngb-highlight [result]="item.FechaFormat" [term]="filtro.value"></ngb-highlight></td>
+                                            <td><ngb-highlight [result]="item.Horas" [term]="filtro.value"></ngb-highlight></td>
+                                        </tr>
+                                    </ng-container>
+                                </tbody>
+                            </table>                    
+                        </div>
+                    </div>
+                </div>
+
+
+                
             </div>
         </div>
     </div>
 </div>
+
+
+<ng-template #offcanvasFiltros let-offcanvas>
+    <app-filtros></app-filtros>	    
+</ng-template>

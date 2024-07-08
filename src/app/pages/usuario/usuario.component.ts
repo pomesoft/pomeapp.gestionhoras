@@ -33,6 +33,21 @@ export class UsuarioComponent implements OnInit, OnDestroy {
     get loginUsuarioNoValido() {
         return this.formulario.get('loginUsuario').invalid && this.formulario.get('loginUsuario').touched
     }
+    get apellidoNoValido() {
+        return this.formulario.get('apellido').invalid && this.formulario.get('apellido').touched
+    }
+    get nombreNoValido() {
+        return this.formulario.get('nombre').invalid && this.formulario.get('nombre').touched
+    }
+    get emailNoValido() {
+        return this.formulario.get('email').invalid && this.formulario.get('email').touched
+    }    
+    get idRolNoValido() {
+        return this.formulario.get('idRol').invalid && this.formulario.get('idRol').touched
+    }    
+    get idFuncionNoValido() {
+        return this.formulario.get('idFuncion').invalid && this.formulario.get('idFuncion').touched
+    }
 
     constructor(
         private store: Store<AppState>,
@@ -64,24 +79,14 @@ export class UsuarioComponent implements OnInit, OnDestroy {
         this.formulario = this.formBuilder.group({
             id: [-1],
             loginUsuario: ['', Validators.required],
-            apellido: [''],
-            nombre: [''],
-            email: [''],
+            apellido: ['', Validators.required],
+            nombre: ['', Validators.required],
+            email: ['', [Validators.required, Validators.email]],
             celular: [''],
-            idRol: [0],
-            idCliente: [0],
+            idRol: [0, [Validators.required, Validators.min(1)]],
+            idFuncion: [0, [Validators.required, Validators.min(1)]],
             habilitado: [0],
         });
-        // Object.keys(this.formulario.controls).forEach(key => {
-        //     if (key != 'id' && key != 'email' && key != 'loginUsuario') {
-        //         const yourControl = this.formulario.get(key);
-        //         yourControl.valueChanges.subscribe(() => {
-        //             if (yourControl.value) {
-        //                 yourControl.patchValue(yourControl.value.toUpperCase(), { emitEvent: false });
-        //             }
-        //         });
-        //     }
-        // });
     }
 
     private setearFormulario(Usuario: Usuario) {
@@ -95,6 +100,7 @@ export class UsuarioComponent implements OnInit, OnDestroy {
                 email: Usuario.Email,
                 celular: Usuario.Celular,
                 idRol: Usuario.Rol.Id,
+                idFuncion: Usuario.Funcion.Id,
                 habilitado: Usuario.Habilitado ? 1 : 0,
             });
         } else {
@@ -107,6 +113,7 @@ export class UsuarioComponent implements OnInit, OnDestroy {
                 celular: '',
                 observaciones: '',
                 idRol: 0,
+                idFuncion: 0,
                 habilitado: 0,
             });
         }
@@ -136,6 +143,10 @@ export class UsuarioComponent implements OnInit, OnDestroy {
             Rol: {
                 Id: this.formulario.get('idRol').value,
                 Descripcion: 'ROL',
+            },
+            Funcion: {
+                Id: this.formulario.get('idFuncion').value,
+                Descripcion: 'FUNCION',
             },
         };
 

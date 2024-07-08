@@ -32,22 +32,29 @@ export interface Usuario {
     Habilitado?: boolean;
     Vigente?: boolean;
     Rol?: Rol;
-    ClienteList?: string;
+    Funcion?: Funcion;    
     NombreCompleto?: string;
 }
 
 
 export interface Rol {
     Id: number;
-    Descripcion?: string;
-    Vigente?: boolean;
-    IdDescripcion?: string;
+    Descripcion: string;
 }
 
+export interface Funcion {
+    Id: number;
+    Descripcion: string;
+}
 
 export interface DataFiltro {
     IdProfesional?: number;
+    Profesional?: string;
+    IdCliente?: number;
+    Cliente?: string;
     IdProyecto?: number;
+    Proyecto?: string;
+    IdTipoProyecto?: number;
     Periodo?: number;
     Meses?: number;
     FechaDesde?: string;
@@ -63,6 +70,12 @@ export interface DataFiltro {
 export interface DashboardInfo {
 }
 
+
+export interface ItemListado {
+    Id: number;
+    Descripcion: string;
+    Valor?: number;
+}
 
 export interface Producto {
     Id: number;
@@ -86,7 +99,6 @@ export interface Tarea {
     Periodo?: number;
     FechaRegistro?: string;
     HorasRegistro?: number;
-
 }
 
 export interface Profesional {
@@ -101,6 +113,16 @@ export interface Cliente {
 }
 
 
+export interface RolFuncion{
+    Id: number;    
+    Rol: Rol;
+    HorasAsignadas?: number;
+    Periodo?: number;
+    RegistroFecha?: string;
+    RegistroHoras?: number;
+}
+
+
 export interface Proyecto {
     Id: number;
     Descripcion: string;
@@ -111,6 +133,18 @@ export interface Proyecto {
     ProductoDescripcion?: string;
     FechaInicio?: Date;
     FechaFin?: Date;
-    Tareas?: Tarea[];
-    TareasFULL?: Tarea[];
+    RolesAsignados?: RolFuncion[];
+    RolesAsignadosFULL?: RolFuncion[];
+}
+
+
+export interface RegistroHora {
+    Id: number;
+    Profesional: Profesional;
+    Cliente: Cliente;
+    Proyecto: Proyecto;
+    Tarea: Tarea;
+    Fecha?: Date;
+    FechaFormat?: string;
+    Horas?: number;
 }

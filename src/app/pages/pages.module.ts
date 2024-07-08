@@ -43,6 +43,14 @@ import { PlanningComponent } from './planning/planning.component';
 import { ConfiguracionComponent } from './configuracion/configuracion.component';
 import { RegistrohorasplanificadasComponent } from './registrohorasplanificadas/registrohorasplanificadas.component';
 import { RegistrohorasmanualComponent } from './registrohorasmanual/registrohorasmanual.component';
+import { ProfesionalesComponent } from './profesionales/profesionales.component';
+import { ProfesionalComponent } from './profesional/profesional.component';
+import { ClientesComponent } from './clientes/clientes.component';
+import { ClienteComponent } from './cliente/cliente.component';
+import { ProyectosComponent } from './proyectos/proyectos.component';
+import { ProyectoComponent } from './proyecto/proyecto.component';
+import { FuncionesComponent } from './funciones/funciones.component';
+import { FuncionComponent } from './funcion/funcion.component';
 
 @NgModule({
     declarations: [
@@ -59,6 +67,14 @@ import { RegistrohorasmanualComponent } from './registrohorasmanual/registrohora
         ConfiguracionComponent,
         RegistrohorasplanificadasComponent,
         RegistrohorasmanualComponent,
+        ProfesionalesComponent,
+        ProfesionalComponent,
+        ClientesComponent,
+        ClienteComponent,
+        ProyectosComponent,
+        ProyectoComponent,
+        FuncionesComponent,
+        FuncionComponent,
     ],
     exports: [
         DashboardComponent,

@@ -9,14 +9,14 @@ export interface DashboardInfoState {
     error: any
 }
 
-export const dashboardInfoInitialState: DashboardInfoState = {
+export const DashboardInfoInitialState: DashboardInfoState = {
     dashboardInfo: null,
     loaded: false,
     loading: false,
     error: null
 }
 
-const _dashboardInfoReducer = createReducer(dashboardInfoInitialState,
+const _dashboardInfoReducer = createReducer(DashboardInfoInitialState,
 
     on(cargarDashboardInfo, state => ({ 
         ...state, 

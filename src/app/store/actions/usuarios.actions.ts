@@ -1,5 +1,5 @@
 import { createAction, props } from '@ngrx/store';
-import { Usuario } from 'src/app/models/entity.models';
+import { Usuario } from '../../models/entity.models';
 
 
 export const cargarUsuarios = createAction('[Usuarios] Cargar Usuarios');

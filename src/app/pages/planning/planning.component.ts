@@ -20,7 +20,7 @@ import { Proyecto, TipoProyecto } from '../../models/entity.models';
 })
 export class PlanningComponent {
 
-    tituloFormulario: string = "Asignación y planificación de tareas";
+    tituloFormulario: string = "Asignación de Horas";
 
     cargando: boolean = true;
     procesando: boolean = false;
@@ -57,8 +57,8 @@ export class PlanningComponent {
     get tipoProyectoNoValido() {
         return this.formularioProyecto.get('tipoProyecto').invalid && this.formularioProyecto.get('tipoProyecto').touched;
     }
-    get tareaNoValido() {
-        return this.formularioTarea.get('tarea').invalid && this.formularioTarea.get('tarea').touched;
+    get rolFuncionNoValido() {
+        return this.formularioTarea.get('rolFuncion').invalid && this.formularioTarea.get('rolFuncion').touched;
     }
     get horasNoValida() {
         return this.formularioTarea.get('horas').invalid && this.formularioTarea.get('horas').touched;
@@ -198,7 +198,7 @@ export class PlanningComponent {
 
         this.formularioTarea = this.formBuilder.group({
             id: [-1],
-            tarea: ['', Validators.required],
+            rolFuncion: ['', Validators.required],
             horas: ['', Validators.required],
             periodo: [1],
         });
@@ -222,22 +222,14 @@ export class PlanningComponent {
 
 
     onClickListarProyectos(event: any) {
-        this.listadoFULL = this.proyectoService.proyectos.filter(item => {
-            var lista = item.Tareas.filter(t => this.profesional.toLowerCase().includes(t.Profesional.Apellido.toLowerCase()));
-            return lista.length > 0;
-        });
+        this.listadoFULL = this.proyectoService.proyectos;
         if (this.listadoFULL.length > 0) {
             this.proyectoSeleccionado = this.listadoFULL[0];
         }
         this.refreshDatos();
+        console.log('proyectoSeleccionado', this.proyectoSeleccionado);
     }
 
-    onClickLimpiarProfesional(event: any) {
-        event.preventDefault();
-        this.profesional = '';
-        this.proyectoSeleccionado = null;
-        this.onClickListarProyectos(event);
-    }
 
 
     onClickSeleccionarProyecto(

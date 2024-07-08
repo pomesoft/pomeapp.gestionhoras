@@ -49,7 +49,7 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterContentInit {
     @ViewChild(BaseChartDirective) chart: BaseChartDirective | undefined;
 
     totalHoras: ChartData<'bar'> = {
-        labels: ['Planificadas', 'Registradas'],
+        labels: ['Asignadas', 'Registradas'],
         datasets: [
             {
                 data: [650, 400],
@@ -72,7 +72,7 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterContentInit {
         labels: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 1, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30],
         datasets: [
             {
-                label: 'Planificadas',
+                label: 'Asignadas',
                 data: [0, 0, 8, 8, 8, 8, 8, 0, 0, 8, 8, 8, 8, 8, 0, 0, 8, 8, 8, 8,8, 8, 8, 8, 8, 8, 8, 8, 8,0],
                 backgroundColor: 'rgba(255, 159, 64, 0.2)',
                 borderColor: 'rgba(255, 159, 64, 1)',

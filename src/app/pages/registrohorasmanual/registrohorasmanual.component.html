@@ -4,14 +4,14 @@
 
             <div class="form-group row">
 
-                <label class="col-sm-3 control-label col-form-label text-right">Profesional:</label>
+                <label class="col-sm-3 control-label col-form-label text-right">Usuario:</label>
                 <div class="col-sm-9 control-label col-form-label">
                     <div class="input-group">
                         <span class="input-group-addon ">
                             <i class="fa fa-user-o"></i>
                         </span>
                         <input id="typeahead-focus" type="text" class="form-control" formControlName="profesional"
-                            placeholder="Seleccione un profesional" [ngbTypeahead]="searchProfesional"
+                            placeholder="Seleccione un usuario" [ngbTypeahead]="searchProfesional"
                             (focus)="focus$.next($any($event).target.value)"
                             (click)="click$.next($any($event).target.value)" #instanceProfesional="ngbTypeahead" />
                         <span class="input-group-addon" role="button" (click)="onClickLimpiarTypeahead('profesional')">
@@ -27,7 +27,7 @@
                 <div class="col-sm-9 control-label col-form-label">
                     <div class="input-group">
                         <span class="input-group-addon">
-                            <i class="fa  fa-list-alt"></i>
+                            <i class="fa fa-user"></i>
                         </span>
                         <input id="clienteTypeahead" type="text" class="form-control" formControlName="cliente"
                             placeholder="Seleccione un cliente" [class.is-invalid]="clienteNoValido"
@@ -50,7 +50,7 @@
                 <div class="col-sm-9 control-label col-form-label">
                     <div class="input-group">
                         <span class="input-group-addon">
-                            <i class="fa  fa-list-alt"></i>
+                            <i class="fa fa-list-alt"></i>
                         </span>
                         <input id="proyectoTypeahead" type="text" class="form-control" formControlName="proyecto"
                             placeholder="Seleccione un proyecto" [class.is-invalid]="proyectoNoValido"
@@ -83,17 +83,43 @@
                 </div>
 
 
-                <label class="col-sm-3 control-label col-form-label text-right">Tarea:</label>
+                <label class="col-sm-3 control-label col-form-label text-right">Función Asociada:</label>
+                <div class="col-sm-9 control-label col-form-label">
+                    <div class="input-group">
+                        <div class="input-group">
+                            <span class="input-group-addon">
+                                <i class="fa fa-pencil-square-o"></i>
+                            </span>
+                            <select class="form-control custom-select" id="rolFuncion" 
+                                formControlName="rolFuncion">
+                                <option value="0">Seleccione una función asociada</option>
+                                <option value="1">EXPERTO REGULATORIO</option>
+                                <option value="2">EXPERTO FARMACOVIGILANCIA</option>
+                                <option value="3">EXPERTO MEDICO</option>
+                                <option value="4">EXPERTO COMPLIANCE</option>
+                                <option value="5">EXPERTO LEGAL</option>
+                                <option value="6">PROJECT MANAGER</option>
+                                <option value="7">ANALISTA SENIOR</option>
+                                <option value="8">ANALISTA JUNIOR</option>
+                                <option value="9">TECNICO ADMINISTRATIVO</option>
+                                <option value="10">GESTORÍA</option>
+                            </select>
+                            
+                        </div>
+                        <small *ngIf="rolFuncionNoValido" class="text-danger">
+                            Debe seleccioinar función asociada
+                        </small>
+                    </div>
+                </div>
+
+                <label class="col-sm-3 control-label col-form-label text-right">Detalle y Producto:</label>
                 <div class="col-sm-9 control-label col-form-label">
                     <div class="input-group">
                         <span class="input-group-addon">
                             <i class="fa fa-pencil-square-o"></i>
                         </span>
-                        <input type="text" class="form-control" placeholder="Ingrese al tarea" formControlName="tarea"
-                            [class.is-invalid]="tareaNoValido">
-                        <small *ngIf="tareaNoValido" class="text-danger">
-                            Debe ingresar tarea
-                        </small>
+                        <textarea class="form-control" rows="2"  placeholder="Ingrese detalle y producto si aplica" 
+                            formControlName="detalle"></textarea>
                     </div>
                 </div>
 
@@ -120,8 +146,10 @@
                         <span class="input-group-addon">
                             <i class="fa fa-clock-o"></i>
                         </span>
-                        <input type="number" class="form-control" id="horas" formControlName="horas"
-                            [class.is-invalid]="horasNoValida">
+                        <input type="number" class="form-control" id="horas" 
+                            formControlName="horas"
+                            [class.is-invalid]="horasNoValida"
+                            (focus)="onFocus($event)">
                     </div>
                     <small *ngIf="horasNoValida" class="text-danger">
                         Debe ingresar horas

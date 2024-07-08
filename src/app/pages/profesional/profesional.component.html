@@ -1,0 +1,49 @@
+<form autocomplete="off" [formGroup]="formulario" (ngSubmit)="onClickGuardar()">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h4 class="modal-title" id="formModalLabel1">Datos de {{tituloFormulario}}</h4>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="onClickCerrar()"><span
+                    aria-hidden="true">&times;</span></button>
+        </div>
+        <div class="modal-body">
+
+            <div class="form-group row">
+                <label class="col-sm-3 text-right control-label col-form-label">Apellido</label>
+                <div class="col-sm-9">
+                    <input type="text" class="form-control" placeholder="Ingrese apellido" formControlName="apellido"
+                        [class.is-invalid]="apellidoNoValido">
+                    <small *ngIf="apellidoNoValido" class="text-danger">
+                        Debe ingresar apellido para continuar
+                    </small>
+                </div>
+            </div>
+
+            <div class="form-group row">
+                <label class="col-sm-3 text-right control-label col-form-label">Nombre</label>
+                <div class="col-sm-9">
+                    <input type="text" class="form-control" placeholder="Ingrese nombre" formControlName="nombre"
+                        [class.is-invalid]="nombreNoValido">
+                    <small *ngIf="nombreNoValido" class="text-danger">
+                        Debe ingresar nombre para continuar
+                    </small>
+                </div>
+            </div>
+
+
+        </div>
+        <div class="modal-footer">            
+            <button type="submit" class="btn btn-success" *ngIf="!procesando">
+                <i class="fa fa-save m-2"></i>
+                Grabar
+            </button>
+            <button type="button" class="btn btn-default" disabled *ngIf="procesando">
+                <i class="fa fa-spinner fa-sync m-2"></i>
+                Procesando...
+            </button>
+            <button type="button" class="btn btn-default" (click)="onClickCerrar()">
+                <i class="fa fa-times m-2"></i>
+                Cancelar
+            </button>
+        </div>
+    </div>
+</form>
