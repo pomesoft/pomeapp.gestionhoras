@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { ActivatedRouteSnapshot, CanActivate, RouterStateSnapshot } from '@angular/router';
+import { ActivatedRouteSnapshot, RouterStateSnapshot } from '@angular/router';
 import { Observable } from 'rxjs';
 
 import { UsuarioService } from '../services/usuario.service';
@@ -7,7 +7,7 @@ import { UsuarioService } from '../services/usuario.service';
 @Injectable({
     providedIn: 'root'
 })
-export class RoladminGuard implements CanActivate {
+export class RoladminGuard  {
 
     constructor( private usuarioService: UsuarioService ) {}
 
