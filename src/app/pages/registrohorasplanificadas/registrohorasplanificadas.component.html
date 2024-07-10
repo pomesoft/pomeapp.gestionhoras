@@ -106,69 +106,73 @@
             </div> -->
             <div class="col-12" style="padding: 0px !important;">
 
-                <div class="card">
-                    <div class="card-body"  *ngIf="proyectoSeleccionado">
-                        <h6 class="card-title">
-                            {{proyectoSeleccionado.Cliente.Nombre}} - 
-                            {{proyectoSeleccionado.Descripcion}} - 
-                            {{proyectoSeleccionado.Tipo.Descripcion}}
-                        </h6>
-                        
+                <ng-container *ngFor="let itemProyecto of proyectosCliente">
 
-                        <ul class="list-group" >
-                            <li class="list-group-item border border-bottom">
-                
-                                <div class="d-flex flex-row">
-                                    <div style="width: 30%;">
-                                        <h6>Función Asociada</h6>
-                                    </div>
-                                    <div style="width: 45%;">
-                                        <h6>Detalle y Producto</h6>
-                                    </div>
-                                    <div class="p-l-10" style="width: 15%;">
-                                        <h6>Fecha</h6>
-                                    </div>
-                                    <div class="p-l-10" style="width: 10%;">
-                                        <h6>Horas</h6>
-                                    </div>
-                                </div>
+                    <div class="card">
+                        <div class="card-body" >
+                            <h6 class="card-title">
+                                {{itemProyecto.Cliente.Nombre}} - 
+                                {{itemProyecto.Descripcion}} - 
+                                {{itemProyecto.Tipo.Descripcion}}
+                            </h6>
+                            
 
-                            </li>
-
-                            <li class="list-group-item border border-bottom"
-                                *ngFor="let rolFuncion of proyectoSeleccionado.RolesAsignados; index as i; trackBy: trackByFn">
-
-                                <div class="d-flex flex-row">
-                                    <div style="width: 30%;">
-                                        {{rolFuncion.Rol.Descripcion}}
-                                    </div>
-                                    <div class="p-l-10 p-r-10" style="width: 45%;">
-                                        <textarea class="form-control" rows="2" (focus)="onFocus($event)"></textarea>
-                                    </div>                                    
-                                    <div style="width: 15%;">
-                                        <div class="input-group">
-                                            <span class="input-group-addon" (click)="dteFecha.toggle()">
-                                                <i class="fa fa-calendar"></i>
-                                            </span>
-                                            <input id="fechaNgDateStruct" class="form-control" placeholder="dd/mm/yyyy"
-                                                name="dteFecha" ngbDatepicker #dteFecha="ngbDatepicker"
-                                                [(ngModel)]="proyectoSeleccionado.RolesAsignados[i].RegistroFecha" />
+                            <ul class="list-group" >
+                                <li class="list-group-item border border-bottom">
+                    
+                                    <div class="d-flex flex-row">
+                                        <div style="width: 30%;">
+                                            <h6>Función Asociada</h6>
+                                        </div>
+                                        <div style="width: 45%;">
+                                            <h6>Detalle y Producto</h6>
+                                        </div>
+                                        <div class="p-l-10" style="width: 15%;">
+                                            <h6>Fecha</h6>
+                                        </div>
+                                        <div class="p-l-10" style="width: 10%;">
+                                            <h6>Horas</h6>
                                         </div>
                                     </div>
-                                    <div class="p-l-10 p-r-10"  style="width: 10%;">
-                                        <div class="input-group">                                            
-                                            <input type="number" id="inputHoras_{{rolFuncion.Id}}" class="form-control"
-                                                [(ngModel)]="proyectoSeleccionado.RolesAsignados[i].RegistroHoras"
-                                                (focus)="onFocus($event)"
-                                                (keypress)="onKeyPressInputHoras($event, rolFuncion.Id)">
-                                        </div>
-                                    </div>
-                                </div>                                
-                            </li>
-                        </ul>
 
+                                </li>
+
+                                <li class="list-group-item border border-bottom"
+                                    *ngFor="let rolFuncion of itemProyecto.RolesAsignados; index as i; trackBy: trackByFn">
+
+                                    <div class="d-flex flex-row">
+                                        <div style="width: 30%;">
+                                            {{rolFuncion.Rol.Descripcion}}
+                                        </div>
+                                        <div class="p-l-10 p-r-10" style="width: 45%;">
+                                            <textarea class="form-control" rows="2" (focus)="onFocus($event)"></textarea>
+                                        </div>                                    
+                                        <div style="width: 15%;">
+                                            <div class="input-group">
+                                                <span class="input-group-addon" (click)="dteFecha.toggle()">
+                                                    <i class="fa fa-calendar"></i>
+                                                </span>
+                                                <input id="fechaNgDateStruct" class="form-control" placeholder="dd/mm/yyyy"
+                                                    name="dteFecha" ngbDatepicker #dteFecha="ngbDatepicker"
+                                                    [(ngModel)]="itemProyecto.RolesAsignados[i].RegistroFecha" />
+                                            </div>
+                                        </div>
+                                        <div class="p-l-10 p-r-10"  style="width: 10%;">
+                                            <div class="input-group">                                            
+                                                <input type="number" id="inputHoras_{{rolFuncion.Id}}" class="form-control"
+                                                    [(ngModel)]="itemProyecto.RolesAsignados[i].RegistroHoras"
+                                                    (focus)="onFocus($event)"
+                                                    (keypress)="onKeyPressInputHoras($event, rolFuncion.Id)">
+                                            </div>
+                                        </div>
+                                    </div>                                
+                                </li>
+                            </ul>
+
+                        </div>
                     </div>
-                </div>
+
+                </ng-container>
 
 
 

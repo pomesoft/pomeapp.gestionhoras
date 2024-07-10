@@ -200,7 +200,6 @@ export class PlanningComponent {
             id: [-1],
             rolFuncion: ['', Validators.required],
             horas: ['', Validators.required],
-            periodo: [1],
         });
         Object.keys(this.formularioTarea.controls).forEach(key => {
             if (key != 'id') {

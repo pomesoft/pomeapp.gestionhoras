@@ -139,13 +139,13 @@ export class ProyectoService {
             { Id: 10, Descripcion: 'GESTORÍA' },
         ];
 
-        let rolAsignado1: RolFuncion = { Id: 1, Rol: this.roles.find(r => r.Id == 1), HorasAsignadas: 10, Periodo: 1, RegistroFecha: this.helpersService.parserDate(fecIni), RegistroHoras: 0 };
-        let rolAsignado2: RolFuncion = { Id: 2, Rol: this.roles.find(r => r.Id == 2), HorasAsignadas: 10, Periodo: 1, RegistroFecha: this.helpersService.parserDate(fecIni), RegistroHoras: 0 };
-        let rolAsignado3: RolFuncion = { Id: 3, Rol: this.roles.find(r => r.Id == 3), HorasAsignadas: 10, Periodo: 1, RegistroFecha: this.helpersService.parserDate(fecIni), RegistroHoras: 0 };
-        let rolAsignado6: RolFuncion = { Id: 6, Rol: this.roles.find(r => r.Id == 6), HorasAsignadas: 10, Periodo: 1, RegistroFecha: this.helpersService.parserDate(fecIni), RegistroHoras: 0 };
-        let rolAsignado7: RolFuncion = { Id: 7, Rol: this.roles.find(r => r.Id == 7), HorasAsignadas: 10, Periodo: 1, RegistroFecha: this.helpersService.parserDate(fecIni), RegistroHoras: 0 };
-        let rolAsignado8: RolFuncion = { Id: 8, Rol: this.roles.find(r => r.Id == 8), HorasAsignadas: 10, Periodo: 1, RegistroFecha: this.helpersService.parserDate(fecIni), RegistroHoras: 0 };
-        let rolAsignado9: RolFuncion = { Id: 9, Rol: this.roles.find(r => r.Id == 9), HorasAsignadas: 10, Periodo: 1, RegistroFecha: this.helpersService.parserDate(fecIni), RegistroHoras: 0 };
+        let rolAsignado1: RolFuncion = { Id: 1, Rol: this.roles.find(r => r.Id == 1), HorasAsignadas: 0, Periodo: 1, RegistroFecha: this.helpersService.parserDate(fecIni), RegistroHoras: 0 };
+        let rolAsignado2: RolFuncion = { Id: 2, Rol: this.roles.find(r => r.Id == 2), HorasAsignadas: 0, Periodo: 1, RegistroFecha: this.helpersService.parserDate(fecIni), RegistroHoras: 0 };
+        let rolAsignado3: RolFuncion = { Id: 3, Rol: this.roles.find(r => r.Id == 3), HorasAsignadas: 0, Periodo: 1, RegistroFecha: this.helpersService.parserDate(fecIni), RegistroHoras: 0 };
+        let rolAsignado6: RolFuncion = { Id: 6, Rol: this.roles.find(r => r.Id == 6), HorasAsignadas: 0, Periodo: 1, RegistroFecha: this.helpersService.parserDate(fecIni), RegistroHoras: 0 };
+        let rolAsignado7: RolFuncion = { Id: 7, Rol: this.roles.find(r => r.Id == 7), HorasAsignadas: 0, Periodo: 1, RegistroFecha: this.helpersService.parserDate(fecIni), RegistroHoras: 0 };
+        let rolAsignado8: RolFuncion = { Id: 8, Rol: this.roles.find(r => r.Id == 8), HorasAsignadas: 0, Periodo: 1, RegistroFecha: this.helpersService.parserDate(fecIni), RegistroHoras: 0 };
+        let rolAsignado9: RolFuncion = { Id: 9, Rol: this.roles.find(r => r.Id == 9), HorasAsignadas: 0, Periodo: 1, RegistroFecha: this.helpersService.parserDate(fecIni), RegistroHoras: 0 };
 
 
         let proyecto1: Proyecto = { Id: 1, Descripcion: 'PROYECTO #001', Cliente: this.clientes.find(c=>c.Id==1), Tipo: tipoMensual, TipoDescripcion: tipoMensual.Descripcion, FechaInicio: fecIni, FechaFin: this.agregarMeses(fecIni, 12), Producto: producto1, ProductoDescripcion: producto1.Descripcion, RolesAsignados: [rolAsignado1, rolAsignado3, rolAsignado6, rolAsignado7] };

@@ -26,6 +26,7 @@ export class RegistrohorasplanificadasComponent implements OnInit, OnDestroy {
     listado$: Observable<Proyecto[]>;
     hayDatos: boolean = false;
     proyectoSeleccionado: Proyecto;
+    proyectosCliente: Proyecto[];
     proyectoId: number = -1;
 
     registroHorasSubs: Subscription;
@@ -175,9 +176,11 @@ export class RegistrohorasplanificadasComponent implements OnInit, OnDestroy {
     }
 
     onChangeCliente(event) {
-        this.proyectos = this.proyectoService.proyectos
-            .filter(item => item.Cliente.Nombre === event)
-            .map(item => item.Descripcion);
+
+        this.proyectosCliente = this.proyectoService.proyectos
+                                    .filter(item => item.Cliente.Nombre === event);
+
+        this.proyectos =this.proyectosCliente.map(item => item.Descripcion);
 
         if (this.proyectos.length == 1) {
             this.proyecto = this.proyectos[0];
@@ -192,7 +195,6 @@ export class RegistrohorasplanificadasComponent implements OnInit, OnDestroy {
     }
 
     onChangeProyecto(event) {
-        console.log('onChangeProyecto(event)', event);
         this.proyectoSeleccionado = this.listadoFULL.find(item => item.Descripcion == event);
         this.hayDatos = this.proyectoSeleccionado != null;
     }
