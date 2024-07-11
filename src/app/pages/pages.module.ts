@@ -51,6 +51,9 @@ import { ProyectosComponent } from './proyectos/proyectos.component';
 import { ProyectoComponent } from './proyecto/proyecto.component';
 import { FuncionesComponent } from './funciones/funciones.component';
 import { FuncionComponent } from './funcion/funcion.component';
+import { ReportegeneralComponent } from './reportegeneral/reportegeneral.component';
+import { ReportetimesheetComponent } from './reportetimesheet/reportetimesheet.component';
+import { ReportemensualizadoComponent } from './reportemensualizado/reportemensualizado.component';
 
 @NgModule({
     declarations: [
@@ -75,6 +78,9 @@ import { FuncionComponent } from './funcion/funcion.component';
         ProyectoComponent,
         FuncionesComponent,
         FuncionComponent,
+        ReportegeneralComponent,
+        ReportetimesheetComponent,
+        ReportemensualizadoComponent,
     ],
     exports: [
         DashboardComponent,

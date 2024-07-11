@@ -105,6 +105,7 @@ export interface Profesional {
     Id: number;
     Apellido: string;
     Nombre: string;
+    Funcion: Funcion;
 }
 
 export interface Cliente {
@@ -143,8 +144,9 @@ export interface RegistroHora {
     Profesional: Profesional;
     Cliente: Cliente;
     Proyecto: Proyecto;
-    Tarea: Tarea;
+    Funcion: Funcion;
     Fecha?: Date;
     FechaFormat?: string;
     Horas?: number;
+    Detalle?:string;
 }

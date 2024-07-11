@@ -27,6 +27,9 @@ export class RegistrohorasplanificadasComponent implements OnInit, OnDestroy {
     hayDatos: boolean = false;
     proyectoSeleccionado: Proyecto;
     proyectosCliente: Proyecto[];
+
+    profesionalSeleccionado: Profesional;
+
     proyectoId: number = -1;
 
     registroHorasSubs: Subscription;
@@ -43,6 +46,9 @@ export class RegistrohorasplanificadasComponent implements OnInit, OnDestroy {
     proyectos: string[] = [];
 
     periodo: number = 1;
+
+    listarTodasFunciones: boolean = false;
+
 
     @ViewChild('instance', { static: true }) instance: NgbTypeahead;
     focus$ = new Subject<string>();
@@ -127,10 +133,11 @@ export class RegistrohorasplanificadasComponent implements OnInit, OnDestroy {
             });
 
         this.listadoFULL = this.proyectoService.proyectos;
-        this.listadoProfesionales = this.proyectoService.profesionales.map(item => item.Apellido + '' + item.Nombre);
+        this.listadoProfesionales = this.proyectoService.profesionales.map(item => item.Apellido + ' ' + item.Nombre);
         this.clientes = this.proyectoService.clientes.map(item => item.Nombre);
 
         this.profesional = 'APELLIDO 1 NOMBRE 1';
+        this.onChangeProfesional();
     }
 
     ngOnDestroy(): void {
@@ -173,14 +180,25 @@ export class RegistrohorasplanificadasComponent implements OnInit, OnDestroy {
         this.profesional = '';
         this.cliente = '';
         this.proyectoSeleccionado = null;
+        this.profesionalSeleccionado = null;
+    }
+
+    onChangeProfesional() {
+
+        if (this.profesional && this.profesional != '') {
+            this.profesionalSeleccionado = this.proyectoService.profesionales.find(item => (item.Apellido + ' ' + item.Nombre) == this.profesional);
+        }
+
+        console.log(this.profesionalSeleccionado);
+
     }
 
     onChangeCliente(event) {
 
         this.proyectosCliente = this.proyectoService.proyectos
-                                    .filter(item => item.Cliente.Nombre === event);
+            .filter(item => item.Cliente.Nombre === event);
 
-        this.proyectos =this.proyectosCliente.map(item => item.Descripcion);
+        this.proyectos = this.proyectosCliente.map(item => item.Descripcion);
 
         if (this.proyectos.length == 1) {
             this.proyecto = this.proyectos[0];

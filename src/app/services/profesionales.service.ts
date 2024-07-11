@@ -17,11 +17,12 @@ export class ProfesionalesService {
     constructor(
         private http: HttpClient
     ) {
-        let profesional1: Profesional = { Id: 1, Apellido: 'APELLIDO 1', Nombre: 'NOMBRE 1' };
-        let profesional2: Profesional = { Id: 2, Apellido: 'APELLIDO 2', Nombre: 'NOMBRE 2' };
-        let profesional3: Profesional = { Id: 3, Apellido: 'APELLIDO 3', Nombre: 'NOMBRE 3' };
+        let profesional1: Profesional = { Id: 1, Apellido: 'APELLIDO 1', Nombre: 'NOMBRE 1', Funcion: { Id: 6, Descripcion: 'PROJECT MANAGER' } };
+        let profesional2: Profesional = { Id: 2, Apellido: 'APELLIDO 2', Nombre: 'NOMBRE 2', Funcion: { Id: 7, Descripcion: 'ANALISTA SENIOR' }  };
+        let profesional3: Profesional = { Id: 3, Apellido: 'APELLIDO 3', Nombre: 'NOMBRE 3', Funcion: { Id: 8, Descripcion: 'ANALISTA JUNIOR' }  };
+        let profesional4: Profesional = { Id: 3, Apellido: 'APELLIDO 3', Nombre: 'NOMBRE 3', Funcion: { Id: 1, Descripcion: 'EXPERTO REGULATORIO' }  };
 
-        this.profesionales = [profesional1, profesional2, profesional3];
+        this.profesionales = [profesional1, profesional2, profesional3, profesional4];
     }
 
     listar(): Observable<Profesional[]> {

@@ -2,21 +2,21 @@
     <div class="col col-md-12">
         <div class="form-group row" style="margin-bottom: 5px !important;">
             <label class="col-md-2 control-label col-form-label text-center">Usuario:</label>
-            <div class="col-md-7">
+            <div class="col-md-6">
                 <div class="input-group">
                     <span class="input-group-addon ">
                         <i class="fa fa-user-o"></i>
                     </span>
                     <input id="typeahead-focus" type="text" class="form-control" [(ngModel)]="profesional"
                         [ngbTypeahead]="searchProfesional" (focus)="focus$.next($any($event).target.value)"
-                        (click)="click$.next($any($event).target.value)" #instance="ngbTypeahead" />
+                        (click)="click$.next($any($event).target.value)" #instance="ngbTypeahead" (ngModelChange)="onChangeProfesional()"/>
                     <span class="input-group-addon" role="button" data-toggle="tooltip" data-placement="top"
                         title="Limpiar profesional" (click)="onClickLimpiarProfesional($event)">
                         <i class="fa fa-times"></i>
                     </span>
                 </div>
             </div>
-            <div class="col-12 col-md-3 p-t-5">
+            <div class="col-12 col-md-4 p-t-5">
                 <div class="input-group">
                     <button type="button" class="btn btn-rounded btn-block btn-outline-success waves-effect waves-light"
                         (click)="onClickGuardar($event)">
@@ -26,10 +26,10 @@
                 </div>
             </div>
         </div>
-        <div class="form-group row" style="margin-bottom: 5px !important;">
+        <div class="form-group row">
 
             <label class="col-md-2 control-label col-form-label text-center">Cliente:</label>
-            <div class="col-md-4">
+            <div class="col-md-6">
                 <div class="input-group">
                     <span class="input-group-addon ">
                         <i class="fa fa-user"></i>
@@ -44,7 +44,15 @@
                 </div>
             </div>
 
-            <label class="col-md-1 control-label col-form-label text-center">Proyecto</label>
+            <div class="col-12 col-md-4 p-t-10">
+                <div class="form-group form-check">
+                    <input type="checkbox" id="listarTodasFunciones" [(ngModel)]="listarTodasFunciones"
+                                class="form-check-input" />
+                    <label for="listarTodasFunciones" class="form-check-label">Todas las Funciones Asociadas</label>
+                </div>
+            </div>
+
+            <!-- <label class="col-md-1 control-label col-form-label text-center">Proyecto</label>
             <div class="col-md-5">
                 <div class="input-group">
                     <span class="input-group-addon ">
@@ -58,64 +66,26 @@
                             <i class="fa fa-times"></i>
                         </span>
                 </div>
-            </div>
+            </div> -->
 
         </div>
         
 
         <div class="row">
-            <!-- <div class="col-md-3 col-12" style="padding: 0px !important;">
-                <div class="card">
-                    <div class="card-body">
-                        <h5 class="card-title">Proyectos</h5>
-                        <form>
-                            <div class="input-group">
-                                <input type="text" class="form-control w-30"
-                                    placeholder="Buscar..." [formControl]="filtro">
-                                <span class="input-group-addon" role="button" data-toggle="tooltip" data-placement="top"
-                                    title="Buscar" (click)="refreshDatos()">
-                                    <i class="fa fa-search"></i>
-                                </span>
-                                <span class="input-group-addon" role="button" data-toggle="tooltip" data-placement="top"
-                                    title="Borrar" (click)="filtro.reset('')">
-                                    <i class="fa fa-times"></i>
-                                </span>
-                            </div>
-                        </form>
-                        <div class="list-group">
-                            <a href="#" *ngFor="let proyecto of listado$ | async;"
-                                class="list-group-item list-group-item-action  border"
-                                [class.active]="proyectoSeleccionado && proyecto.Id==proyectoSeleccionado.Id"
-                                (click)="onClickSeleccionarProyecto($event, proyecto)">
-
-                                <div class="d-flex flex-row ">
-                                    <div class="flex-grow-1">
-                                        <ngb-highlight [result]="proyecto.Cliente.Nombre"
-                                            [term]="filtro.value"></ngb-highlight><br/>
-                                        <ngb-highlight [result]="proyecto.Descripcion"
-                                            [term]="filtro.value"></ngb-highlight>
-                                    </div>
-                                    <div>
-                                        <span class="h5 text-muted"><i class="mdi mdi-arrow-right-bold"></i></span>
-                                    </div>
-                                </div>
-                            </a>
-                        </div>
-                    </div>
-                </div>
-            </div> -->
-            <div class="col-12" style="padding: 0px !important;">
+            <div class="col-12" style="padding-top: 0px !important;">
 
                 <ng-container *ngFor="let itemProyecto of proyectosCliente">
 
-                    <div class="card">
-                        <div class="card-body" >
+                    <div class="card border">
+                        <div class="card-header">
                             <h6 class="card-title">
                                 {{itemProyecto.Cliente.Nombre}} - 
                                 {{itemProyecto.Descripcion}} - 
                                 {{itemProyecto.Tipo.Descripcion}}
                             </h6>
                             
+                        </div>
+                        <div class="card-body" >                            
 
                             <ul class="list-group" >
                                 <li class="list-group-item border border-bottom">
@@ -137,36 +107,39 @@
 
                                 </li>
 
-                                <li class="list-group-item border border-bottom"
-                                    *ngFor="let rolFuncion of itemProyecto.RolesAsignados; index as i; trackBy: trackByFn">
+                                <ng-container *ngFor="let rolFuncion of itemProyecto.RolesAsignados; index as i; trackBy: trackByFn">
 
-                                    <div class="d-flex flex-row">
-                                        <div style="width: 30%;">
-                                            {{rolFuncion.Rol.Descripcion}}
-                                        </div>
-                                        <div class="p-l-10 p-r-10" style="width: 45%;">
-                                            <textarea class="form-control" rows="2" (focus)="onFocus($event)"></textarea>
-                                        </div>                                    
-                                        <div style="width: 15%;">
-                                            <div class="input-group">
-                                                <span class="input-group-addon" (click)="dteFecha.toggle()">
-                                                    <i class="fa fa-calendar"></i>
-                                                </span>
-                                                <input id="fechaNgDateStruct" class="form-control" placeholder="dd/mm/yyyy"
-                                                    name="dteFecha" ngbDatepicker #dteFecha="ngbDatepicker"
-                                                    [(ngModel)]="itemProyecto.RolesAsignados[i].RegistroFecha" />
+                                    <li class="list-group-item border border-bottom" *ngIf="rolFuncion.Rol.Id == profesionalSeleccionado.Funcion.Id || listarTodasFunciones">
+
+                                        <div class="d-flex flex-row">
+                                            <div style="width: 30%;">
+                                                {{rolFuncion.Rol.Descripcion}}
                                             </div>
-                                        </div>
-                                        <div class="p-l-10 p-r-10"  style="width: 10%;">
-                                            <div class="input-group">                                            
-                                                <input type="number" id="inputHoras_{{rolFuncion.Id}}" class="form-control"
-                                                    [(ngModel)]="itemProyecto.RolesAsignados[i].RegistroHoras"
-                                                    (focus)="onFocus($event)"
-                                                    (keypress)="onKeyPressInputHoras($event, rolFuncion.Id)">
+                                            <div class="p-l-10 p-r-10" style="width: 45%;">
+                                                <textarea class="form-control" rows="2" (focus)="onFocus($event)"></textarea>
+                                            </div>                                    
+                                            <div style="width: 15%;">
+                                                <div class="input-group">
+                                                    <span class="input-group-addon" (click)="dteFecha.toggle()">
+                                                        <i class="fa fa-calendar"></i>
+                                                    </span>
+                                                    <input id="fechaNgDateStruct" class="form-control" placeholder="dd/mm/yyyy"
+                                                        name="dteFecha" ngbDatepicker #dteFecha="ngbDatepicker"
+                                                        [(ngModel)]="itemProyecto.RolesAsignados[i].RegistroFecha" />
+                                                </div>
                                             </div>
-                                        </div>
-                                    </div>                                
-                                </li>
+                                            <div class="p-l-10 p-r-10"  style="width: 10%;">
+                                                <div class="input-group">                                            
+                                                    <input type="number" id="inputHoras_{{rolFuncion.Id}}" class="form-control"
+                                                        [(ngModel)]="itemProyecto.RolesAsignados[i].RegistroHoras"
+                                                        (focus)="onFocus($event)"
+                                                        (keypress)="onKeyPressInputHoras($event, rolFuncion.Id)">
+                                                </div>
+                                            </div>
+                                        </div>                                
+                                    </li>
+
+                                </ng-container>
                             </ul>
 
                         </div>

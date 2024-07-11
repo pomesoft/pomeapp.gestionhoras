@@ -21,7 +21,6 @@ import { Proyecto, TipoProyecto } from '../../models/entity.models';
 })
 export class RegistrohorasmanualComponent implements OnInit, OnDestroy {
 
-    tituloFormulario: string = 'Moneda'
 
     procesando: boolean = false;
 

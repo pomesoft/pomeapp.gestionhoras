@@ -93,39 +93,6 @@ export class ProyectoService {
         ];
 
 
-        let profesional1: Profesional = { Id: 1, Apellido: 'APELLIDO 1', Nombre: 'NOMBRE 1' };
-        let profesional2: Profesional = { Id: 2, Apellido: 'APELLIDO 2', Nombre: 'NOMBRE 2' };
-        let profesional3: Profesional = { Id: 3, Apellido: 'APELLIDO 3', Nombre: 'NOMBRE 3' };
-
-        this.profesionales = [profesional1, profesional2, profesional3];
-
-        let producto1: Producto = { Id: 1, Descripcion: 'PRODUCTO ENTREGABLE #1' };
-        let producto2: Producto = { Id: 2, Descripcion: 'PRODUCTO ENTREGABLE #2' };
-        let producto3: Producto = { Id: 3, Descripcion: 'PRODUCTO ENTREGABLE #3' };
-
-        let tipoMensual: TipoProyecto = { Id: 1, Descripcion: 'MENSUALIZADO' };
-        let tipoEntregable: TipoProyecto = { Id: 2, Descripcion: 'ENTREGABLE' };
-
-        this.tiposProyecto = [tipoMensual, tipoEntregable];
-
-        let tarea1: Tarea = { Id: 1, Descripcion: 'REUNIÓN', FechaInicio: this.agregarMeses(fecIni, -5), FechaFin: this.agregarMeses(fecIni, 12), Profesional: profesional1, FechaRegistro: fechaRegistro, HorasRegistro: 0, Periodo: 2 };
-        let tarea2: Tarea = { Id: 2, Descripcion: 'REUNIÓN', FechaInicio: this.agregarMeses(fecIni, -5), FechaFin: this.agregarMeses(fecIni, 12), Profesional: profesional2, FechaRegistro: fechaRegistro, HorasRegistro: 0, Periodo: 1 };
-        let tarea3: Tarea = { Id: 3, Descripcion: 'REUNIÓN', FechaInicio: this.agregarMeses(fecIni, -5), FechaFin: this.agregarMeses(fecIni, 12), Profesional: profesional3, FechaRegistro: fechaRegistro, HorasRegistro: 0, Periodo: 1 };
-        let tarea4: Tarea = { Id: 4, Descripcion: 'PRESENTACIÓN', FechaInicio: this.agregarMeses(fecIni, -5), FechaFin: this.agregarMeses(fecIni, 6), Profesional: profesional1, FechaRegistro: fechaRegistro, HorasRegistro: 0, Periodo: 3 };
-        let tarea5: Tarea = { Id: 5, Descripcion: 'HACER REGISTRO', FechaInicio: this.agregarMeses(fecIni, -5), FechaFin: this.agregarMeses(fecIni, 12), Profesional: profesional2, FechaRegistro: fechaRegistro, HorasRegistro: 0, Periodo: 1 };
-        let tarea6: Tarea = { Id: 6, Descripcion: 'HACER REGISTRO', FechaInicio: this.agregarMeses(fecIni, -5), FechaFin: this.agregarMeses(fecIni, 12), Profesional: profesional3, FechaRegistro: fechaRegistro, HorasRegistro: 0, Periodo: 1 };
-        let tarea7: Tarea = { Id: 7, Descripcion: 'HACER REGISTRO', FechaInicio: this.agregarMeses(fecIni, -5), FechaFin: this.agregarMeses(fecIni, 2), Profesional: profesional1, FechaRegistro: fechaRegistro, HorasRegistro: 0, Periodo: 2 };
-        let tarea8: Tarea = { Id: 8, Descripcion: 'RENOVACIÓN', FechaInicio: this.agregarMeses(fecIni, -5), FechaFin: this.agregarMeses(fecIni, 12), Profesional: profesional2, FechaRegistro: fechaRegistro, HorasRegistro: 0, Periodo: 1 };
-        let tarea9: Tarea = { Id: 9, Descripcion: 'RENOVACIÓN', FechaInicio: this.agregarMeses(fecIni, -5), FechaFin: this.agregarMeses(fecIni, 12), Profesional: profesional3, FechaRegistro: fechaRegistro, HorasRegistro: 0, Periodo: 1 };
-        let tarea10: Tarea = { Id: 10, Descripcion: 'RENOVACIÓN', FechaInicio: this.agregarMeses(fecIni, -5), FechaFin: this.agregarMeses(fecIni, 12), Profesional: profesional1, FechaRegistro: fechaRegistro, HorasRegistro: 0, Periodo: 1 };
-        let tarea11: Tarea = { Id: 11, Descripcion: 'PRESENTACIÓN', FechaInicio: this.agregarMeses(fecIni, -5), FechaFin: this.agregarMeses(fecIni, 3), Profesional: profesional2, FechaRegistro: fechaRegistro, HorasRegistro: 0, Periodo: 1 };
-        let tarea12: Tarea = { Id: 12, Descripcion: 'PRESENTACIÓN', FechaInicio: this.agregarMeses(fecIni, -5), FechaFin: this.agregarMeses(fecIni, 1), Profesional: profesional3, FechaRegistro: fechaRegistro, HorasRegistro: 0, Periodo: 1 };
-        let tarea13: Tarea = { Id: 13, Descripcion: 'TRADUCCIÓN PROTOCOLO', FechaInicio: this.agregarMeses(fecIni, -5), FechaFin: this.agregarMeses(fecIni, 1), Profesional: profesional1, FechaRegistro: fechaRegistro, HorasRegistro: 0, Periodo: 1 };
-
-        let tareas: Tarea[] = [
-            tarea1, tarea2, tarea3, tarea4, tarea5, tarea6, tarea7, tarea8, tarea9, tarea10, tarea11, tarea12, tarea13,
-        ];
-
         this.roles = [
             { Id: 1, Descripcion: 'EXPERTO REGULATORIO' },
             { Id: 2, Descripcion: 'EXPERTO FARMACOVIGILANCIA' },
@@ -139,6 +106,25 @@ export class ProyectoService {
             { Id: 10, Descripcion: 'GESTORÍA' },
         ];
 
+
+        let profesional1: Profesional = { Id: 1, Apellido: 'APELLIDO 1', Nombre: 'NOMBRE 1', Funcion: { Id: 6, Descripcion: 'PROJECT MANAGER' } };
+        let profesional2: Profesional = { Id: 2, Apellido: 'APELLIDO 2', Nombre: 'NOMBRE 2', Funcion: { Id: 7, Descripcion: 'ANALISTA SENIOR' } };
+        let profesional3: Profesional = { Id: 3, Apellido: 'APELLIDO 3', Nombre: 'NOMBRE 3', Funcion: { Id: 8, Descripcion: 'ANALISTA JUNIOR' } };
+        let profesional4: Profesional = { Id: 4, Apellido: 'APELLIDO 4', Nombre: 'NOMBRE 4', Funcion: { Id: 1, Descripcion: 'EXPERTO REGULATORIO' } };
+
+
+        this.profesionales = [profesional1, profesional2, profesional3, profesional4];
+
+        let producto1: Producto = { Id: 1, Descripcion: 'PRODUCTO ENTREGABLE #1' };
+        let producto2: Producto = { Id: 2, Descripcion: 'PRODUCTO ENTREGABLE #2' };
+        let producto3: Producto = { Id: 3, Descripcion: 'PRODUCTO ENTREGABLE #3' };
+
+        let tipoMensual: TipoProyecto = { Id: 1, Descripcion: 'MENSUALIZADO' };
+        let tipoEntregable: TipoProyecto = { Id: 2, Descripcion: 'ENTREGABLE' };
+
+        this.tiposProyecto = [tipoMensual, tipoEntregable];
+
+
         let rolAsignado1: RolFuncion = { Id: 1, Rol: this.roles.find(r => r.Id == 1), HorasAsignadas: 0, Periodo: 1, RegistroFecha: this.helpersService.parserDate(fecIni), RegistroHoras: 0 };
         let rolAsignado2: RolFuncion = { Id: 2, Rol: this.roles.find(r => r.Id == 2), HorasAsignadas: 0, Periodo: 1, RegistroFecha: this.helpersService.parserDate(fecIni), RegistroHoras: 0 };
         let rolAsignado3: RolFuncion = { Id: 3, Rol: this.roles.find(r => r.Id == 3), HorasAsignadas: 0, Periodo: 1, RegistroFecha: this.helpersService.parserDate(fecIni), RegistroHoras: 0 };
@@ -148,80 +134,80 @@ export class ProyectoService {
         let rolAsignado9: RolFuncion = { Id: 9, Rol: this.roles.find(r => r.Id == 9), HorasAsignadas: 0, Periodo: 1, RegistroFecha: this.helpersService.parserDate(fecIni), RegistroHoras: 0 };
 
 
-        let proyecto1: Proyecto = { Id: 1, Descripcion: 'PROYECTO #001', Cliente: this.clientes.find(c=>c.Id==1), Tipo: tipoMensual, TipoDescripcion: tipoMensual.Descripcion, FechaInicio: fecIni, FechaFin: this.agregarMeses(fecIni, 12), Producto: producto1, ProductoDescripcion: producto1.Descripcion, RolesAsignados: [rolAsignado1, rolAsignado3, rolAsignado6, rolAsignado7] };
-        let proyecto2: Proyecto = { Id: 2, Descripcion: 'PROYECTO #002', Cliente: this.clientes.find(c=>c.Id==2), Tipo: tipoEntregable, TipoDescripcion: tipoEntregable.Descripcion, FechaInicio: fecIni, FechaFin: this.agregarMeses(fecIni, 12), Producto: producto2, ProductoDescripcion: producto2.Descripcion, RolesAsignados: [rolAsignado1, rolAsignado2, rolAsignado3, rolAsignado6, rolAsignado7, rolAsignado8] };
-        let proyecto3: Proyecto = { Id: 3, Descripcion: 'PROYECTO #003', Cliente: this.clientes.find(c=>c.Id==3), Tipo: tipoMensual, TipoDescripcion: tipoMensual.Descripcion, FechaInicio: fecIni, FechaFin: this.agregarMeses(fecIni, 12), Producto: producto3, ProductoDescripcion: producto3.Descripcion, RolesAsignados: [rolAsignado6, rolAsignado7, rolAsignado8] };
-        let proyecto4: Proyecto = { Id: 4, Descripcion: 'PROYECTO #004', Cliente: this.clientes.find(c=>c.Id==4), Tipo: tipoMensual, TipoDescripcion: tipoMensual.Descripcion, FechaInicio: fecIni, FechaFin: this.agregarMeses(fecIni, 12), Producto: producto1, ProductoDescripcion: producto3.Descripcion, RolesAsignados: [rolAsignado1, rolAsignado6, rolAsignado7] };
-        let proyecto5: Proyecto = { Id: 5, Descripcion: 'PROYECTO #005', Cliente: this.clientes.find(c=>c.Id==1), Tipo: tipoEntregable, TipoDescripcion: tipoEntregable.Descripcion, FechaInicio: fecIni, FechaFin: this.agregarMeses(fecIni, 12), Producto: producto1, ProductoDescripcion: producto1.Descripcion, RolesAsignados: [rolAsignado6, rolAsignado7, rolAsignado8, rolAsignado9] };
-        let proyecto6: Proyecto = { Id: 6, Descripcion: 'PROYECTO #006', Cliente: this.clientes.find(c=>c.Id==2), Tipo: tipoEntregable, TipoDescripcion: tipoEntregable.Descripcion, FechaInicio: fecIni, FechaFin: this.agregarMeses(fecIni, 12), Producto: producto1, ProductoDescripcion: producto3.Descripcion, RolesAsignados: [rolAsignado1, rolAsignado3, rolAsignado6, rolAsignado7] };
+        let proyecto1: Proyecto = { Id: 1, Descripcion: 'PROYECTO #001', Cliente: this.clientes.find(c => c.Id == 1), Tipo: tipoMensual, TipoDescripcion: tipoMensual.Descripcion, FechaInicio: fecIni, FechaFin: this.agregarMeses(fecIni, 12), Producto: producto1, ProductoDescripcion: producto1.Descripcion, RolesAsignados: [rolAsignado1, rolAsignado3, rolAsignado6, rolAsignado7] };
+        let proyecto2: Proyecto = { Id: 2, Descripcion: 'PROYECTO #002', Cliente: this.clientes.find(c => c.Id == 2), Tipo: tipoEntregable, TipoDescripcion: tipoEntregable.Descripcion, FechaInicio: fecIni, FechaFin: this.agregarMeses(fecIni, 12), Producto: producto2, ProductoDescripcion: producto2.Descripcion, RolesAsignados: [rolAsignado1, rolAsignado2, rolAsignado3, rolAsignado6, rolAsignado7, rolAsignado8] };
+        let proyecto3: Proyecto = { Id: 3, Descripcion: 'PROYECTO #003', Cliente: this.clientes.find(c => c.Id == 3), Tipo: tipoMensual, TipoDescripcion: tipoMensual.Descripcion, FechaInicio: fecIni, FechaFin: this.agregarMeses(fecIni, 12), Producto: producto3, ProductoDescripcion: producto3.Descripcion, RolesAsignados: [rolAsignado6, rolAsignado7, rolAsignado8] };
+        let proyecto4: Proyecto = { Id: 4, Descripcion: 'PROYECTO #004', Cliente: this.clientes.find(c => c.Id == 4), Tipo: tipoMensual, TipoDescripcion: tipoMensual.Descripcion, FechaInicio: fecIni, FechaFin: this.agregarMeses(fecIni, 12), Producto: producto1, ProductoDescripcion: producto3.Descripcion, RolesAsignados: [rolAsignado1, rolAsignado6, rolAsignado7] };
+        let proyecto5: Proyecto = { Id: 5, Descripcion: 'PROYECTO #005', Cliente: this.clientes.find(c => c.Id == 1), Tipo: tipoEntregable, TipoDescripcion: tipoEntregable.Descripcion, FechaInicio: fecIni, FechaFin: this.agregarMeses(fecIni, 12), Producto: producto1, ProductoDescripcion: producto1.Descripcion, RolesAsignados: [rolAsignado6, rolAsignado7, rolAsignado8, rolAsignado9] };
+        let proyecto6: Proyecto = { Id: 6, Descripcion: 'PROYECTO #006', Cliente: this.clientes.find(c => c.Id == 2), Tipo: tipoEntregable, TipoDescripcion: tipoEntregable.Descripcion, FechaInicio: fecIni, FechaFin: this.agregarMeses(fecIni, 12), Producto: producto1, ProductoDescripcion: producto3.Descripcion, RolesAsignados: [rolAsignado1, rolAsignado3, rolAsignado6, rolAsignado7] };
 
 
         this.proyectos = [
             proyecto1, proyecto2, proyecto3, proyecto4, proyecto5, proyecto6,
         ];
 
+
         this.horasRegistradas = [
-            { Id: 1, Profesional: profesional1, Cliente: proyecto1.Cliente, Proyecto: proyecto1, Tarea: tarea1, Fecha: fecIni, FechaFormat: fecIniFormat, Horas: 160 },
-            { Id: 1, Profesional: profesional1, Cliente: proyecto1.Cliente, Proyecto: proyecto1, Tarea: tarea1, Fecha: fecIni, FechaFormat: fecIniFormat, Horas: 2 },
-            { Id: 2, Profesional: profesional2, Cliente: proyecto1.Cliente, Proyecto: proyecto1, Tarea: tarea2, Fecha: fecIni, FechaFormat: fecIniFormat, Horas: 1 },
-            { Id: 3, Profesional: profesional3, Cliente: proyecto1.Cliente, Proyecto: proyecto1, Tarea: tarea3, Fecha: fecIni, FechaFormat: fecIniFormat, Horas: 3 },
-            { Id: 4, Profesional: profesional1, Cliente: proyecto4.Cliente, Proyecto: proyecto4, Tarea: tarea4, Fecha: fecIni, FechaFormat: fecIniFormat, Horas: 4 },
-            { Id: 5, Profesional: profesional2, Cliente: proyecto5.Cliente, Proyecto: proyecto5, Tarea: tarea5, Fecha: fecIni, FechaFormat: fecIniFormat, Horas: 1 },
-            { Id: 6, Profesional: profesional3, Cliente: proyecto6.Cliente, Proyecto: proyecto6, Tarea: tarea6, Fecha: fecIni, FechaFormat: fecIniFormat, Horas: 2 },
-            { Id: 7, Profesional: profesional1, Cliente: proyecto1.Cliente, Proyecto: proyecto1, Tarea: tarea7, Fecha: fecIni, FechaFormat: fecIniFormat, Horas: 5 },
-            { Id: 8, Profesional: profesional2, Cliente: proyecto2.Cliente, Proyecto: proyecto2, Tarea: tarea8, Fecha: fecIni, FechaFormat: fecIniFormat, Horas: 8 },
-            { Id: 9, Profesional: profesional3, Cliente: proyecto3.Cliente, Proyecto: proyecto3, Tarea: tarea9, Fecha: fecIni, FechaFormat: fecIniFormat, Horas: 2 },
-            { Id: 10, Profesional: profesional1, Cliente: proyecto4.Cliente, Proyecto: proyecto4, Tarea: tarea10, Fecha: fecIni, FechaFormat: fecIniFormat, Horas: 1 },
-            { Id: 11, Profesional: profesional1, Cliente: proyecto5.Cliente, Proyecto: proyecto5, Tarea: tarea11, Fecha: fecIni, FechaFormat: fecIniFormat, Horas: 3 },
-            { Id: 12, Profesional: profesional1, Cliente: proyecto6.Cliente, Proyecto: proyecto6, Tarea: tarea12, Fecha: fecIni, FechaFormat: fecIniFormat, Horas: 4 },
-            { Id: 13, Profesional: profesional1, Cliente: proyecto1.Cliente, Proyecto: proyecto1, Tarea: tarea13, Fecha: fecIni, FechaFormat: fecIniFormat, Horas: 12 },
-            { Id: 14, Profesional: profesional2, Cliente: proyecto2.Cliente, Proyecto: proyecto2, Tarea: tarea1, Fecha: fecIni, FechaFormat: fecIniFormat, Horas: 2 },
-            { Id: 15, Profesional: profesional3, Cliente: proyecto3.Cliente, Proyecto: proyecto3, Tarea: tarea1, Fecha: fecIni, FechaFormat: fecIniFormat, Horas: 5 },
-            { Id: 16, Profesional: profesional1, Cliente: proyecto4.Cliente, Proyecto: proyecto4, Tarea: tarea1, Fecha: fecIni, FechaFormat: fecIniFormat, Horas: 1 },
-            { Id: 17, Profesional: profesional2, Cliente: proyecto5.Cliente, Proyecto: proyecto5, Tarea: tarea3, Fecha: fecIni, FechaFormat: fecIniFormat, Horas: 2 },
-            { Id: 18, Profesional: profesional3, Cliente: proyecto6.Cliente, Proyecto: proyecto6, Tarea: tarea3, Fecha: fecIni, FechaFormat: fecIniFormat, Horas: 1 },
-            { Id: 19, Profesional: profesional1, Cliente: proyecto1.Cliente, Proyecto: proyecto1, Tarea: tarea1, Fecha: fecIni, FechaFormat: fecIniFormat, Horas: 3 },
-            { Id: 20, Profesional: profesional2, Cliente: proyecto2.Cliente, Proyecto: proyecto2, Tarea: tarea2, Fecha: fecIni, FechaFormat: fecIniFormat, Horas: 4 },
-            { Id: 21, Profesional: profesional3, Cliente: proyecto3.Cliente, Proyecto: proyecto3, Tarea: tarea3, Fecha: fecIni, FechaFormat: fecIniFormat, Horas: 1 },
-            { Id: 22, Profesional: profesional1, Cliente: proyecto4.Cliente, Proyecto: proyecto4, Tarea: tarea4, Fecha: fecIni, FechaFormat: fecIniFormat, Horas: 2 },
-            { Id: 23, Profesional: profesional2, Cliente: proyecto5.Cliente, Proyecto: proyecto5, Tarea: tarea5, Fecha: fecIni, FechaFormat: fecIniFormat, Horas: 5 },
-            { Id: 24, Profesional: profesional3, Cliente: proyecto6.Cliente, Proyecto: proyecto6, Tarea: tarea6, Fecha: fecIni, FechaFormat: fecIniFormat, Horas: 8 },
-            { Id: 25, Profesional: profesional1, Cliente: proyecto1.Cliente, Proyecto: proyecto1, Tarea: tarea7, Fecha: fecIni, FechaFormat: fecIniFormat, Horas: 2 },
-            { Id: 26, Profesional: profesional2, Cliente: proyecto2.Cliente, Proyecto: proyecto2, Tarea: tarea8, Fecha: fecIni, FechaFormat: fecIniFormat, Horas: 1 },
-            { Id: 27, Profesional: profesional3, Cliente: proyecto3.Cliente, Proyecto: proyecto3, Tarea: tarea9, Fecha: fecIni, FechaFormat: fecIniFormat, Horas: 3 },
-            { Id: 28, Profesional: profesional1, Cliente: proyecto4.Cliente, Proyecto: proyecto4, Tarea: tarea10, Fecha: fecIni, FechaFormat: fecIniFormat, Horas: 4 },
-            { Id: 29, Profesional: profesional2, Cliente: proyecto5.Cliente, Proyecto: proyecto5, Tarea: tarea11, Fecha: fecIni, FechaFormat: fecIniFormat, Horas: 12 },
-            { Id: 30, Profesional: profesional3, Cliente: proyecto6.Cliente, Proyecto: proyecto6, Tarea: tarea12, Fecha: fecIni, FechaFormat: fecIniFormat, Horas: 2 },
-            { Id: 31, Profesional: profesional1, Cliente: proyecto2.Cliente, Proyecto: proyecto2, Tarea: tarea13, Fecha: fecIni, FechaFormat: fecIniFormat, Horas: 5 },
-            { Id: 32, Profesional: profesional2, Cliente: proyecto2.Cliente, Proyecto: proyecto2, Tarea: tarea2, Fecha: fecIni, FechaFormat: fecIniFormat, Horas: 1 },
-            { Id: 33, Profesional: profesional3, Cliente: proyecto2.Cliente, Proyecto: proyecto2, Tarea: tarea2, Fecha: fecIni, FechaFormat: fecIniFormat, Horas: 2 },
-            { Id: 34, Profesional: profesional1, Cliente: proyecto1.Cliente, Proyecto: proyecto1, Tarea: tarea2, Fecha: fecIni, FechaFormat: fecIniFormat, Horas: 1 },
-            { Id: 35, Profesional: profesional2, Cliente: proyecto1.Cliente, Proyecto: proyecto1, Tarea: tarea2, Fecha: fecIni, FechaFormat: fecIniFormat, Horas: 3 },
-            { Id: 36, Profesional: profesional3, Cliente: proyecto2.Cliente, Proyecto: proyecto2, Tarea: tarea1, Fecha: fecIni, FechaFormat: fecIniFormat, Horas: 4 },
-            { Id: 37, Profesional: profesional1, Cliente: proyecto3.Cliente, Proyecto: proyecto3, Tarea: tarea2, Fecha: fecIni, FechaFormat: fecIniFormat, Horas: 1 },
-            { Id: 38, Profesional: profesional2, Cliente: proyecto4.Cliente, Proyecto: proyecto4, Tarea: tarea3, Fecha: fecIni, FechaFormat: fecIniFormat, Horas: 2 },
-            { Id: 39, Profesional: profesional3, Cliente: proyecto5.Cliente, Proyecto: proyecto5, Tarea: tarea4, Fecha: fecIni, FechaFormat: fecIniFormat, Horas: 5 },
-            { Id: 40, Profesional: profesional1, Cliente: proyecto6.Cliente, Proyecto: proyecto6, Tarea: tarea5, Fecha: fecIni, FechaFormat: fecIniFormat, Horas: 8 },
-            { Id: 41, Profesional: profesional2, Cliente: proyecto1.Cliente, Proyecto: proyecto1, Tarea: tarea6, Fecha: fecIni, FechaFormat: fecIniFormat, Horas: 2 },
-            { Id: 42, Profesional: profesional3, Cliente: proyecto2.Cliente, Proyecto: proyecto2, Tarea: tarea7, Fecha: fecIni, FechaFormat: fecIniFormat, Horas: 1 },
-            { Id: 43, Profesional: profesional1, Cliente: proyecto3.Cliente, Proyecto: proyecto3, Tarea: tarea8, Fecha: fecIni, FechaFormat: fecIniFormat, Horas: 3 },
-            { Id: 44, Profesional: profesional2, Cliente: proyecto4.Cliente, Proyecto: proyecto4, Tarea: tarea9, Fecha: fecIni, FechaFormat: fecIniFormat, Horas: 4 },
-            { Id: 45, Profesional: profesional3, Cliente: proyecto5.Cliente, Proyecto: proyecto5, Tarea: tarea10, Fecha: fecIni, FechaFormat: fecIniFormat, Horas: 12 },
-            { Id: 46, Profesional: profesional1, Cliente: proyecto6.Cliente, Proyecto: proyecto6, Tarea: tarea11, Fecha: fecIni, FechaFormat: fecIniFormat, Horas: 2 },
-            { Id: 47, Profesional: profesional2, Cliente: proyecto1.Cliente, Proyecto: proyecto1, Tarea: tarea12, Fecha: fecIni, FechaFormat: fecIniFormat, Horas: 5 },
-            { Id: 48, Profesional: profesional3, Cliente: proyecto2.Cliente, Proyecto: proyecto2, Tarea: tarea13, Fecha: fecIni, FechaFormat: fecIniFormat, Horas: 1 },
-            { Id: 49, Profesional: profesional1, Cliente: proyecto3.Cliente, Proyecto: proyecto3, Tarea: tarea1, Fecha: fecIni, FechaFormat: fecIniFormat, Horas: 2 },
-            { Id: 50, Profesional: profesional2, Cliente: proyecto4.Cliente, Proyecto: proyecto4, Tarea: tarea2, Fecha: fecIni, FechaFormat: fecIniFormat, Horas: 1 },
-            { Id: 51, Profesional: profesional3, Cliente: proyecto5.Cliente, Proyecto: proyecto5, Tarea: tarea3, Fecha: fecIni, FechaFormat: fecIniFormat, Horas: 3 },
-            { Id: 52, Profesional: profesional1, Cliente: proyecto6.Cliente, Proyecto: proyecto6, Tarea: tarea4, Fecha: fecIni, FechaFormat: fecIniFormat, Horas: 4 },
-            { Id: 53, Profesional: profesional2, Cliente: proyecto1.Cliente, Proyecto: proyecto1, Tarea: tarea5, Fecha: fecIni, FechaFormat: fecIniFormat, Horas: 12 },
-            { Id: 54, Profesional: profesional3, Cliente: proyecto2.Cliente, Proyecto: proyecto2, Tarea: tarea1, Fecha: fecIni, FechaFormat: fecIniFormat, Horas: 2 },
-            { Id: 55, Profesional: profesional1, Cliente: proyecto3.Cliente, Proyecto: proyecto3, Tarea: tarea2, Fecha: fecIni, FechaFormat: fecIniFormat, Horas: 5 },
-            { Id: 56, Profesional: profesional2, Cliente: proyecto4.Cliente, Proyecto: proyecto4, Tarea: tarea3, Fecha: fecIni, FechaFormat: fecIniFormat, Horas: 1 },
-            { Id: 57, Profesional: profesional3, Cliente: proyecto5.Cliente, Proyecto: proyecto5, Tarea: tarea4, Fecha: fecIni, FechaFormat: fecIniFormat, Horas: 2 },
-            { Id: 58, Profesional: profesional2, Cliente: proyecto6.Cliente, Proyecto: proyecto6, Tarea: tarea1, Fecha: fecIni, FechaFormat: fecIniFormat, Horas: 1 },
-            { Id: 59, Profesional: profesional2, Cliente: proyecto1.Cliente, Proyecto: proyecto1, Tarea: tarea2, Fecha: fecIni, FechaFormat: fecIniFormat, Horas: 3 },
-            { Id: 60, Profesional: profesional2, Cliente: proyecto1.Cliente, Proyecto: proyecto1, Tarea: tarea3, Fecha: fecIni, FechaFormat: fecIniFormat, Horas: 4 },
+            { Id: 1, Profesional: profesional1, Cliente: proyecto1.Cliente, Proyecto: proyecto1, Funcion: profesional1.Funcion, Fecha: fecIni, FechaFormat: fecIniFormat, Horas: 160, Detalle: 'Zyprexa - recepción de solicitud de actualización de textos, descarga, revisión preliminar de documentos de partida' },
+            { Id: 1, Profesional: profesional1, Cliente: proyecto1.Cliente, Proyecto: proyecto1, Funcion: profesional1.Funcion, Fecha: fecIni, FechaFormat: fecIniFormat, Horas: 2, Detalle: 'Zyprexa - recepción de solicitud de actualización de textos, descarga, revisión preliminar de documentos de partida' },
+            { Id: 2, Profesional: profesional2, Cliente: proyecto1.Cliente, Proyecto: proyecto1, Funcion: profesional2.Funcion, Fecha: fecIni, FechaFormat: fecIniFormat, Horas: 1, Detalle: 'Gemtro - recepción de solicitud de actualización de textos, descarga, revisión preliminar de documentos de partida' },
+            { Id: 3, Profesional: profesional3, Cliente: proyecto1.Cliente, Proyecto: proyecto1, Funcion: profesional3.Funcion, Fecha: fecIni, FechaFormat: fecIniFormat, Horas: 3, Detalle: 'GEMTRO / Gemcitabina - double check y cruce final entre PI & PIL locales actualizados y ambos vs referencia internacional - enttrega al cliente' },
+            { Id: 4, Profesional: profesional1, Cliente: proyecto4.Cliente, Proyecto: proyecto4, Funcion: profesional1.Funcion, Fecha: fecIni, FechaFormat: fecIniFormat, Horas: 4, Detalle: 'No aplica' },
+            { Id: 5, Profesional: profesional2, Cliente: proyecto5.Cliente, Proyecto: proyecto5, Funcion: profesional2.Funcion, Fecha: fecIni, FechaFormat: fecIniFormat, Horas: 1, Detalle: 'Zyprexa - recepción de solicitud de actualización de textos, descarga, revisión preliminar de documentos de partida' },
+            { Id: 6, Profesional: profesional3, Cliente: proyecto6.Cliente, Proyecto: proyecto6, Funcion: profesional3.Funcion, Fecha: fecIni, FechaFormat: fecIniFormat, Horas: 2, Detalle: 'Zyprexa - recepción de solicitud de actualización de textos, descarga, revisión preliminar de documentos de partida' },
+            { Id: 7, Profesional: profesional1, Cliente: proyecto1.Cliente, Proyecto: proyecto1, Funcion: profesional1.Funcion, Fecha: fecIni, FechaFormat: fecIniFormat, Horas: 5, Detalle: 'Gemtro - recepción de solicitud de actualización de textos, descarga, revisión preliminar de documentos de partida' },
+            { Id: 8, Profesional: profesional2, Cliente: proyecto2.Cliente, Proyecto: proyecto2, Funcion: profesional2.Funcion, Fecha: fecIni, FechaFormat: fecIniFormat, Horas: 8.5, Detalle: 'GEMTRO / Gemcitabina - double check y cruce final entre PI & PIL locales actualizados y ambos vs referencia internacional - enttrega al cliente' },
+            { Id: 9, Profesional: profesional3, Cliente: proyecto3.Cliente, Proyecto: proyecto3, Funcion: profesional3.Funcion, Fecha: fecIni, FechaFormat: fecIniFormat, Horas: 2.5, Detalle: 'Zyprexa - recepción de solicitud de actualización de textos, descarga, revisión preliminar de documentos de partida' }, { Id: 10, Profesional: profesional1, Cliente: proyecto4.Cliente, Proyecto: proyecto4, Funcion: profesional1.Funcion, Fecha: fecIni, FechaFormat: fecIniFormat, Horas: 1, Detalle: 'Zyprexa - recepción de solicitud de actualización de textos, descarga, revisión preliminar de documentos de partida' },
+            { Id: 11, Profesional: profesional1, Cliente: proyecto5.Cliente, Proyecto: proyecto5, Funcion: profesional1.Funcion, Fecha: fecIni, FechaFormat: fecIniFormat, Horas: 3, Detalle: 'Gemtro - recepción de solicitud de actualización de textos, descarga, revisión preliminar de documentos de partida' },
+            { Id: 12, Profesional: profesional1, Cliente: proyecto6.Cliente, Proyecto: proyecto6, Funcion: profesional1.Funcion, Fecha: fecIni, FechaFormat: fecIniFormat, Horas: 4, Detalle: 'GEMTRO / Gemcitabina - double check y cruce final entre PI & PIL locales actualizados y ambos vs referencia internacional - enttrega al cliente' },
+            { Id: 13, Profesional: profesional1, Cliente: proyecto1.Cliente, Proyecto: proyecto1, Funcion: profesional1.Funcion, Fecha: fecIni, FechaFormat: fecIniFormat, Horas: 12, Detalle: 'No aplica' },
+            { Id: 14, Profesional: profesional2, Cliente: proyecto2.Cliente, Proyecto: proyecto2, Funcion: profesional2.Funcion, Fecha: fecIni, FechaFormat: fecIniFormat, Horas: 2, Detalle: 'Zyprexa - recepción de solicitud de actualización de textos, descarga, revisión preliminar de documentos de partida' },
+            { Id: 15, Profesional: profesional3, Cliente: proyecto3.Cliente, Proyecto: proyecto3, Funcion: profesional3.Funcion, Fecha: fecIni, FechaFormat: fecIniFormat, Horas: 5, Detalle: 'Zyprexa - recepción de solicitud de actualización de textos, descarga, revisión preliminar de documentos de partida' },
+            { Id: 16, Profesional: profesional1, Cliente: proyecto4.Cliente, Proyecto: proyecto4, Funcion: profesional1.Funcion, Fecha: fecIni, FechaFormat: fecIniFormat, Horas: 1, Detalle: 'Gemtro - recepción de solicitud de actualización de textos, descarga, revisión preliminar de documentos de partida' },
+            { Id: 17, Profesional: profesional2, Cliente: proyecto5.Cliente, Proyecto: proyecto5, Funcion: profesional2.Funcion, Fecha: fecIni, FechaFormat: fecIniFormat, Horas: 2, Detalle: 'GEMTRO / Gemcitabina - double check y cruce final entre PI & PIL locales actualizados y ambos vs referencia internacional - enttrega al cliente' },
+            { Id: 18, Profesional: profesional3, Cliente: proyecto6.Cliente, Proyecto: proyecto6, Funcion: profesional3.Funcion, Fecha: fecIni, FechaFormat: fecIniFormat, Horas: 1.5, Detalle: 'No aplica' },
+            { Id: 19, Profesional: profesional1, Cliente: proyecto1.Cliente, Proyecto: proyecto1, Funcion: profesional1.Funcion, Fecha: fecIni, FechaFormat: fecIniFormat, Horas: 3, Detalle: 'Reuniones' },
+            { Id: 20, Profesional: profesional2, Cliente: proyecto2.Cliente, Proyecto: proyecto2, Funcion: profesional2.Funcion, Fecha: fecIni, FechaFormat: fecIniFormat, Horas: 4, Detalle: 'Zyprexa - recepción de solicitud de actualización de textos, descarga, revisión preliminar de documentos de partida' },
+            { Id: 21, Profesional: profesional3, Cliente: proyecto3.Cliente, Proyecto: proyecto3, Funcion: profesional3.Funcion, Fecha: fecIni, FechaFormat: fecIniFormat, Horas: 1.5, Detalle: 'Zyprexa - recepción de solicitud de actualización de textos, descarga, revisión preliminar de documentos de partida' },
+            { Id: 22, Profesional: profesional1, Cliente: proyecto4.Cliente, Proyecto: proyecto4, Funcion: profesional1.Funcion, Fecha: fecIni, FechaFormat: fecIniFormat, Horas: 2, Detalle: 'Gemtro - recepción de solicitud de actualización de textos, descarga, revisión preliminar de documentos de partida' },
+            { Id: 23, Profesional: profesional2, Cliente: proyecto5.Cliente, Proyecto: proyecto5, Funcion: profesional2.Funcion, Fecha: fecIni, FechaFormat: fecIniFormat, Horas: 5, Detalle: 'GEMTRO / Gemcitabina - double check y cruce final entre PI & PIL locales actualizados y ambos vs referencia internacional - enttrega al cliente' },
+            { Id: 24, Profesional: profesional3, Cliente: proyecto6.Cliente, Proyecto: proyecto6, Funcion: profesional3.Funcion, Fecha: fecIni, FechaFormat: fecIniFormat, Horas: 8, Detalle: 'No aplica' },
+            { Id: 25, Profesional: profesional1, Cliente: proyecto1.Cliente, Proyecto: proyecto1, Funcion: profesional1.Funcion, Fecha: fecIni, FechaFormat: fecIniFormat, Horas: 2, Detalle: 'Reuniones' },
+            { Id: 26, Profesional: profesional2, Cliente: proyecto2.Cliente, Proyecto: proyecto2, Funcion: profesional2.Funcion, Fecha: fecIni, FechaFormat: fecIniFormat, Horas: 1, Detalle: 'Zyprexa - recepción de solicitud de actualización de textos, descarga, revisión preliminar de documentos de partida' },
+            { Id: 27, Profesional: profesional3, Cliente: proyecto3.Cliente, Proyecto: proyecto3, Funcion: profesional3.Funcion, Fecha: fecIni, FechaFormat: fecIniFormat, Horas: 3, Detalle: 'Zyprexa - recepción de solicitud de actualización de textos, descarga, revisión preliminar de documentos de partida' },
+            { Id: 28, Profesional: profesional1, Cliente: proyecto4.Cliente, Proyecto: proyecto4, Funcion: profesional1.Funcion, Fecha: fecIni, FechaFormat: fecIniFormat, Horas: 4, Detalle: 'Gemtro - recepción de solicitud de actualización de textos, descarga, revisión preliminar de documentos de partida' },
+            { Id: 29, Profesional: profesional2, Cliente: proyecto5.Cliente, Proyecto: proyecto5, Funcion: profesional2.Funcion, Fecha: fecIni, FechaFormat: fecIniFormat, Horas: 12, Detalle: 'GEMTRO / Gemcitabina - double check y cruce final entre PI & PIL locales actualizados y ambos vs referencia internacional - enttrega al cliente' },
+            { Id: 30, Profesional: profesional3, Cliente: proyecto6.Cliente, Proyecto: proyecto6, Funcion: profesional3.Funcion, Fecha: fecIni, FechaFormat: fecIniFormat, Horas: 2, Detalle: 'No aplica' },
+            { Id: 31, Profesional: profesional1, Cliente: proyecto2.Cliente, Proyecto: proyecto2, Funcion: profesional1.Funcion, Fecha: fecIni, FechaFormat: fecIniFormat, Horas: 5, Detalle: 'Reuniones' },
+            { Id: 32, Profesional: profesional2, Cliente: proyecto2.Cliente, Proyecto: proyecto2, Funcion: profesional2.Funcion, Fecha: fecIni, FechaFormat: fecIniFormat, Horas: 1, Detalle:'Zyprexa - recepción de solicitud de actualización de textos, descarga, revisión preliminar de documentos de partida'},
+            { Id: 33, Profesional: profesional3, Cliente: proyecto2.Cliente, Proyecto: proyecto2, Funcion: profesional3.Funcion, Fecha: fecIni, FechaFormat: fecIniFormat, Horas: 2, Detalle:'Zyprexa - recepción de solicitud de actualización de textos, descarga, revisión preliminar de documentos de partida'},
+            { Id: 34, Profesional: profesional1, Cliente: proyecto1.Cliente, Proyecto: proyecto1, Funcion: profesional1.Funcion, Fecha: fecIni, FechaFormat: fecIniFormat, Horas: 1, Detalle:'Gemtro - recepción de solicitud de actualización de textos, descarga, revisión preliminar de documentos de partida'},
+            { Id: 35, Profesional: profesional2, Cliente: proyecto1.Cliente, Proyecto: proyecto1, Funcion: profesional2.Funcion, Fecha: fecIni, FechaFormat: fecIniFormat, Horas: 3, Detalle:'GEMTRO / Gemcitabina - double check y cruce final entre PI & PIL locales actualizados y ambos vs referencia internacional - enttrega al cliente'},
+            { Id: 36, Profesional: profesional3, Cliente: proyecto2.Cliente, Proyecto: proyecto2, Funcion: profesional3.Funcion, Fecha: fecIni, FechaFormat: fecIniFormat, Horas: 4, Detalle:'No aplica'},
+            { Id: 37, Profesional: profesional1, Cliente: proyecto3.Cliente, Proyecto: proyecto3, Funcion: profesional1.Funcion, Fecha: fecIni, FechaFormat: fecIniFormat, Horas: 1, Detalle:'Reuniones'},
+            { Id: 38, Profesional: profesional2, Cliente: proyecto4.Cliente, Proyecto: proyecto4, Funcion: profesional2.Funcion, Fecha: fecIni, FechaFormat: fecIniFormat, Horas: 2, Detalle:'Zyprexa - recepción de solicitud de actualización de textos, descarga, revisión preliminar de documentos de partida'},
+            { Id: 39, Profesional: profesional3, Cliente: proyecto5.Cliente, Proyecto: proyecto5, Funcion: profesional3.Funcion, Fecha: fecIni, FechaFormat: fecIniFormat, Horas: 5, Detalle:'Zyprexa - recepción de solicitud de actualización de textos, descarga, revisión preliminar de documentos de partida'},
+            { Id: 40, Profesional: profesional1, Cliente: proyecto6.Cliente, Proyecto: proyecto6, Funcion: profesional1.Funcion, Fecha: fecIni, FechaFormat: fecIniFormat, Horas: 8, Detalle:'Gemtro - recepción de solicitud de actualización de textos, descarga, revisión preliminar de documentos de partida'},
+            { Id: 41, Profesional: profesional2, Cliente: proyecto1.Cliente, Proyecto: proyecto1, Funcion: profesional2.Funcion, Fecha: fecIni, FechaFormat: fecIniFormat, Horas: 2, Detalle:'GEMTRO / Gemcitabina - double check y cruce final entre PI & PIL locales actualizados y ambos vs referencia internacional - enttrega al cliente'},
+            { Id: 42, Profesional: profesional3, Cliente: proyecto2.Cliente, Proyecto: proyecto2, Funcion: profesional3.Funcion, Fecha: fecIni, FechaFormat: fecIniFormat, Horas: 1, Detalle:'No aplica'},
+            { Id: 43, Profesional: profesional1, Cliente: proyecto3.Cliente, Proyecto: proyecto3, Funcion: profesional1.Funcion, Fecha: fecIni, FechaFormat: fecIniFormat, Horas: 3, Detalle:'Reuniones'},
+            { Id: 44, Profesional: profesional2, Cliente: proyecto4.Cliente, Proyecto: proyecto4, Funcion: profesional2.Funcion, Fecha: fecIni, FechaFormat: fecIniFormat, Horas: 4, Detalle: '' },
+            { Id: 45, Profesional: profesional3, Cliente: proyecto5.Cliente, Proyecto: proyecto5, Funcion: profesional3.Funcion, Fecha: fecIni, FechaFormat: fecIniFormat, Horas: 12, Detalle: '' },
+            { Id: 46, Profesional: profesional1, Cliente: proyecto6.Cliente, Proyecto: proyecto6, Funcion: profesional1.Funcion, Fecha: fecIni, FechaFormat: fecIniFormat, Horas: 2, Detalle:'Zyprexa - recepción de solicitud de actualización de textos, descarga, revisión preliminar de documentos de partida'},
+            { Id: 47, Profesional: profesional2, Cliente: proyecto1.Cliente, Proyecto: proyecto1, Funcion: profesional2.Funcion, Fecha: fecIni, FechaFormat: fecIniFormat, Horas: 5, Detalle:'Zyprexa - recepción de solicitud de actualización de textos, descarga, revisión preliminar de documentos de partida'},
+            { Id: 48, Profesional: profesional3, Cliente: proyecto2.Cliente, Proyecto: proyecto2, Funcion: profesional3.Funcion, Fecha: fecIni, FechaFormat: fecIniFormat, Horas: 1, Detalle:'Gemtro - recepción de solicitud de actualización de textos, descarga, revisión preliminar de documentos de partida'},
+            { Id: 49, Profesional: profesional1, Cliente: proyecto3.Cliente, Proyecto: proyecto3, Funcion: profesional1.Funcion, Fecha: fecIni, FechaFormat: fecIniFormat, Horas: 2, Detalle:'GEMTRO / Gemcitabina - double check y cruce final entre PI & PIL locales actualizados y ambos vs referencia internacional - enttrega al cliente'},
+            { Id: 50, Profesional: profesional2, Cliente: proyecto4.Cliente, Proyecto: proyecto4, Funcion: profesional2.Funcion, Fecha: fecIni, FechaFormat: fecIniFormat, Horas: 1, Detalle:'No aplica'},
+            { Id: 51, Profesional: profesional3, Cliente: proyecto5.Cliente, Proyecto: proyecto5, Funcion: profesional3.Funcion, Fecha: fecIni, FechaFormat: fecIniFormat, Horas: 3, Detalle:'Reuniones'},
+            { Id: 52, Profesional: profesional1, Cliente: proyecto6.Cliente, Proyecto: proyecto6, Funcion: profesional1.Funcion, Fecha: fecIni, FechaFormat: fecIniFormat, Horas: 4, Detalle: '' },
+            { Id: 53, Profesional: profesional2, Cliente: proyecto1.Cliente, Proyecto: proyecto1, Funcion: profesional2.Funcion, Fecha: fecIni, FechaFormat: fecIniFormat, Horas: 12, Detalle: '' },
+            { Id: 54, Profesional: profesional3, Cliente: proyecto2.Cliente, Proyecto: proyecto2, Funcion: profesional3.Funcion, Fecha: fecIni, FechaFormat: fecIniFormat, Horas: 2, Detalle: '' },
+            { Id: 55, Profesional: profesional1, Cliente: proyecto3.Cliente, Proyecto: proyecto3, Funcion: profesional1.Funcion, Fecha: fecIni, FechaFormat: fecIniFormat, Horas: 5, Detalle: '' },
+            { Id: 56, Profesional: profesional2, Cliente: proyecto4.Cliente, Proyecto: proyecto4, Funcion: profesional2.Funcion, Fecha: fecIni, FechaFormat: fecIniFormat, Horas: 1, Detalle: '' },
+            { Id: 57, Profesional: profesional3, Cliente: proyecto5.Cliente, Proyecto: proyecto5, Funcion: profesional3.Funcion, Fecha: fecIni, FechaFormat: fecIniFormat, Horas: 2, Detalle: '' },
+            { Id: 58, Profesional: profesional2, Cliente: proyecto6.Cliente, Proyecto: proyecto6, Funcion: profesional2.Funcion, Fecha: fecIni, FechaFormat: fecIniFormat, Horas: 1, Detalle: '' },
+            { Id: 59, Profesional: profesional2, Cliente: proyecto1.Cliente, Proyecto: proyecto1, Funcion: profesional2.Funcion, Fecha: fecIni, FechaFormat: fecIniFormat, Horas: 3, Detalle: '' },
+            { Id: 60, Profesional: profesional4, Cliente: proyecto1.Cliente, Proyecto: proyecto1, Funcion: profesional4.Funcion, Fecha: fecIni, FechaFormat: fecIniFormat, Horas: 4, Detalle: '' },
 
         ];
     }

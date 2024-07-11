@@ -1,0 +1,252 @@
+<div class="row animated fadeIn fast" *ngIf="cargando">
+    <div class="col-12">
+        <div class="alert alert-info text-center">
+            <h4 class="alert-heading">Cargando</h4>
+            <i class="fa fa-spin fa-refresh fa-4x"></i>
+            <p class="mb-0">Por favor espere...</p>
+        </div>
+    </div>
+</div>
+
+<div class="row animated fadeIn fast" *ngIf="error">
+    <div class="col-12">
+        <div class="alert alert-danger text-center">
+            <h4 class="alert-heading">Ocurrió un error</h4>
+            <i class="fa fa-exclamation-triangle fa-4x"></i>
+            <p class="mb-0">Ocurrió un error reintente en unos minutos, si el error persiste contactarse con soporte.
+            </p>
+        </div>
+    </div>
+</div>
+
+<div class="row animated fadeIn fast" *ngIf="!cargando">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <div class="row">
+
+                    <div class="col-md-9">
+                        <div class="row">
+                            <div class="col-12 col-md-9">
+                                <form>
+                                    <div class="input-group">
+                                        <input type="text" class="form-control w-20" 
+                                                placeholder="Ingreso texto a buscar y presione enter......" 
+                                                [formControl]="filtro" >
+                                        <span class="input-group-btn">
+                                            <button class="btn btn-outline-secondary" type="button" data-toggle="tooltip"
+                                                data-placement="top" title="Buscar"
+                                                (click)="refreshDatos()">
+                                                <i class="fa fa-search"></i>
+                                            </button>
+                                            <button class="btn btn-outline-secondary" type="button" data-toggle="tooltip"
+                                                data-placement="top" title="Borrar búsqueda"
+                                                (click)="filtro.reset('')">
+                                                <i class="fa fa-times"></i>
+                                            </button>                                    
+                                        </span>
+                                    </div>
+                                </form>
+                            </div>                            
+                            <div class="col-6 col-md-3">
+                                <button type="button" class="btn btn-outline-secondary btn-block"
+                                    (click)="onClickAbrirOffcanvas(offcanvasFiltros)">
+                                    <i class="fa fa-list-alt"></i>
+                                    Filtros
+                                </button>                        
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-12 col-md-3">
+                        <div class="border border-info rounded">
+                            <div class="d-flex flex-row b-b">
+                                <div class="bg-info-subtle p-r-10 p-l-10">
+                                    <h2 class="text-info box m-b-0">
+                                        <i class="fa fa-clock-o"></i>
+                                    </h2>
+                                </div>
+                                <div class="m-l-10 align-self-center">
+                                    <h4 class="m-b-0">{{totalHoras | number :'1.0-0'}}</h4>
+                                    <span class="text-secondary m-b-0">Total de Horas</span>
+                                </div>                                
+                            </div>                          
+                        </div>
+                    </div>
+
+                </div>
+                
+
+                <div class="row">
+                    <div class="col-12 col-md-9">
+                        <div class="d-flex gap-2 justify-content-start" >
+                            <span  *ngFor="let item of labelsFiltros" 
+                                class="badge d-flex align-items-center p-2 pe-2 text-light-emphasis bg-light-subtle border border-dark-subtle rounded-pill">
+                                {{item}}
+                            </span>
+                          </div>
+                    </div>                    
+                </div>
+
+                <div class="row" style="max-height: 200px; overflow-y: auto;">
+
+                    <div class="d-flex flex-row">
+                        <div class="flex-grow-1" style="width: 40% !important;">
+                            <div class="card">
+                                <div class="card-body">
+                                    <div class="d-flex flex-row m-b-5">
+                                        <div class="flex-grow-1">
+                                            <span class="h6 card-title">
+                                                Total de horas por cliente y proyecto
+                                            </span>
+                                        </div>
+                                    </div> 
+                                    <ul class="list-group">
+                                        <li class="list-group-item list-group-item-action border border-bottom">                    
+                                            <div class="d-flex flex-row">
+                                                <div class="flex-grow-1" style="width: 85% !important;">
+                                                    <h6>Cliente - Proyecto</h6>
+                                                </div>
+                                                <div style="width: 15% !important;">
+                                                    <h6>Horas</h6>
+                                                </div>
+                                            </div>                    
+                                        </li>
+                                        <li class="list-group-item list-group-item-action border border-bottom"
+                                            *ngFor="let item of totalXProyecto ">
+        
+                                            <div class="d-flex flex-row">
+                                                <div class="flex-grow-1" style="width: 85% !important;">
+                                                    <ngb-highlight [result]="item.Descripcion" [term]="filtro.value"></ngb-highlight>
+                                                </div>
+                                                <div class="p-l-10 text-right" style="width: 15% !important;">
+                                                    <ngb-highlight [result]="item.Valor" [term]="filtro.value"></ngb-highlight>
+                                                </div>
+                                            </div>                        
+                                        </li>                                                
+                                    </ul>                
+                                </div>
+                            </div>
+                        </div>
+
+
+                        <div style="width: 30% !important;">
+                            <div class="card">
+                                <div class="card-body">
+                                    <div class="d-flex flex-row m-b-5">
+                                        <div class="flex-grow-1">
+                                            <span class="h6 card-title">
+                                                Total de horas por función asignada
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <ul class="list-group">
+                                        <li class="list-group-item list-group-item-action border border-bottom">
+                                            <div class="d-flex flex-row">
+                                                <div class="flex-grow-1" style="width: 80% !important;">
+                                                    <h6>Función Asignada</h6>
+                                                </div>
+                                                <div style="width: 20% !important;">
+                                                    <h6>Horas</h6>
+                                                </div>
+                                            </div>
+                                        </li>
+                                        <li class="list-group-item list-group-item-action border border-bottom" 
+                                            *ngFor="let item of totalXFuncion ">                
+                                            <div class="d-flex flex-row">
+                                                <div class="flex-grow-1" style="width: 80% !important;">
+                                                    <ngb-highlight [result]="item.Descripcion" [term]="filtro.value"></ngb-highlight>
+                                                </div>
+                                                <div class="p-l-10 text-right" style="width: 20% !important;">
+                                                    <ngb-highlight [result]="item.Valor" [term]="filtro.value"></ngb-highlight>
+                                                </div>
+                                            </div>                    
+                                        </li>
+                                    </ul>                
+                                </div>
+                            </div>                                    
+                        </div>
+
+
+                        <div style="width: 30% !important;">
+                            <div class="card">
+                                <div class="card-body">
+                                    <div class="d-flex flex-row m-b-5">
+                                        <div class="flex-grow-1">
+                                            <span class="h6 card-title">
+                                                Total de horas por profesional
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <ul class="list-group">
+                                        <li class="list-group-item list-group-item-action border border-bottom">                    
+                                            <div class="d-flex flex-row">
+                                                <div class="flex-grow-1" style="width: 80% !important;">
+                                                    <h6>Profesional</h6>
+                                                </div>
+                                                <div style="width: 20% !important;">
+                                                    <h6>Horas</h6>
+                                                </div>
+                                            </div>
+                                        </li>
+                                        <li class="list-group-item list-group-item-action border border-bottom" 
+                                            *ngFor="let item of totalXProfesional ">
+        
+                                            <div class="d-flex flex-row">
+                                                <div class="flex-grow-1" style="width: 80% !important;">
+                                                    <ngb-highlight [result]="item.Descripcion" [term]="filtro.value"></ngb-highlight>
+                                                </div>
+                                                <div class="p-l-10 text-right" style="width: 20% !important;">
+                                                    <ngb-highlight [result]="item.Valor" [term]="filtro.value"></ngb-highlight>
+                                                </div>
+                                            </div>                    
+                                        </li>
+                                    </ul>                
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div> 
+
+                <hr/>
+
+                <div class="table-responsive" style="max-height: 450px; overflow-y: auto;">
+                    <table class="table table-hover ">
+                        <thead>
+                            <tr class="table-active">
+                                <th style="width: 20%;">Profesional</th>
+                                <th style="width: 20%;">Cliente</th>
+                                <th style="width: 20%;">Proyecto</th>
+                                <th style="width: 20%;">Función Asociada</th>
+                                <th style="width: 15%;">Fecha</th>
+                                <th style="width: 10%;">Horas</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <ng-container *ngFor="let item of listado$ | async;">
+                                <tr>
+                                    <td>
+                                        <ngb-highlight [result]="item.Profesional.Nombre" [term]="filtro.value"></ngb-highlight>&nbsp;
+                                        <ngb-highlight [result]="item.Profesional.Apellido" [term]="filtro.value"></ngb-highlight>
+                                    </td>
+                                    <td><ngb-highlight [result]="item.Cliente.Nombre" [term]="filtro.value"></ngb-highlight></td>
+                                    <td><ngb-highlight [result]="item.Proyecto.Descripcion" [term]="filtro.value"></ngb-highlight></td>
+                                    <td><ngb-highlight [result]="item.Funcion.Descripcion" [term]="filtro.value"></ngb-highlight></td>
+                                    <td><ngb-highlight [result]="item.FechaFormat" [term]="filtro.value"></ngb-highlight></td>
+                                    <td class="text-right"><ngb-highlight [result]="item.Horas" [term]="filtro.value"></ngb-highlight></td>
+                                </tr>
+                            </ng-container>
+                        </tbody>
+                    </table>                    
+                </div>
+                
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<ng-template #offcanvasFiltros let-offcanvas>
+    <app-filtros></app-filtros>	    
+</ng-template>

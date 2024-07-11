@@ -1,0 +1,163 @@
+<div class="row animated fadeIn fast" *ngIf="cargando">
+    <div class="col-12">
+        <div class="alert alert-info text-center">
+            <h4 class="alert-heading">Cargando</h4>
+            <i class="fa fa-spin fa-refresh fa-4x"></i>
+            <p class="mb-0">Por favor espere...</p>
+        </div>
+    </div>
+</div>
+
+<div class="row animated fadeIn fast" *ngIf="error">
+    <div class="col-12">
+        <div class="alert alert-danger text-center">
+            <h4 class="alert-heading">Ocurrió un error</h4>
+            <i class="fa fa-exclamation-triangle fa-4x"></i>
+            <p class="mb-0">Ocurrió un error reintente en unos minutos, si el error persiste contactarse con soporte.
+            </p>
+        </div>
+    </div>
+</div>
+
+<div class="row animated fadeIn fast" *ngIf="!cargando">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <div class="form-group row">
+
+                    <label class="col-sm-2 control-label col-form-label text-right">Cliente:</label>
+                    <div class="col-sm-8 control-label col-form-label">
+                        <div class="input-group">
+                            <span class="input-group-addon">
+                                <i class="fa fa-user"></i>
+                            </span>
+                            <input id="clienteTypeahead" type="text" class="form-control" 
+                                [(ngModel)]="cliente" (ngModelChange)="onChangeCliente($event)"
+                                placeholder="Seleccione un cliente" 
+                                [ngbTypeahead]="searchCliente" (focus)="focusCliente$.next($any($event).target.value)"
+                                (click)="clickCliente$.next($any($event).target.value)"
+                                #instanceCliente="ngbTypeahead" />
+                            <span class="input-group-addon" role="button" (click)="onClickLimpiarCliente('cliente')">
+                                <i class="fa fa-times"></i>
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="col-sm-2 control-label col-form-label">
+                        <div class="input-group">
+                            <button type="button" class="btn btn-rounded btn-block btn-outline-success waves-effect waves-light">
+                                <i class="fa fa-check"></i>
+                                Aplicar filtros
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <label class="col-sm-2 control-label col-form-label text-right">Proyecto:</label>
+                    <div class="col-sm-8 control-label col-form-label">
+                        <div class="input-group">
+                            <span class="input-group-addon">
+                                <i class="fa fa-list-alt"></i>
+                            </span>
+                            <input id="proyectoTypeahead" type="text" class="form-control" 
+                                [(ngModel)]="proyecto" (ngModelChange)="onChangeProyecto($event)"
+                                placeholder="Seleccione un proyecto" 
+                                [ngbTypeahead]="searchProyecto" (focus)="focusProyecto$.next($any($event).target.value)"
+                                (click)="clickProyecto$.next($any($event).target.value)"
+                                #instanceProyecto="ngbTypeahead" />
+                            <span class="input-group-addon" role="button" (click)="onClickLimpiaProyecto('proyecto')">
+                                <i class="fa fa-times"></i>
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="col-sm-2 control-label col-form-label">
+                        <div class="input-group">
+                            <button type="button" class="btn btn-rounded btn-block btn-outline-secondary waves-effect waves-light">
+                                <i class="fa fa-file-excel-o"></i>
+                                Exportar
+                            </button>
+                        </div>
+                    </div>
+
+                    
+                    <label class="col-sm-2 control-label col-form-label text-right">Mes de Prestación:</label>
+                    <div class="col-sm-3 control-label col-form-label">
+                        <div class="input-group">
+                            <span class="input-group-addon">
+                                <i class="fa fa-calendar"></i>
+                            </span>
+                            <select class="form-control custom-select" >
+                                <option value="0">JULIO</option>
+                                <option value="1">ENERO</option>
+                                <option value="2">FEBRERO</option>
+                                <option value="3">MARZO</option>
+                                <option value="4">ABRIL</option>
+                                <option value="5">MAYO</option>
+                                <option value="6">JUNIO</option>
+                                <option value="7">JULIO</option>
+                                <option value="8">AGOSTO</option>
+                                <option value="9">SEPTIEMBRE</option>
+                                <option value="10">OCTUBRE</option>
+                                <option value="11">NOVIEMBRE</option>
+                                <option value="12">DICIEMBRE</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <label class="col-sm-1 control-label col-form-label text-right">Año:</label>
+                    <div class="col-sm-2 control-label col-form-label">
+                        <div class="input-group">
+                            <input type="number" class="form-control" [(ngModel)]="anioPrestacion"  
+                                (focus)="onFocus($event)">
+                        </div>
+                    </div>
+                    
+                    <label class="col-sm-1 control-label col-form-label">&nbsp;</label>
+
+                    <div class="col-sm-3 control-label col-form-label">
+                        <div class="border border-info rounded">
+                            <div class="d-flex flex-row b-b">
+                                <div class="bg-info-subtle p-r-10 p-l-10">
+                                    <h2 class="text-info box m-b-0">
+                                        <i class="fa fa-clock-o"></i>
+                                    </h2>
+                                </div>
+                                <div class="m-l-10 align-self-center">
+                                    <h4 class="m-b-0">{{totalHoras | number :'1.1-2'}}</h4>
+                                    <span class="text-secondary m-b-0">Tiempo Dedicado</span>
+                                </div>                                
+                            </div>                          
+                        </div>
+                    </div>
+                </div>
+
+                <hr/>
+
+                <div class="table-responsive "  style="max-height: 450px; overflow-y: auto;">                            
+                    <table class="table table-hover ">
+                        <thead>
+                            <tr class="table-active">
+                                <th style="width: 15%;">Fecha</th>
+                                <th style="width: 20%;">Función asociada</th>
+                                <th style="width: 45%;">Detalle y Producto</th>
+                                <th style="width: 15%;">Tiempo dedicado</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+
+                            <ng-container *ngFor="let item of listado">
+                                <tr>
+                                    <td>{{item.FechaFormat}}</td>
+                                    <td>{{item.Funcion.Descripcion}}</td>
+                                    <td>{{item.Detalle}}</td>
+                                    <td class="text-right">{{item.Horas | number :'1.1-2'}}</td>
+                                </tr>
+                            </ng-container>
+                        </tbody>
+                    </table>                    
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
