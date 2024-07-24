@@ -30,12 +30,16 @@ export class ClientesComponent implements OnInit, AfterContentInit, OnDestroy {
 
     datosSubs: Subscription;
 
+    page: number = 1;
+    pageSize: number = 15;
+    total: number = 0;
+
     listadoFULL: Cliente[];
     listado$: Observable<Cliente[]>;
 
     filtro = new FormControl('', { nonNullable: true });
 
-    search(text: string): Cliente[] {
+    search(text: string): Cliente[] {        
         return this.listadoFULL.filter((item) => {
             const term = text.toLowerCase();
             return (
@@ -58,7 +62,11 @@ export class ClientesComponent implements OnInit, AfterContentInit, OnDestroy {
 
         this.listado$ = this.filtro.valueChanges.pipe(
             startWith(''),
-            map((text) => this.search(text).map((item, i) => ({ id: i + 1, ...item }))),
+            map((text) => this.search(text).map((item, i) => ({ id: i + 1, ...item }))
+                .slice(
+                    (this.page - 1) * this.pageSize,
+                    (this.page - 1) * this.pageSize + this.pageSize,
+                )),
         );
         this.refreshDatos();
     }
@@ -69,6 +77,7 @@ export class ClientesComponent implements OnInit, AfterContentInit, OnDestroy {
                 this.cargando = loading;
                 this.error = error;
                 this.listadoFULL = clientes;
+                this.total = this.listadoFULL.length;
             });
     }
 

@@ -26,8 +26,6 @@ export class UsuarioComponent implements OnInit, OnDestroy {
 
     formulario: FormGroup;
 
-
-    clientesSubs: Subscription;
     usuarioSubs: Subscription;
 
     get loginUsuarioNoValido() {
@@ -71,7 +69,6 @@ export class UsuarioComponent implements OnInit, OnDestroy {
 
     ngOnDestroy(): void {
         this.usuarioSubs.unsubscribe();
-        this.clientesSubs.unsubscribe();
     }
 
 
@@ -90,7 +87,6 @@ export class UsuarioComponent implements OnInit, OnDestroy {
     }
 
     private setearFormulario(Usuario: Usuario) {
-        console.log('usuario', Usuario);
         if (Usuario) {
             this.formulario.reset({
                 id: Usuario.Id,

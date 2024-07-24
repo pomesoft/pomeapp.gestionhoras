@@ -88,55 +88,155 @@
                         <div class="card-body" >                            
 
                             <ul class="list-group" >
-                                <li class="list-group-item border border-bottom">
-                    
+                                <!-- <li class="list-group-item border border-bottom">                    
                                     <div class="d-flex flex-row">
-                                        <div style="width: 30%;">
+                                        <div class="text-center"  style="width: 30%;">
                                             <h6>Función Asociada</h6>
+                                        </div>                                        
+                                        <div class="text-center"  style="width: 70%;">
+                                            <h6>Clasificación de Actividad</h6>
                                         </div>
-                                        <div style="width: 45%;">
+                                        <div class="text-center" style="width: 45%;">
                                             <h6>Detalle y Producto</h6>
                                         </div>
-                                        <div class="p-l-10" style="width: 15%;">
-                                            <h6>Fecha</h6>
-                                        </div>
-                                        <div class="p-l-10" style="width: 10%;">
-                                            <h6>Horas</h6>
-                                        </div>
                                     </div>
-
-                                </li>
+                                </li> -->
 
                                 <ng-container *ngFor="let rolFuncion of itemProyecto.RolesAsignados; index as i; trackBy: trackByFn">
 
-                                    <li class="list-group-item border border-bottom" *ngIf="rolFuncion.Rol.Id == profesionalSeleccionado.Funcion.Id || listarTodasFunciones">
+                                    <li class="list-group-item border m-b-10" *ngIf="rolFuncion.Rol.Id == profesionalSeleccionado.Funcion.Id || listarTodasFunciones">
 
                                         <div class="d-flex flex-row">
-                                            <div style="width: 30%;">
-                                                {{rolFuncion.Rol.Descripcion}}
+                                            <div class="form-horizontal" style="width: 25%;">
+                                                <div class="form-group row">
+                                                    <label class="text-left control-label col-form-label h6">
+                                                        {{rolFuncion.Rol.Descripcion}}
+                                                    </label>
+                                                </div>
                                             </div>
-                                            <div class="p-l-10 p-r-10" style="width: 45%;">
-                                                <textarea class="form-control" rows="2" (focus)="onFocus($event)"></textarea>
-                                            </div>                                    
-                                            <div style="width: 15%;">
+                                            <div class="form-horizontal" style="width: 70%;">
+                                                <div class="form-group row" style="padding: 0px !important;">
+                                                    <label for="clasificacionActividad" class="col-sm-4 text-right control-label col-form-label">Clasificación Actividad:</label>
+                                                    <div class="col-sm-8">
+                                                        <select class="form-control custom-select" id="clasificacionActividad">
+                                                            <option value="0"></option>
+                                                            <option value="1">NUEVO REGISTRO</option>
+                                                            <option value="2">VARIACIONES TECNICAS ALTA COMPLEJIDAD</option>
+                                                            <option value="3">VARIACIONES TECNICAS BAJA COMLEJIDAD</option>
+                                                            <option value="4">IP Y ROTULOS ALTA COMPLEJIDAD</option>
+                                                            <option value="5">IP Y ROTULOS ALTA COMPLEJIDAD</option>
+                                                            <option value="6">RENOVACIONES </option>
+                                                            <option value="7">BÚSQUEDAS BIBLIOGRÁFICAS</option>
+                                                            <option value="8">IPAS NUEVO</option>
+                                                            <option value="9">IPAS REVISIÓN</option>
+                                                            <option value="10">PGR NUEVO</option>
+                                                            <option value="11">PGR REVISION</option>
+                                                            <option value="12">GESTION DE CASOS</option>
+                                                            <option value="13">PROYECTO ESPECIFICO</option>
+                                                            <option value="14">ENTRENAMIENTO</option>
+                                                            <option value="15">REUNION DE EQUIPO, PRIORIDADES</option>
+                                                        </select>    
+                                                    </div>                                                    
+                                                    <label for="detalleProducto" class="col-sm-4 text-right control-label col-form-label m-t-5">Detalle y Producto: </label>
+                                                    <div class="col-sm-8 m-t-5">
+                                                        <textarea class="form-control" ID="detalleProducto" rows="2" (focus)="onFocus($event)"></textarea>    
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="d-flex flex-row">
+
+                                            <div class="text-center m-t-10 p-r-20"  style="width: 30%;">
                                                 <div class="input-group">
-                                                    <span class="input-group-addon" (click)="dteFecha.toggle()">
-                                                        <i class="fa fa-calendar"></i>
+                                                    <span (click)="dteFecha.toggle()">
+                                                        Fecha:&nbsp;&nbsp;
                                                     </span>
                                                     <input id="fechaNgDateStruct" class="form-control" placeholder="dd/mm/yyyy"
                                                         name="dteFecha" ngbDatepicker #dteFecha="ngbDatepicker"
                                                         [(ngModel)]="itemProyecto.RolesAsignados[i].RegistroFecha" />
+                                                    <span class="input-group-addon" (click)="dteFecha.toggle()">
+                                                        <i class="fa fa-calendar"></i>
+                                                    </span>
+                                                </div>
+                                                <div class="input-group m-t-5">
+                                                    <span>Semana 14/07/2024 al 20/07/2024</span>
                                                 </div>
                                             </div>
-                                            <div class="p-l-10 p-r-10"  style="width: 10%;">
-                                                <div class="input-group">                                            
-                                                    <input type="number" id="inputHoras_{{rolFuncion.Id}}" class="form-control"
-                                                        [(ngModel)]="itemProyecto.RolesAsignados[i].RegistroHoras"
-                                                        (focus)="onFocus($event)"
-                                                        (keypress)="onKeyPressInputHoras($event, rolFuncion.Id)">
+
+                                            <div class="text-center"  style="width: 70%;">
+                                                <div class="table-responsive ">
+                                                    <table class="table">
+                                                        <tbody>
+                                                            <!-- <tr *ngFor="let item of listadoFULL;"> -->
+                                                            <tr>                                                                       
+                                                                <td class="bg-secondary-subtle text-center">
+                                                                    <span>Dom 14</span>
+                                                                    <input type="number" id="inputHoras_{{rolFuncion.Id}}" class="form-control"
+                                                                        (focus)="onFocus($event)"
+                                                                        (keypress)="onKeyPressInputHoras($event, rolFuncion.Id)">
+                                                                </td>
+                                                                <td class="text-center">
+                                                                    <span>Lun 15</span>
+                                                                    <input type="number" id="inputHoras_{{rolFuncion.Id}}" class="form-control"
+                                                                        (focus)="onFocus($event)"
+                                                                        (keypress)="onKeyPressInputHoras($event, rolFuncion.Id)">
+                                                                </td>
+                                                                <td class="text-center">
+                                                                    <span>Mar 16</span>
+                                                                    <input type="number" id="inputHoras_{{rolFuncion.Id}}" class="form-control"
+                                                                        (focus)="onFocus($event)"
+                                                                        (keypress)="onKeyPressInputHoras($event, rolFuncion.Id)">
+                                                                </td>
+                                                                <td class="text-center">
+                                                                    <span>Mie 17</span>
+                                                                    <input type="number" id="inputHoras_{{rolFuncion.Id}}" class="form-control"
+                                                                        (focus)="onFocus($event)"
+                                                                        (keypress)="onKeyPressInputHoras($event, rolFuncion.Id)">
+                                                                </td>
+                                                                <td class="text-center">
+                                                                    <span>Jue 18</span>
+                                                                    <input type="number" id="inputHoras_{{rolFuncion.Id}}" class="form-control"
+                                                                        (focus)="onFocus($event)"
+                                                                        (keypress)="onKeyPressInputHoras($event, rolFuncion.Id)">
+                                                                </td>
+                                                                <td class="text-center">
+                                                                    <span>Vie 19</span>
+                                                                    <input type="number" id="inputHoras_{{rolFuncion.Id}}" class="form-control"
+                                                                        (focus)="onFocus($event)"
+                                                                        (keypress)="onKeyPressInputHoras($event, rolFuncion.Id)">
+                                                                </td>
+                                                                <td class="bg-secondary-subtle text-center">
+                                                                    <span>Sab 20</span>
+                                                                    <input type="number" id="inputHoras_{{rolFuncion.Id}}" class="form-control"                                                                        
+                                                                        (focus)="onFocus($event)"
+                                                                        (keypress)="onKeyPressInputHoras($event, rolFuncion.Id)">
+                                                                </td>
+                                                                <td>
+                                                                    <a href="#" class="btn btn-outline-success btn-rounded m-t-10" data-toggle="tooltip"
+                                                                        data-placement="top" title="Guardar"
+                                                                        (click)="onClickGuardar($event)">
+                                                                        <span class="h5 text-success"><i class="fa fa-save"></i></span>
+                                                                    </a>                                                
+                                                                </td>
+                                                            </tr>
+                                                        </tbody>
+                                                    </table> 
                                                 </div>
                                             </div>
-                                        </div>                                
+                                                                         
+                                            <!-- <div class="form-horizontal">
+                                                <div class="form-group row">
+                                                    <div class="col-sm-4">
+                                                        
+                                                    </div>
+                                                    <div class="col-sm-8">
+                                                        
+                                                    </div>                                                    
+                                                </div>
+                                            </div> -->
+                                        </div>
+
                                     </li>
 
                                 </ng-container>

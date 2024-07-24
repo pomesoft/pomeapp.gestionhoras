@@ -54,6 +54,8 @@ import { FuncionComponent } from './funcion/funcion.component';
 import { ReportegeneralComponent } from './reportegeneral/reportegeneral.component';
 import { ReportetimesheetComponent } from './reportetimesheet/reportetimesheet.component';
 import { ReportemensualizadoComponent } from './reportemensualizado/reportemensualizado.component';
+import { ClasificacionesActividadesComponent } from './clasificaciones-actividades/clasificaciones-actividades.component';
+import { ClasificacionActividadComponent } from './clasificacion-actividad/clasificacion-actividad.component';
 
 @NgModule({
     declarations: [
@@ -81,6 +83,8 @@ import { ReportemensualizadoComponent } from './reportemensualizado/reportemensu
         ReportegeneralComponent,
         ReportetimesheetComponent,
         ReportemensualizadoComponent,
+        ClasificacionesActividadesComponent,
+        ClasificacionActividadComponent,
     ],
     exports: [
         DashboardComponent,

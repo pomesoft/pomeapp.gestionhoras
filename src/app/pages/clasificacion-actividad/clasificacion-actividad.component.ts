@@ -5,57 +5,57 @@ import { Subscription } from 'rxjs';
 
 import { Store } from '@ngrx/store';
 import { AppState } from '../../store/app.reducers';
-import { cargarFunciones } from '../../store/actions';
+import { cargarClasificacionesActividades } from '../../store/actions';
 
-import { Funcion } from '../../models/entity.models';
+import { ClasificacionActividad } from '../../models/entity.models';
 
-import { FuncionesService } from '../../services/funciones.service';
+import { ClasificacionesService } from '../../services/clasificaciones.service';
 import { SwalhelperService } from '../../services/swalhelper.service';
 
 @Component({
-    selector: 'app-funcion',
-    templateUrl: './funcion.component.html',
+    selector: 'app-clasificacion-actividad',
+    templateUrl: './clasificacion-actividad.component.html',
     styles: [
     ]
 })
-export class FuncionComponent implements OnInit, OnDestroy {
-    public tituloFormulario: string = 'Funcion'
-  
+export class ClasificacionActividadComponent implements OnInit, OnDestroy {
+    public tituloFormulario: string = 'Clasificación de Actividad'
+
     public procesando: boolean = false;
-  
+
     formulario: FormGroup;
-  
+
     datoSubs: Subscription;
-  
-  
+
+
     get descripcionNoValido() {
         return this.formulario.get('descripcion').invalid && this.formulario.get('descripcion').touched
     }
-  
+
     constructor(
         private store: Store<AppState>,
         private formBuilder: FormBuilder,
         private modalService: NgbModal,
         private swalService: SwalhelperService,
-        private datosServcice: FuncionesService,
+        private datosServcice: ClasificacionesService,
     ) {
-  
+
         this.crearFormulario();
-  
+
     }
-  
+
     ngOnInit(): void {
-        this.datoSubs = this.store.select('funciones')
-            .subscribe(({ funcion }) => {
-                this.setearFormulario(funcion);
+        this.datoSubs = this.store.select('clasificacionesActividades')
+            .subscribe(({ clasificacionActividad }) => {
+                this.setearFormulario(clasificacionActividad);
             });
     }
-  
+
     ngOnDestroy(): void {
         this.datoSubs.unsubscribe();
     }
-  
-  
+
+
     private crearFormulario() {
         this.formulario = this.formBuilder.group({
             id: [-1],
@@ -72,8 +72,8 @@ export class FuncionComponent implements OnInit, OnDestroy {
             }
         });
     }
-  
-    private setearFormulario(dato: Funcion) {
+
+    private setearFormulario(dato: ClasificacionActividad) {
         if (dato) {
             this.formulario.reset({
                 id: dato.Id,
@@ -86,10 +86,10 @@ export class FuncionComponent implements OnInit, OnDestroy {
             });
         }
     }
-  
+
     onClickGuardar() {
         if (this.formulario.invalid) {
-  
+
             return Object.values(this.formulario.controls).forEach(control => {
                 if (control instanceof FormGroup) {
                     Object.values(control.controls).forEach(control => control.markAsTouched());
@@ -97,24 +97,24 @@ export class FuncionComponent implements OnInit, OnDestroy {
                     control.markAsTouched();
                 }
             });
-  
+
         }
-  
+
         this.swalService.setToastOK();
-  
+
         this.datosServcice.actualizar(this.formulario.value)
             .subscribe({
-                next: (response: Funcion) => {
-                    this.store.dispatch(cargarFunciones());
+                next: (response: ClasificacionActividad) => {
+                    this.store.dispatch(cargarClasificacionesActividades());
                     this.swalService.setToastOK();
                     this.modalService.dismissAll();
                 },
                 error: (error) => this.swalService.setToastError(error)
             });
-  
+
     }
-  
+
     onClickCerrar() {
         this.modalService.dismissAll();
     }
-  }
+}

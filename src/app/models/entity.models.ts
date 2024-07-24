@@ -32,7 +32,7 @@ export interface Usuario {
     Habilitado?: boolean;
     Vigente?: boolean;
     Rol?: Rol;
-    Funcion?: Funcion;    
+    Funcion?: Funcion;
     NombreCompleto?: string;
 }
 
@@ -43,6 +43,11 @@ export interface Rol {
 }
 
 export interface Funcion {
+    Id: number;
+    Descripcion: string;
+}
+
+export interface ClasificacionActividad {
     Id: number;
     Descripcion: string;
 }
@@ -114,8 +119,8 @@ export interface Cliente {
 }
 
 
-export interface RolFuncion{
-    Id: number;    
+export interface RolFuncion {
+    Id: number;
     Rol: Rol;
     HorasAsignadas?: number;
     Periodo?: number;
@@ -126,14 +131,17 @@ export interface RolFuncion{
 
 export interface Proyecto {
     Id: number;
-    Descripcion: string;
+    Codigo: string;
+    Descripcion?: string;
     Cliente?: Cliente;
+    ClienteNombre?: string;
     Tipo?: TipoProyecto;
     TipoDescripcion?: string;
     Producto?: Producto;
     ProductoDescripcion?: string;
     FechaInicio?: Date;
     FechaFin?: Date;
+    DiaCierre?: number;
     RolesAsignados?: RolFuncion[];
     RolesAsignadosFULL?: RolFuncion[];
 }
@@ -148,5 +156,5 @@ export interface RegistroHora {
     Fecha?: Date;
     FechaFormat?: string;
     Horas?: number;
-    Detalle?:string;
+    Detalle?: string;
 }

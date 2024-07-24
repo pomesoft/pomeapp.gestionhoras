@@ -41,6 +41,15 @@
                     </div>
 
                     <div class="col-12 col-md-4 p-2">
+                        <ngb-pagination
+                            [collectionSize]="total"
+                            [(page)]="page"                                    
+                            [pageSize]="pageSize"
+                            [maxSize]="3"
+                            [rotate]="true"
+                            [boundaryLinks]="true"
+                            (pageChange)="refreshDatos()">
+                        </ngb-pagination>
                     </div>
 
                 </div>
@@ -71,7 +80,18 @@
                                 </td>
                             </tr>
                         </tbody>
-                    </table>
+                    </table>                    
+                    <div class="d-flex justify-content-between p-2">
+                        <ngb-pagination
+                            [collectionSize]="total"
+                            [(page)]="page"                                    
+                            [pageSize]="pageSize"
+                            [maxSize]="10"
+                            [rotate]="true"
+                            [boundaryLinks]="true"
+                            (pageChange)="refreshDatos()">
+                        </ngb-pagination>                            
+                    </div>
                 </div>
             </div>
         </div>

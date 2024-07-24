@@ -17,9 +17,6 @@
                         <span class="input-group-addon" role="button" (click)="onClickLimpiarTypeahead('profesional')">
                             <i class="fa fa-times"></i>
                         </span>
-                        <span class="input-group-addon" role="button" (click)="onClickAgregar('Profesional')">
-                            <i class="fa fa-plus m-r-5"></i>Agregar
-                        </span>
                     </div>
                 </div>
 
@@ -35,9 +32,6 @@
                             (click)="clickCliente$.next($any($event).target.value)" #instanceCliente="ngbTypeahead" />
                         <span class="input-group-addon" role="button" (click)="onClickLimpiarTypeahead('cliente')">
                             <i class="fa fa-times"></i>
-                        </span>
-                        <span class="input-group-addon" role="button" (click)="onClickAgregar('Cliente')">
-                            <i class="fa fa-plus m-r-5"></i>Agregar
                         </span>
                     </div>
                     <small *ngIf="clienteNoValido" class="text-danger">
@@ -58,9 +52,6 @@
                             (click)="clickProyecto$.next($any($event).target.value)" #instanceProyecto="ngbTypeahead" />
                         <span class="input-group-addon" role="button" (click)="onClickLimpiarTypeahead('proyecto')">
                             <i class="fa fa-times"></i>
-                        </span>
-                        <span class="input-group-addon" role="button" (click)="onClickAgregar('Proyecto')">
-                            <i class="fa fa-plus m-r-5"></i>Agregar
                         </span>
                     </div>
                     <small *ngIf="proyectoNoValido" class="text-danger">
@@ -86,30 +77,28 @@
                 <label class="col-sm-3 control-label col-form-label text-right">Función Asociada:</label>
                 <div class="col-sm-9 control-label col-form-label">
                     <div class="input-group">
-                        <div class="input-group">
-                            <span class="input-group-addon">
-                                <i class="fa fa-pencil-square-o"></i>
-                            </span>
-                            <select class="form-control custom-select" id="rolFuncion" 
-                                formControlName="rolFuncion">
-                                <option value="0">Seleccione una función asociada</option>
-                                <option value="1">EXPERTO REGULATORIO</option>
-                                <option value="2">EXPERTO FARMACOVIGILANCIA</option>
-                                <option value="3">EXPERTO MEDICO</option>
-                                <option value="4">EXPERTO COMPLIANCE</option>
-                                <option value="5">EXPERTO LEGAL</option>
-                                <option value="6">PROJECT MANAGER</option>
-                                <option value="7">ANALISTA SENIOR</option>
-                                <option value="8">ANALISTA JUNIOR</option>
-                                <option value="9">TECNICO ADMINISTRATIVO</option>
-                                <option value="10">GESTORÍA</option>
-                            </select>
-                            
-                        </div>
-                        <small *ngIf="rolFuncionNoValido" class="text-danger">
-                            Debe seleccioinar función asociada
-                        </small>
+                        <span class="input-group-addon">
+                            <i class="fa fa-pencil-square-o"></i>
+                        </span>
+                        <select class="form-control custom-select" id="rolFuncion" 
+                            formControlName="rolFuncion">
+                            <option value="0">Seleccione una función asociada</option>
+                            <option value="1">EXPERTO REGULATORIO</option>
+                            <option value="2">EXPERTO FARMACOVIGILANCIA</option>
+                            <option value="3">EXPERTO MEDICO</option>
+                            <option value="4">EXPERTO COMPLIANCE</option>
+                            <option value="5">EXPERTO LEGAL</option>
+                            <option value="6">PROJECT MANAGER</option>
+                            <option value="7">ANALISTA SENIOR</option>
+                            <option value="8">ANALISTA JUNIOR</option>
+                            <option value="9">TECNICO ADMINISTRATIVO</option>
+                            <option value="10">GESTORÍA</option>
+                        </select>
+                        
                     </div>
+                    <small *ngIf="rolFuncionNoValido" class="text-danger">
+                        Debe seleccioinar función asociada
+                    </small>
                 </div>
 
                 <label class="col-sm-3 control-label col-form-label text-right">Detalle y Producto:</label>

@@ -31,6 +31,7 @@ export class ProyectoComponent implements OnInit, OnDestroy {
     clientes: string[] = [];
     tiposProyecto: TipoProyecto[];
 
+    usuarios: string[] = [];
 
     @ViewChild('instanceCliente', { static: true }) instanceCliente: NgbTypeahead;
     focusCliente$ = new Subject<string>();
@@ -44,15 +45,50 @@ export class ProyectoComponent implements OnInit, OnDestroy {
         return merge(debouncedText$, inputFocus$, clicksWithClosedPopup$)
             .pipe(
                 map((term) => {
-                    var datos = (term === '' ? this.clientes : this.clientes.filter((v) => v.toLowerCase().indexOf(term.toLowerCase()) > -1)).slice(0, 10);
+                    var datos = (term === '' ? this.clientes : this.clientes.filter((v) => v.toLowerCase().indexOf(term.toLowerCase()) > -1)).slice(0, 15);
                     return [...new Set(datos)];
                 }),
             );
     };
 
+    @ViewChild('instanceUsuarioPL', { static: true }) instanceUsuarioPL: NgbTypeahead;
+    focusUsuarioPL$ = new Subject<string>();
+    clickUsuarioPL$ = new Subject<string>();
 
-    get descripcionNoValido() {
-        return this.formulario.get('descripcion').invalid && this.formulario.get('descripcion').touched
+    searchUsuarioPL: OperatorFunction<string, readonly string[]> = (text$: Observable<string>) => {
+        const debouncedText$ = text$.pipe(debounceTime(200), distinctUntilChanged());
+        //const clicksWithClosedPopup$ = this.click$.pipe(filter(() => !this.instance.isPopupOpen()));
+        const inputFocus$ = this.focusUsuarioPL$;
+
+        //, clicksWithClosedPopup$
+        return merge(debouncedText$, inputFocus$).pipe(
+            map((term) => {
+                var datos = (term === '' ? this.usuarios : this.usuarios.filter((v) => v.toLowerCase().indexOf(term.toLowerCase()) > -1)).slice(0, 10);
+                return [...new Set(datos)];
+            }),
+        );
+    };
+
+    @ViewChild('instanceUsuarioPLB', { static: true }) instanceUsuarioPLB: NgbTypeahead;
+    focusUsuarioPLB$ = new Subject<string>();
+    clickUsuarioPLB$ = new Subject<string>();
+
+    searchUsuarioPLB: OperatorFunction<string, readonly string[]> = (text$: Observable<string>) => {
+        const debouncedText$ = text$.pipe(debounceTime(200), distinctUntilChanged());
+        //const clicksWithClosedPopup$ = this.click$.pipe(filter(() => !this.instance.isPopupOpen()));
+        const inputFocus$ = this.focusUsuarioPLB$;
+
+        //, clicksWithClosedPopup$
+        return merge(debouncedText$, inputFocus$).pipe(
+            map((term) => {
+                var datos = (term === '' ? this.usuarios : this.usuarios.filter((v) => v.toLowerCase().indexOf(term.toLowerCase()) > -1)).slice(0, 10);
+                return [...new Set(datos)];
+            }),
+        );
+    };
+
+    get codigoNoValido() {
+        return this.formulario.get('codigo').invalid && this.formulario.get('codigo').touched
     }
     get clienteNoValido() {
         return this.formulario.get('cliente').invalid && this.formulario.get('cliente').touched;
@@ -78,6 +114,7 @@ export class ProyectoComponent implements OnInit, OnDestroy {
     ngOnInit(): void {
 
         this.tiposProyecto = this.datosServcice.tiposProyecto.map(item => item);
+        this.usuarios = this.datosServcice.profesionales.map(item => item.Apellido + '' + item.Nombre);
 
         this.clientesSubs = this.store.select('clientes')
             .subscribe(({ clientes }) => {
@@ -85,7 +122,7 @@ export class ProyectoComponent implements OnInit, OnDestroy {
             });
 
         this.datoSubs = this.store.select('proyectos')
-            .subscribe(({ proyecto }) => {
+            .subscribe(({ proyecto}) => {                
                 this.setearFormulario(proyecto);
             });
 
@@ -105,7 +142,8 @@ export class ProyectoComponent implements OnInit, OnDestroy {
 
         this.formulario = this.formBuilder.group({
             id: [-1],
-            descripcion: ['', Validators.required],
+            codigo: ['', Validators.required],
+            descripcion: [''],
             idTipoProyecto: [0, [Validators.required, Validators.min(1)]],
             cliente: ['', Validators.required],
             producto: ['', Validators.required],
@@ -113,9 +151,12 @@ export class ProyectoComponent implements OnInit, OnDestroy {
             fechaInicio: [this.helperService.parserNgDateStruct(fecha), Validators.required],
             fechaFinNgDateStruct: [null],
             fechaFin: [''],
+            diaCierre: [30],
+            usuarioPL: [''],
+            usuarioPLB: [''],
         });
         Object.keys(this.formulario.controls).forEach(key => {
-            if (key != 'id' && key != 'idTipoProyecto' && key.indexOf('fecha') < 0) {
+            if (key != 'id' && key != 'idTipoProyecto' && key != 'diaCierre' && key.indexOf('fecha') < 0) {
                 //console.log('key', key);
                 const yourControl = this.formulario.get(key);
                 yourControl.valueChanges.subscribe(() => {
@@ -130,6 +171,7 @@ export class ProyectoComponent implements OnInit, OnDestroy {
 
 
     private setearFormulario(dato: Proyecto) {
+
 
         if (dato) {
 
@@ -150,14 +192,18 @@ export class ProyectoComponent implements OnInit, OnDestroy {
 
             this.formulario.reset({
                 id: dato.Id,
+                codigo: dato.Codigo,
                 descripcion: dato.Descripcion,
-                idTipoProyecto: dato.Tipo.Id,
-                cliente: dato.Cliente.Nombre,
-                producto: dato.Producto.Descripcion,
+                idTipoProyecto: dato.Tipo ? dato.Tipo.Id : '',
+                cliente: dato.Cliente ? dato.Cliente.Nombre : '',
+                producto: '',
                 fechaInicioNgDateStruct: _fechaInicioNgDateStruct,
                 fechaInicio: this.helperService.parserDate(dato.FechaInicio),
                 fechaFinNgDateStruct: _fechaFinNgDateStruct,
                 fechaFin: dato.FechaFin ? this.helperService.parserDate(dato.FechaFin) : null,
+                diaCierre: [dato.DiaCierre],
+                usuarioPL: '',
+                usuarioPLB: '',
             });
         } else {
 

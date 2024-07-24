@@ -23,47 +23,59 @@
     <div class="col-12">
         <div class="card">
             <div class="card-body">
-                <div class="card-title h3 desktop">{{tituloFormulario}}</div>
-                <div class="card-title h5 mobile">{{tituloFormulario}}</div>
+                <div class="card-title h3">{{tituloFormulario}}</div>
                 <hr />
 
                 <!-- Nav tabs -->
                 <div class="vtabs customvtab w-100">
-                    <ul class="nav nav-tabs tabs-vertical p-t-20" role="tablist" style="width: 200px !important;">
+                    <ul class="nav nav-tabs tabs-vertical p-t-20" role="tablist" style="width: 170px !important;">
                         <li class="nav-item"> 
-                            <a class="nav-link" data-toggle="tab" href="#rolesusuario" role="tab">
-                                <span role="button">Funciones Asociadas</span> 
-                            </a> 
-                        </li>
-                        <li class="nav-item"> 
-                            <a class="nav-link active" data-toggle="tab" href="#profesionales" role="tab">
-                                <span role="button">Profesionales</span> 
-                            </a> 
-                        </li>
-                        <li class="nav-item"> 
-                            <a class="nav-link" data-toggle="tab" href="#clientes" role="tab">
+                            <a class="nav-link" data-toggle="tab" href="#" role="tab"
+                                [class.active]="tabIndex==1"
+                                (click)="onClickTab($event,1)">
                                 <span role="button">Clientes</span> 
                             </a> 
                         </li>
                         <li class="nav-item"> 
-                            <a class="nav-link" data-toggle="tab" href="#proyectos" role="tab">
+                            <a class="nav-link" data-toggle="tab" href="#" role="tab"
+                                [class.active]="tabIndex==2"
+                                (click)="onClickTab($event,2)">
                                 <span role="button">Proyectos</span> 
                             </a> 
-                        </li>                        
+                        </li>
+                        <li class="nav-item"> 
+                            <a class="nav-link" data-toggle="tab" href="#" role="tab"
+                                [class.active]="tabIndex==3"
+                                (click)="onClickTab($event,3)">
+                                <span role="button">Funciones Asignadas</span> 
+                            </a> 
+                        </li>
+                        <li class="nav-item"> 
+                            <a class="nav-link" data-toggle="tab" href="#" role="tab"
+                                [class.active]="tabIndex==4"
+                                (click)="onClickTab($event,4)">
+                                <span role="button">Clasificaciones Actividades</span> 
+                            </a> 
+                        </li>
+                                                
                     </ul>
                     <!-- Tab panes -->
                     <div class="tab-content" style="padding: 0px !important;">                        
-                        <div class="tab-pane" id="rolesusuario" role="tabpanel">
-                            <app-funciones></app-funciones>
-                        </div>
-                        <div class="tab-pane active" id="profesionales" role="tabpanel">
-                            <app-profesionales></app-profesionales>
-                        </div>
-                        <div class="tab-pane" id="clientes" role="tabpanel">
+                        <div class="tab-pane" id="clientes" role="tabpanel"
+                            [class.active]="tabIndex==1">
                             <app-clientes></app-clientes>
                         </div>
-                        <div class="tab-pane" id="proyectos" role="tabpanel">
+                        <div class="tab-pane" id="proyectos" role="tabpanel"
+                            [class.active]="tabIndex==2">
                             <app-proyectos></app-proyectos>
+                        </div>
+                        <div class="tab-pane" id="funciones" role="tabpanel"
+                            [class.active]="tabIndex==3">
+                            <app-funciones></app-funciones>
+                        </div>
+                        <div class="tab-pane" id="proyectos" role="tabpanel"
+                            [class.active]="tabIndex==4">
+                            <app-clasificaciones-actividades></app-clasificaciones-actividades>
                         </div>
                     </div>
                 </div>

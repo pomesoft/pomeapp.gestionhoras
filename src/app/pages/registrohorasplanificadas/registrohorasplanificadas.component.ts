@@ -237,6 +237,7 @@ export class RegistrohorasplanificadasComponent implements OnInit, OnDestroy {
     }
 
     onClickGuardar(event: any) {
+        event.preventDefault();
         this.swalService.setToastOK();
     }
 

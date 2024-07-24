@@ -22,7 +22,7 @@ export class ProyectosEffects {
             mergeMap(
                 (action) => this.datosService.listar()
                     .pipe(
-                        //tap(oper => console.log('usuarios effect', oper)),
+                        //tap(data => console.log('proyectos effect', data)),
                         map(data => datosActions.cargarProyectosSuccess({ proyectos: data })),
                         catchError(err => of(datosActions.cargarProyectosError({ payload: err })))
                     )

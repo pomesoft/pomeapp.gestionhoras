@@ -16,11 +16,13 @@ export class ConfiguracionComponent {
 
     tituloFormulario: string = "Configuración del sistema";
 
+    tabIndex: number = 1;
+
 
     menu: any[] = [
         { titulo: 'Profesionales', href: 'profesionales', component: 'app-profesionales' },
         { titulo: 'Clientes', href: 'clientes', component: 'app-clientes' },
-        { titulo: 'Proyectos', href: 'proyectos' , component: 'app-proyectos'},
+        { titulo: 'Proyectos', href: 'proyectos', component: 'app-proyectos' },
     ];
 
     constructor() {
@@ -33,6 +35,15 @@ export class ConfiguracionComponent {
             this.cargando = false;
         });
 
+    }
+
+    onClickTab(
+        event: any,
+        index: number,
+    ) {
+        event.preventDefault();
+        this.tabIndex = index;
+        console.log('this.tabIndex', this.tabIndex)
     }
 
 }
