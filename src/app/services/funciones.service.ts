@@ -1,60 +1,80 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 
 import { environment } from '../../environments/environment';
 
 import { Funcion } from '../models/entity.models';
-import { Observable, of } from 'rxjs';
+
+
+const base_url = environment.base_url;
+
+const headers = new HttpHeaders({
+    'Content-Type': 'application/json'
+});
+
 
 @Injectable({
     providedIn: 'root'
 })
 export class FuncionesService {
 
-    private funciones: Funcion[];
-
-    private base_url = environment.base_url;
+    funciones: Funcion[] = [];
 
     constructor(
         private http: HttpClient
-    ) {
+    ) { }
 
-        this.funciones = [
-            { Id: 1, Descripcion: 'EXPERTO REGULATORIO' },
-            { Id: 2, Descripcion: 'EXPERTO FARMACOVIGILANCIA' },
-            { Id: 3, Descripcion: 'EXPERTO MEDICO' },
-            { Id: 4, Descripcion: 'EXPERTO COMPLIANCE' },
-            { Id: 5, Descripcion: 'EXPERTO LEGAL' },
-            { Id: 6, Descripcion: 'PROJECT MANAGER' },
-            { Id: 7, Descripcion: 'ANALISTA SENIOR' },
-            { Id: 8, Descripcion: 'ANALISTA JUNIOR' },
-            { Id: 9, Descripcion: 'TECNICO ADMINISTRATIVO' },
-            { Id: 10, Descripcion: 'GESTORÍA' },
-        ];
+    get token(): string {
+        return localStorage.getItem('token') || '';
     }
 
-    listar(): Observable<Funcion[]> {
-        console.log('this.funciones', this.funciones);
-        return of(this.funciones);
+    get headers() {
+        return {
+            headers: {
+                'x-token': this.token
+            }
+        }
     }
 
-    obtener(id: number): Observable<Funcion> {
-        return of(this.funciones.find(item => item.Id == id));
+    inicializar() {
+        return new Promise<boolean>((resolve, reject) => {
+            this.listar()
+                .subscribe({
+                    next: (response) => {
+                        this.funciones = response;
+                        resolve(true)
+                    },
+                    error: (error) => reject(<any>error),
+                });
+        });
     }
 
-    actualizar(
-        data: Funcion
-    ): Observable<Funcion> {
-        // const url = `${this.base_url}Funcion`;
-        // return this.http.post<Funcion>(url, data, this.headers);
-        return this.obtener(data.Id);
+    listar(listarVigentes: boolean = true) {
+        const url = `${base_url}funciones/?listarVigentes=${listarVigentes}`;
+        return this.http.get<Funcion[]>(url, this.headers)
     }
 
-    eliminar(
-        id: number
-    ): Observable<Funcion> {
-        //const url = `${base_url}Funcion/eliminar/${id}`;
-        // return this.http.post<Funcion>(url, data, this.headers);
-        return this.obtener(id);
+    obtener(id: number) {
+
+        const url = `${base_url}funciones/${id}`;
+        return this.http.get<Funcion>(url, this.headers);
+
     }
+
+    eliminar(dato: Funcion) {
+        const url = `${base_url}Funcion/eliminar?id=${dato.Id}`;
+        return this.http.post(url, this.headers);
+    }
+
+
+    actualizar(dato: Funcion) {
+        console.log('dato', JSON.stringify(dato));
+        if (dato.Id <= 0) {
+            return this.http.post(`${base_url}funciones`, dato, this.headers);
+        } else {
+            return this.http.put(`${base_url}funciones/${dato.Id}`, dato, this.headers);
+        }
+
+    }
+
 }

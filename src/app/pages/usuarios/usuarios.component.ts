@@ -27,7 +27,7 @@ export class UsuariosComponent implements OnInit, OnDestroy {
     textoBusqueda: string = '';
 
     page: number = 1;
-    pageSize: number = 15;
+    pageSize: number = 10;
     total: number = 0;
 
     usuariosSubs: Subscription;
@@ -36,6 +36,7 @@ export class UsuariosComponent implements OnInit, OnDestroy {
     listado$: Observable<Usuario[]>;
 
     filtro = new FormControl('', { nonNullable: true });
+    listarNoVigentes: boolean = false;
 
     search(text: string): Usuario[] {
         return this.listadoFULL.filter((item) => {
@@ -45,7 +46,9 @@ export class UsuariosComponent implements OnInit, OnDestroy {
                 item.Nombre && item.Nombre.toLowerCase().includes(term) ||
                 item.Email && item.Email.toLowerCase().includes(term) ||
                 item.Celular && item.Celular.toLowerCase().includes(term) ||
-                item.LoginUsuario && item.LoginUsuario.toLowerCase().includes(term)
+                item.LoginUsuario && item.LoginUsuario.toLowerCase().includes(term) ||
+                item.Rol && item.Rol.Descripcion && item.Rol.Descripcion.toLowerCase().includes(term) ||
+                item.Funcion && item.Funcion.Descripcion && item.Funcion.Descripcion.toLowerCase().includes(term)
             );
         });
     }
@@ -75,36 +78,47 @@ export class UsuariosComponent implements OnInit, OnDestroy {
 
     ngOnInit(): void {
 
-        // this.usuariosSubs = this.store.select('usuarios')
-        //     .subscribe(({ usuarios, loading, error }) => {
-        //         this.cargando = loading;
-        //         this.error = error;
-        //         this.listadoFULL = usuarios;
-        //         this.total = this.listadoFULL.length;
-        //     });
-
-        // this.store.dispatch(cargarUsuarios());
+        this.usuariosSubs = this.store.select('usuarios')
+            .subscribe(({ usuarios, loaded }) => {
+                if (loaded){
+                    this.cargarListadoFULL(usuarios);
+                    this.refreshDatos();
+                }
+            });
+        this.cargarDatos();
     }
 
     ngOnDestroy(): void {
-        //this.usuariosSubs.unsubscribe();
+        this.usuariosSubs.unsubscribe();
     }
 
     async cargarDatos() {
 
         this.cargando = true;
-        this.listadoFULL = [];
-
+        
         await this.getDatosListadoFull()
-            .then(result => {
-                this.listadoFULL.push(...result);
-                this.total = this.listadoFULL.length;
+            .then(usuarios => {
+                this.cargarListadoFULL(usuarios);
             })
             .catch(err => {
                 this.swalService.setToastError(`Ocurrió un error al cargar los datos`)
                 console.log(err);
             })
             .finally(() => this.cargando = false);
+
+    }
+
+    cargarListadoFULL(usuarios: Usuario[]) {
+
+        this.listadoFULL = [];
+
+        if (this.listarNoVigentes) {
+            this.listadoFULL.push(...usuarios.filter(item => !item.Vigente));
+        } else {
+            this.listadoFULL.push(...usuarios.filter(item => item.Vigente));
+        }
+
+        this.total = this.listadoFULL.length;
 
     }
 
@@ -115,7 +129,6 @@ export class UsuariosComponent implements OnInit, OnDestroy {
                     next: (response) => resolve(response),
                     error: (error) => reject(<any>error),
                 });
-
         });
     }
 
@@ -123,6 +136,10 @@ export class UsuariosComponent implements OnInit, OnDestroy {
         let valor = this.filtro.value;
         this.filtro.reset('');
         this.filtro.reset(valor);
+    }
+
+    onChangeChekVigentes(event: any) {
+        this.cargarDatos();
     }
 
     onClickAbriModal(event, content, id) {
@@ -156,10 +173,11 @@ export class UsuariosComponent implements OnInit, OnDestroy {
 
             if (result.isConfirmed) {
                 this.cargando = true;
-                this.usuarioServcice.eliminarUsuario(item)
+                item.Vigente = false;
+                this.usuarioServcice.actualizar(item)
                     .subscribe({
                         next: (response: Usuario) => {
-
+                            this.store.dispatch(cargarUsuarios());
                             this.swalService.setToastOK();
                         },
                         error: (error) => this.swalService.setToastError(error),

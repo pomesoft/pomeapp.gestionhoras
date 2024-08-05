@@ -20,18 +20,20 @@ import { SwalhelperService } from '../../services/swalhelper.service';
 })
 export class FuncionComponent implements OnInit, OnDestroy {
     public tituloFormulario: string = 'Funcion'
-  
+
     public procesando: boolean = false;
-  
+
     formulario: FormGroup;
-  
+
     datoSubs: Subscription;
-  
-  
+
+    listarVigentes: boolean = true;
+
+
     get descripcionNoValido() {
-        return this.formulario.get('descripcion').invalid && this.formulario.get('descripcion').touched
+        return this.formulario.get('Descripcion').invalid && this.formulario.get('Descripcion').touched
     }
-  
+
     constructor(
         private store: Store<AppState>,
         private formBuilder: FormBuilder,
@@ -39,30 +41,34 @@ export class FuncionComponent implements OnInit, OnDestroy {
         private swalService: SwalhelperService,
         private datosServcice: FuncionesService,
     ) {
-  
+
         this.crearFormulario();
-  
+
     }
-  
+
     ngOnInit(): void {
         this.datoSubs = this.store.select('funciones')
-            .subscribe(({ funcion }) => {
-                this.setearFormulario(funcion);
+            .subscribe(({ funcion, loaded, listarVigentes }) => {
+                this.listarVigentes = listarVigentes;
+                if (loaded) {
+                    this.setearFormulario(funcion);
+                }
             });
     }
-  
+
     ngOnDestroy(): void {
         this.datoSubs.unsubscribe();
     }
-  
-  
+
+
     private crearFormulario() {
         this.formulario = this.formBuilder.group({
-            id: [-1],
-            descripcion: ['', Validators.required],
+            Id: [0],
+            Descripcion: ['', Validators.required],
+            Vigente: [true],
         });
         Object.keys(this.formulario.controls).forEach(key => {
-            if (key != 'id') {
+            if (key == 'Descripcion') {
                 const yourControl = this.formulario.get(key);
                 yourControl.valueChanges.subscribe(() => {
                     if (yourControl.value) {
@@ -72,24 +78,26 @@ export class FuncionComponent implements OnInit, OnDestroy {
             }
         });
     }
-  
+
     private setearFormulario(dato: Funcion) {
         if (dato) {
             this.formulario.reset({
-                id: dato.Id,
-                descripcion: dato.Descripcion,
+                Id: dato.Id,
+                Descripcion: dato.Descripcion,
+                Vigente: dato.Vigente,
             });
         } else {
             this.formulario.reset({
-                id: -1,
-                descripcion: '',
+                Id: 0,
+                Descripcion: '',
+                Vigente: true,
             });
         }
     }
-  
+
     onClickGuardar() {
         if (this.formulario.invalid) {
-  
+
             return Object.values(this.formulario.controls).forEach(control => {
                 if (control instanceof FormGroup) {
                     Object.values(control.controls).forEach(control => control.markAsTouched());
@@ -97,24 +105,22 @@ export class FuncionComponent implements OnInit, OnDestroy {
                     control.markAsTouched();
                 }
             });
-  
+
         }
-  
-        this.swalService.setToastOK();
-  
+
         this.datosServcice.actualizar(this.formulario.value)
             .subscribe({
                 next: (response: Funcion) => {
-                    this.store.dispatch(cargarFunciones());
+                    this.store.dispatch(cargarFunciones({ listarVigentes: this.listarVigentes }));
                     this.swalService.setToastOK();
                     this.modalService.dismissAll();
                 },
                 error: (error) => this.swalService.setToastError(error)
             });
-  
+
     }
-  
+
     onClickCerrar() {
         this.modalService.dismissAll();
     }
-  }
+}

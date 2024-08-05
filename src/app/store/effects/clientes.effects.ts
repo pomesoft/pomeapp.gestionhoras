@@ -20,7 +20,7 @@ export class ClientesEffects {
         return this.actions$.pipe(
             ofType(datosActions.cargarClientes),
             mergeMap(
-                (action) => this.datosService.listar()
+                (action) => this.datosService.listar(action.listarVigentes)
                     .pipe(
                         //tap(oper => console.log('usuarios effect', oper)),
                         map(data => datosActions.cargarClientesSuccess({ clientes: data })),

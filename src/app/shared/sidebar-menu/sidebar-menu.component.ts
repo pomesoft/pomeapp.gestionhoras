@@ -19,6 +19,8 @@ export class SidebarMenuComponent {
 
     public isCollapsedListados = false;
 
+    public isCollapsedConfiguracion = true;
+
     public userAdmin: boolean = false;
 
     @Input() esMobile: boolean = false;

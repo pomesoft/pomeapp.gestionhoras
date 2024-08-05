@@ -23,33 +23,34 @@ export interface ResponseApiLogin {
 
 export interface Usuario {
     Id: number;
-    LoginUsuario: string;
     Apellido?: string;
     Nombre?: string;
     Email?: any;
-    Celular?: any;
-    ProveedorAuth?: number;
-    Habilitado?: boolean;
+    Celular?: any;    
+    LoginUsuario?: string;
+    Clave?: string;
     Vigente?: boolean;
     Rol?: Rol;
     Funcion?: Funcion;
-    NombreCompleto?: string;
 }
 
 
 export interface Rol {
     Id: number;
     Descripcion: string;
+    Vigente?: boolean;
 }
 
 export interface Funcion {
     Id: number;
     Descripcion: string;
+    Vigente?: boolean;
 }
 
 export interface ClasificacionActividad {
     Id: number;
     Descripcion: string;
+    Vigente?: boolean;
 }
 
 export interface DataFiltro {
@@ -115,7 +116,9 @@ export interface Profesional {
 
 export interface Cliente {
     Id: number;
+    Codigo: string;
     Nombre: string;
+    Vigente?: boolean;
 }
 
 

@@ -41,7 +41,14 @@
                     </div>
 
                     <div class="col-12 col-md-4 p-2">
-                        <ngb-pagination
+                        <div class="form-group form-check">
+                            <input type="checkbox" id="listarTodasFunciones" 
+                                    [(ngModel)]="listarVigentes" 
+                                    (ngModelChange)="onChangeChekVigentes($event)"
+                                        class="form-check-input" />
+                            <label for="listarTodasFunciones" class="form-check-label">Listar Vigentes</label>
+                        </div>
+                        <!-- <ngb-pagination
                             [collectionSize]="total"
                             [(page)]="page"                                    
                             [pageSize]="pageSize"
@@ -49,7 +56,7 @@
                             [rotate]="true"
                             [boundaryLinks]="true"
                             (pageChange)="refreshDatos()">
-                        </ngb-pagination>
+                        </ngb-pagination> -->
                     </div>
 
                 </div>
@@ -58,6 +65,7 @@
                         <thead>
                             <tr>
                                 <th style="width: 10%;"></th>
+                                <th style="width: 5%;">Código</th>
                                 <th style="width: 50%;">Nombre</th>
                             </tr>
                         </thead>
@@ -69,11 +77,14 @@
                                         (click)="onClickAbriModal($event, modalDatos, item.Id)">
                                         <span class="h5 text-info"><i class="fa fa-pencil-square-o"></i></span>
                                     </a>
-                                    <a href="#" class="btn btn-outline-danger btn-rounded btn-sm m-l-5" data-toggle="tooltip"
-                                        data-placement="top" title="Editar"
+                                    <a href="#" class="btn btn-outline-danger btn-rounded btn-sm m-l-5" *ngIf="item.Vigente"
+                                        data-toggle="tooltip" data-placement="top" title="Editar"
                                         (click)="onClickEliminar($event, item)">
                                         <span class="h5 text-danger"><i class="fa fa-minus-square-o"></i></span>
                                     </a>
+                                </td>
+                                <td style="width: 5%;" class="text-right">
+                                    <ngb-highlight [result]="item.Codigo" [term]="filtro.value"></ngb-highlight>
                                 </td>
                                 <td style="width: 50%;">
                                     <ngb-highlight [result]="item.Nombre" [term]="filtro.value"></ngb-highlight>

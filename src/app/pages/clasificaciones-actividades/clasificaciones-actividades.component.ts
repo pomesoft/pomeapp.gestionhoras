@@ -23,21 +23,23 @@ import { ClasificacionesService } from '../../services/clasificaciones.service';
 export class ClasificacionesActividadesComponent implements OnInit, AfterContentInit, OnDestroy {
     cargando: boolean = false;
     tituloFormulario: string = 'Clasificación de Actividades';
-  
+
     error: any;
     textoBusqueda: string = '';
-  
+
     datosSubs: Subscription;
-  
+
     page: number = 1;
     pageSize: number = 15;
     total: number = 0;
-  
+
     listadoFULL: ClasificacionActividad[];
     listado$: Observable<ClasificacionActividad[]>;
-  
+
     filtro = new FormControl('', { nonNullable: true });
-  
+
+    listarVigentes: boolean = true;
+
     search(text: string): ClasificacionActividad[] {
         return this.listadoFULL.filter((item) => {
             const term = text.toLowerCase();
@@ -46,8 +48,8 @@ export class ClasificacionesActividadesComponent implements OnInit, AfterContent
             );
         });
     }
-  
-  
+
+
     constructor(
         private store: Store<AppState>,
         private modalService: NgbModal,
@@ -58,7 +60,7 @@ export class ClasificacionesActividadesComponent implements OnInit, AfterContent
         // customize default values of paginations used by this component tree
         config.size = 'sm';
         config.boundaryLinks = true;
-  
+
         this.listado$ = this.filtro.valueChanges.pipe(
             startWith(''),
             map((text) => this.search(text).map((item, i) => ({ id: i + 1, ...item }))
@@ -69,49 +71,52 @@ export class ClasificacionesActividadesComponent implements OnInit, AfterContent
         );
         this.refreshDatos();
     }
-  
-    ngOnInit(): void {        
+
+    ngOnInit(): void {
         this.datosSubs = this.store.select('clasificacionesActividades')
             .subscribe(({ clasificacionesActividades, loading, error }) => {
                 this.cargando = loading;
-                this.error = error;
-                console.log('clasificacionesActividades', clasificacionesActividades);
+                this.error = error;                
                 this.listadoFULL = clasificacionesActividades;
                 this.total = this.listadoFULL.length;
             });
     }
-  
+
     ngAfterContentInit(): void {
         this.cargando = true;
-        this.store.dispatch(cargarClasificacionesActividades());
+        this.store.dispatch(cargarClasificacionesActividades({ listarVigentes: this.listarVigentes }));
     }
-  
+
     ngOnDestroy(): void {
         this.datosSubs.unsubscribe();
     }
-  
-  
-  
+
+
+
     refreshDatos() {
         let valor = this.filtro.value;
         this.filtro.reset('');
         this.filtro.reset(valor);
     }
-  
+
     onClickAbriModal(event, content, id) {
         event.preventDefault();
-  
+
         this.store.dispatch(cargarClasificacionActividad({ id: id }));
-  
+
         this.modalService.open(content, { size: 'lg', centered: true });
     }
-  
+
+    onChangeChekVigentes(event: any) {
+        this.store.dispatch(cargarClasificacionesActividades({ listarVigentes: this.listarVigentes }));
+    }
+
     onClickEliminar(
         event: any,
         item: ClasificacionActividad
     ) {
         event.preventDefault();
-  
+
         const swalWithBootstrapButtons = Swal.mixin({
             customClass: {
                 confirmButton: 'btn btn-danger m-2 p-2',
@@ -126,13 +131,15 @@ export class ClasificacionesActividadesComponent implements OnInit, AfterContent
             cancelButtonText: '<i class="fa fa-times mr-2"></i>Cancelar',
             confirmButtonText: '<i class="fa fa-minus-square-o mr-2"></i>Desactivar',
         }).then((result) => {
-  
+
             if (result.isConfirmed) {
                 this.cargando = true;
-  
-                this.datosServcice.eliminar(item.Id)
+
+                item.Vigente = false;
+                this.datosServcice.actualizar(item)
                     .subscribe({
                         next: (response: ClasificacionActividad) => {
+                            this.store.dispatch(cargarClasificacionesActividades({ listarVigentes: this.listarVigentes }));
                             this.swalService.setToastOK();
                             this.cargando = false;
                         },
@@ -140,8 +147,7 @@ export class ClasificacionesActividadesComponent implements OnInit, AfterContent
                         complete: () => this.cargando = false,
                     });
             }
-  
+
         });
     }
-  }
-  
+}

@@ -13,6 +13,10 @@ import { ReporteshorasComponent } from './reporteshoras/reporteshoras.component'
 import { RegistrohorasComponent } from './registrohoras/registrohoras.component';
 import { PlanningComponent } from './planning/planning.component';
 import { ConfiguracionComponent } from './configuracion/configuracion.component';
+import { ClientesComponent } from './clientes/clientes.component';
+import { ProyectosComponent } from './proyectos/proyectos.component';
+import { ClasificacionesActividadesComponent } from './clasificaciones-actividades/clasificaciones-actividades.component';
+import { FuncionesComponent } from './funciones/funciones.component';
 
 const routes: Routes = [
     {
@@ -28,6 +32,10 @@ const routes: Routes = [
             { path: 'asignacion', component: PlanningComponent, data: { titulo: 'Asignación' } },
             { path: 'configuracion', component: ConfiguracionComponent, data: { titulo: 'Configuración' } },
             { path: 'usuarios', component: UsuariosComponent, data: { titulo: 'Usuarios' }},
+            { path: 'clientes', component: ClientesComponent, data: { titulo: 'Clientes' }},
+            { path: 'proyectos', component: ProyectosComponent, data: { titulo: 'Proyectos' }},
+            { path: 'funciones', component: FuncionesComponent, data: { titulo: 'Funciones Asignadas' }},
+            { path: 'clasifactividades', component: ClasificacionesActividadesComponent, data: { titulo: 'Clasificación de actividades' }},
         ]
     },
 ];

@@ -20,7 +20,7 @@ export class ClasificacionesActividadesEffects {
         return this.actions$.pipe(
             ofType(datosActions.cargarClasificacionesActividades),
             mergeMap(
-                (action) => this.datosService.listar()
+                (action) => this.datosService.listar(action.listarVigentes)
                     .pipe(
                         //tap(oper => console.log('ClasificacionesActividadesEffects', oper)),
                         map(data => datosActions.cargarClasificacionesActividadesSuccess({ clasificacionesActividades: data })),

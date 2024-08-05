@@ -20,7 +20,10 @@ export const cargarFuncionError = createAction(
 
 //**************************************************************************** */
 //gestion del listdo de funciones
-export const cargarFunciones = createAction('[Funciones] Cargar Funciones');
+export const cargarFunciones = createAction(
+    '[Funciones] Cargar Funciones',
+    props<{ listarVigentes: boolean }>()
+);
 
 export const cargarFuncionesSuccess = createAction(
     '[Funciones] Cargar Funciones Success',

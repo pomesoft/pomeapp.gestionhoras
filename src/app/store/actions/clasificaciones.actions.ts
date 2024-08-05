@@ -20,7 +20,10 @@ export const cargarClasificacionActividadError = createAction(
 
 //**************************************************************************** */
 //gestion del listdo de clasificacionActividades
-export const cargarClasificacionesActividades = createAction('[ClasificacionActividades] Cargar ClasificacionesActividades');
+export const cargarClasificacionesActividades = createAction(
+    '[ClasificacionActividades] Cargar ClasificacionesActividades',
+    props<{ listarVigentes: boolean }>()
+);
 
 export const cargarClasificacionesActividadesSuccess = createAction(
     '[ClasificacionActividades] Cargar ClasificacionesActividades Success',

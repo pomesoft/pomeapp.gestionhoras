@@ -7,7 +7,8 @@ export interface FuncionesState {
     funcion: Funcion,
     loaded: boolean,
     loading: boolean,
-    error: any
+    error: any,
+    listarVigentes: boolean,
 }
 
 export const FuncionesInitialState: FuncionesState = {
@@ -15,7 +16,8 @@ export const FuncionesInitialState: FuncionesState = {
     funcion: null,
     loaded: false,
     loading: false,
-    error: null
+    error: null,
+    listarVigentes: true,
 }
 
 const _FuncionesReducer = createReducer(FuncionesInitialState,
@@ -38,7 +40,11 @@ const _FuncionesReducer = createReducer(FuncionesInitialState,
     })),
 
     //gestion del listado de funciones
-    on(cargarFunciones, state => ({ ...state, loading: true })),
+    on(cargarFunciones, (state, { listarVigentes }) => ({
+        ...state,
+        loading: true,
+        listarVigentes: listarVigentes,
+    })),
 
     on(cargarFuncionesSuccess, (state, { funciones }) => ({
         ...state,

@@ -39,10 +39,13 @@ export class ClientesComponent implements OnInit, AfterContentInit, OnDestroy {
 
     filtro = new FormControl('', { nonNullable: true });
 
-    search(text: string): Cliente[] {        
+    listarVigentes: boolean = true;
+
+    search(text: string): Cliente[] {
         return this.listadoFULL.filter((item) => {
             const term = text.toLowerCase();
             return (
+                item.Codigo && item.Codigo.toLowerCase().includes(term) ||
                 item.Nombre && item.Nombre.toLowerCase().includes(term)
             );
         });
@@ -83,7 +86,7 @@ export class ClientesComponent implements OnInit, AfterContentInit, OnDestroy {
 
     ngAfterContentInit(): void {
         this.cargando = true;
-        this.store.dispatch(cargarClientes());
+        this.store.dispatch(cargarClientes({ listarVigentes: this.listarVigentes }));
     }
 
     ngOnDestroy(): void {
@@ -104,6 +107,10 @@ export class ClientesComponent implements OnInit, AfterContentInit, OnDestroy {
         this.store.dispatch(cargarCliente({ id: id }));
 
         this.modalService.open(content, { size: 'lg', centered: true });
+    }
+
+    onChangeChekVigentes(event: any) {
+        this.store.dispatch(cargarClientes({ listarVigentes: this.listarVigentes }));
     }
 
     onClickEliminar(
@@ -130,9 +137,11 @@ export class ClientesComponent implements OnInit, AfterContentInit, OnDestroy {
             if (result.isConfirmed) {
                 this.cargando = true;
 
-                this.datosServcice.eliminar(item.Id)
+                item.Vigente=false 
+                this.datosServcice.actualizar(item)
                     .subscribe({
                         next: (response: Cliente) => {
+                            this.store.dispatch(cargarClientes({ listarVigentes: this.listarVigentes }));
                             this.swalService.setToastOK();
                             this.cargando = false;
                         },

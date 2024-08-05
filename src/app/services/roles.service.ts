@@ -1,18 +1,24 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 
 import { environment } from '../../environments/environment';
 
-import { Cliente } from '../models/entity.models';
+import { Rol } from '../models/entity.models';
 
 const base_url = environment.base_url;
+
+
+const headers = new HttpHeaders({
+    'Content-Type': 'application/json'
+});
+
 
 @Injectable({
     providedIn: 'root'
 })
-export class ClientesService {
+export class RolesService {
 
-    private clientes: Cliente[];
+    roles: Rol[] = [];
 
     constructor(
         private http: HttpClient
@@ -35,7 +41,7 @@ export class ClientesService {
             this.listar()
                 .subscribe({
                     next: (response) => {
-                        this.clientes = response;
+                        this.roles = response;
                         resolve(true)
                     },
                     error: (error) => reject(<any>error),
@@ -43,31 +49,35 @@ export class ClientesService {
         });
     }
 
-    listar(listarVigentes: boolean = true) {
-        const url = `${base_url}Clientes?listarVigentes=${listarVigentes}`;
-        return this.http.get<Cliente[]>(url, this.headers)
+    listar() {
+        const url = `${base_url}roles`;
+        return this.http.get<Rol[]>(url, this.headers)
     }
 
     obtener(id: number) {
 
-        const url = `${base_url}Clientes/${id}`;
-        return this.http.get<Cliente>(url, this.headers);
+        const url = `${base_url}roles/${id}`;
+        return this.http.get<Rol>(url, this.headers);
 
     }
 
-    eliminar(dato: Cliente) {
-        const url = `${base_url}Cliente/eliminar?id=${dato.Id}`;
+    eliminar(dato: Rol) {
+        const url = `${base_url}Rol/eliminar?id=${dato.Id}`;
         return this.http.post(url, this.headers);
     }
 
 
-    actualizar(dato: Cliente) {
+    actualizar(dato: Rol) {
+
+        console.log('actualizar dato', JSON.stringify(dato));
         if (dato.Id <= 0) {
-            return this.http.post(`${base_url}Clientes`, dato, this.headers);
+            return this.http.post(`${base_url}roles`, dato, this.headers);
         } else {
-            return this.http.put(`${base_url}Clientes/${dato.Id}`, dato, this.headers);
+            return this.http.put(`${base_url}roles/${dato.Id}`, dato, this.headers);
         }
 
     }
 
 }
+
+

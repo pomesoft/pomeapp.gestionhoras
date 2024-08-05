@@ -20,7 +20,7 @@ export class FuncionesEffects {
         return this.actions$.pipe(
             ofType(datosActions.cargarFunciones),
             mergeMap(
-                (action) => this.datosService.listar()
+                (action) => this.datosService.listar(action.listarVigentes)
                     .pipe(
                         //tap(oper => console.log('usuarios effect', oper)),
                         map(data => datosActions.cargarFuncionesSuccess({ funciones: data })),

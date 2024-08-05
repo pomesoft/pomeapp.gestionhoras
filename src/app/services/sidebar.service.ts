@@ -10,8 +10,8 @@ export class SidebarService {
         { titulo: 'Registro de Horas', icono: 'mdi mdi-calendar-clock', url: 'registrohoras' },
         { titulo: 'Asignación', icono: 'mdi mdi-calendar-check', url: 'asignacion' },
         { titulo: 'Reporte de Horas', icono: 'mdi mdi-clipboard-text', url: 'reportehoras' },
-        { titulo: 'Configuración', icono: 'mdi mdi-settings', url: 'configuracion' },
         { titulo: 'Usuarios', icono: 'mdi mdi-account-multiple', url: 'usuarios' },
+        //{ titulo: 'Configuración', icono: 'mdi mdi-settings', url: 'configuracion' },
     ];
 
     constructor() { }

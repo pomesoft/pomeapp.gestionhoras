@@ -292,36 +292,31 @@ export class UsuarioService {
 
 
     listar() {
-
-        const url = `${base_url}usuario`;
+        const url = `${base_url}usuarios`;
         return this.http.get<Usuario[]>(url, this.headers);
     }
 
-    listarPorCliente(idCliente: number) {
-
-        const url = `${base_url}usuario`;
-        return this.http.get<Usuario[]>(url, this.headers)
-            .pipe(
-                map(heroes => heroes.filter(user => user.Vigente && user.Habilitado))
-            );
-    }
-
-
     obtener(id: number) {
 
-        const url = `${base_url}usuario/${id}`;
+        const url = `${base_url}usuarios/${id}`;
         return this.http.get<Usuario>(url, this.headers);
 
     }
 
-    eliminarUsuario(usuario: Usuario) {
+    eliminar(usuario: Usuario) {
         const url = `${base_url}Usuario/eliminar?id=${usuario.Id}`;
         return this.http.post(url, this.headers);
     }
 
-    guardarUsuario(usuario: Usuario) {
-        console.log('base_url', base_url);
-        return this.http.post(`${base_url}usuario`, usuario, this.headers);
+
+    actualizar(usuario: Usuario) {
+        
+        console.log('actualizar usuario', JSON.stringify(usuario));
+        if(usuario.Id<=0){
+            return this.http.post(`${base_url}usuarios`, usuario, this.headers);
+        } else {
+            return this.http.put(`${base_url}usuarios/${usuario.Id}`, usuario, this.headers);
+        }
 
     }
 

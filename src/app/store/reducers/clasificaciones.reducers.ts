@@ -7,7 +7,8 @@ export interface ClasificacionesActividadesState {
     clasificacionActividad: Funcion,
     loaded: boolean,
     loading: boolean,
-    error: any
+    error: any,
+    listarVigentes: boolean,
 }
 
 export const ClasificacionesInitialState: ClasificacionesActividadesState = {
@@ -15,14 +16,15 @@ export const ClasificacionesInitialState: ClasificacionesActividadesState = {
     clasificacionActividad: null,
     loaded: false,
     loading: false,
-    error: null
+    error: null,
+    listarVigentes: true,
 }
 
 const _ClasificacionesReducer = createReducer(ClasificacionesInitialState,
 
     //gestion de un clasificacionActividad
     on(cargarClasificacionActividad, state => ({ ...state, loading: true })),
-
+    
     on(cargarClasificacionActividadSuccess, (state, { clasificacionActividad }) => ({
         ...state,
         loading: false,
@@ -38,8 +40,12 @@ const _ClasificacionesReducer = createReducer(ClasificacionesInitialState,
     })),
 
     //gestion del listado de clasificacionesActividades
-    on(cargarClasificacionesActividades, state => ({ ...state, loading: true })),
-
+    on(cargarClasificacionesActividades, (state, { listarVigentes }) => ({
+        ...state,
+        loading: true,
+        listarVigentes: listarVigentes,
+    })),
+    
     on(cargarClasificacionesActividadesSuccess, (state, { clasificacionesActividades }) => ({
         ...state,
         loading: false,

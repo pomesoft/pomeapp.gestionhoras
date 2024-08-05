@@ -16,9 +16,10 @@
                         (change)="onChangeRol($event)"
                         [class.is-invalid]="idRolNoValido">
                         <option value="0">Seleccione un rol</option>
-                        <option value="1">ADMINISTRADOR</option>
-                        <option value="2">PROYECT LEADER</option>
-                        <option value="3">USUARIO</option>
+                        <option *ngFor="let item of roles"
+                            [value]="item.Id">
+                            {{item.Descripcion}}
+                        </option>
                     </select>                    
                     <small *ngIf="idRolNoValido" class="text-danger">
                         Debe ingresar rol del usuario
@@ -32,21 +33,15 @@
                     <select class="custom-select col-12"
                         id="idFuncion"
                         formControlName="idFuncion"
-                        (change)="onChangeRol($event)"
-                        [class.is-invalid]="idFuncionNoValido">
+                        (change)="onChangeFuncion($event)"
+                        [class.is-invalid]="funcionNoValido">
                         <option value="0">Seleccione una función asociada</option>
-                        <option value="1">EXPERTO REGULATORIO</option>
-                        <option value="2">EXPERTO FARMACOVIGILANCIA</option>
-                        <option value="3">EXPERTO MEDICO</option>
-                        <option value="4">EXPERTO COMPLIANCE</option>
-                        <option value="5">EXPERTO LEGAL</option>
-                        <option value="6">PROJECT MANAGER</option>
-                        <option value="7">ANALISTA SENIOR</option>
-                        <option value="8">ANALISTA JUNIOR</option>
-                        <option value="9">TECNICO ADMINISTRATIVO</option>
-                        <option value="10">GESTORÍA</option>
+                        <option *ngFor="let item of funciones"
+                            [value]="item.Id">
+                            {{item.Descripcion}}
+                        </option>
                     </select>                    
-                    <small *ngIf="idFuncionNoValido" class="text-danger">
+                    <small *ngIf="funcionNoValido" class="text-danger">
                         Debe ingresar función del usuario
                     </small>
                 </div>
@@ -65,9 +60,9 @@
                 <label class="col-sm-2 text-right control-label col-form-label">Habilitado</label>
                 <div class="col-sm-4">
                     <select class="custom-select col-12"
-                        id="habilitado"
-                        formControlName="habilitado"
-                        (change)="onChangeHabilitado($event)">
+                        id="vigente"
+                        formControlName="vigente"
+                        (change)="onChangeVigente($event)">
                         <option value="0">NO</option>
                         <option value="1">SI</option>
                     </select>
@@ -84,11 +79,7 @@
                 </div>
                 <label class="col-sm-2 text-right control-label col-form-label">Nombre</label>
                 <div class="col-sm-4">
-                    <input type="text" class="form-control" placeholder="Nombre" formControlName="nombre"
-                        [class.is-invalid]="nombreNoValido">
-                    <small *ngIf="nombreNoValido" class="text-danger">
-                        Debe ingresar nombre del usuario
-                    </small>
+                    <input type="text" class="form-control" placeholder="Nombre" formControlName="nombre">                    
                 </div>
             </div>
             <div class="form-group row">

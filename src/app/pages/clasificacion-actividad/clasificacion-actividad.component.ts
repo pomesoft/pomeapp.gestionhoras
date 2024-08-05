@@ -27,9 +27,11 @@ export class ClasificacionActividadComponent implements OnInit, OnDestroy {
 
     datoSubs: Subscription;
 
+    listarVigentes: boolean = true;
+
 
     get descripcionNoValido() {
-        return this.formulario.get('descripcion').invalid && this.formulario.get('descripcion').touched
+        return this.formulario.get('Descripcion').invalid && this.formulario.get('Descripcion').touched
     }
 
     constructor(
@@ -46,8 +48,11 @@ export class ClasificacionActividadComponent implements OnInit, OnDestroy {
 
     ngOnInit(): void {
         this.datoSubs = this.store.select('clasificacionesActividades')
-            .subscribe(({ clasificacionActividad }) => {
-                this.setearFormulario(clasificacionActividad);
+            .subscribe(({ clasificacionActividad, loaded, listarVigentes }) => {                
+                this.listarVigentes = listarVigentes;
+                if (loaded) {
+                    this.setearFormulario(clasificacionActividad);
+                }
             });
     }
 
@@ -58,11 +63,12 @@ export class ClasificacionActividadComponent implements OnInit, OnDestroy {
 
     private crearFormulario() {
         this.formulario = this.formBuilder.group({
-            id: [-1],
-            descripcion: ['', Validators.required],
+            Id: [0],
+            Descripcion: ['', Validators.required],
+            Vigente: [true],
         });
         Object.keys(this.formulario.controls).forEach(key => {
-            if (key != 'id') {
+            if (key == 'Descripcion') {
                 const yourControl = this.formulario.get(key);
                 yourControl.valueChanges.subscribe(() => {
                     if (yourControl.value) {
@@ -76,13 +82,15 @@ export class ClasificacionActividadComponent implements OnInit, OnDestroy {
     private setearFormulario(dato: ClasificacionActividad) {
         if (dato) {
             this.formulario.reset({
-                id: dato.Id,
-                descripcion: dato.Descripcion,
+                Id: dato.Id,
+                Descripcion: dato.Descripcion,
+                Vigente: dato.Vigente,
             });
         } else {
             this.formulario.reset({
-                id: -1,
-                descripcion: '',
+                Id: 0,
+                Descripcion: '',
+                Vigente: true,
             });
         }
     }
@@ -105,7 +113,7 @@ export class ClasificacionActividadComponent implements OnInit, OnDestroy {
         this.datosServcice.actualizar(this.formulario.value)
             .subscribe({
                 next: (response: ClasificacionActividad) => {
-                    this.store.dispatch(cargarClasificacionesActividades());
+                    this.store.dispatch(cargarClasificacionesActividades({ listarVigentes: this.listarVigentes }));
                     this.swalService.setToastOK();
                     this.modalService.dismissAll();
                 },

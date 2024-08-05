@@ -10,7 +10,9 @@ import { cargarUsuarios } from '../../store/actions';
 
 import { SwalhelperService } from '../../services/swalhelper.service';
 import { UsuarioService } from '../../services/usuario.service';
-import { Usuario } from '../../models/entity.models';
+import { Funcion, Rol, Usuario } from '../../models/entity.models';
+import { RolesService } from '../../services/roles.service';
+import { FuncionesService } from '../../services/funciones.service';
 
 @Component({
     selector: 'app-usuario',
@@ -28,23 +30,22 @@ export class UsuarioComponent implements OnInit, OnDestroy {
 
     usuarioSubs: Subscription;
 
+    roles: Rol[] = [];
+    funciones: Funcion[] = [];
+
+    funcionNoValido: boolean = false;
+
     get loginUsuarioNoValido() {
-        return this.formulario.get('loginUsuario').invalid && this.formulario.get('loginUsuario').touched
+        return this.formulario.get('loginUsuario').invalid && this.formulario.get('loginUsuario').touched;
     }
     get apellidoNoValido() {
-        return this.formulario.get('apellido').invalid && this.formulario.get('apellido').touched
-    }
-    get nombreNoValido() {
-        return this.formulario.get('nombre').invalid && this.formulario.get('nombre').touched
+        return this.formulario.get('apellido').invalid && this.formulario.get('apellido').touched;
     }
     get emailNoValido() {
-        return this.formulario.get('email').invalid && this.formulario.get('email').touched
-    }    
+        return this.formulario.get('email').invalid && this.formulario.get('email').touched;
+    }
     get idRolNoValido() {
-        return this.formulario.get('idRol').invalid && this.formulario.get('idRol').touched
-    }    
-    get idFuncionNoValido() {
-        return this.formulario.get('idFuncion').invalid && this.formulario.get('idFuncion').touched
+        return this.formulario.get('idRol').invalid && this.formulario.get('idRol').touched;
     }
 
     constructor(
@@ -53,6 +54,8 @@ export class UsuarioComponent implements OnInit, OnDestroy {
         private modalService: NgbModal,
         private swalService: SwalhelperService,
         private usuarioService: UsuarioService,
+        private rolesService: RolesService,
+        private funcionesService: FuncionesService,
     ) {
 
         this.crearFormulario();
@@ -60,11 +63,14 @@ export class UsuarioComponent implements OnInit, OnDestroy {
     }
 
     ngOnInit(): void {
-       
+
         this.usuarioSubs = this.store.select('usuario')
-            .subscribe(({ usuario }) => {
-                this.setearFormulario(usuario);
+            .subscribe(({ usuario, loaded }) => {
+                if (loaded)
+                    this.setearFormulario(usuario);
             });
+
+        this.cargarDatos();
     }
 
     ngOnDestroy(): void {
@@ -72,45 +78,69 @@ export class UsuarioComponent implements OnInit, OnDestroy {
     }
 
 
+    async cargarDatos() {
+
+        await this.rolesService.inicializar()
+            .then(result => {
+                if (result) {
+                    this.roles = this.rolesService.roles;
+                }
+                return this.funcionesService.inicializar();
+            })
+            .then(result => {
+                if (result) {
+                    this.funciones = this.funcionesService.funciones;
+                }
+            })
+            .catch(err => {
+                this.swalService.setToastError(`Ocurrió un error al cargar los datos`)
+                console.log(err);
+            });
+
+    }
+
+
     private crearFormulario() {
         this.formulario = this.formBuilder.group({
             id: [-1],
-            loginUsuario: ['', Validators.required],
             apellido: ['', Validators.required],
-            nombre: ['', Validators.required],
+            nombre: [''],
             email: ['', [Validators.required, Validators.email]],
             celular: [''],
+            loginUsuario: ['', Validators.required],
+            clave: [''],
+            vigente: [1],
             idRol: [0, [Validators.required, Validators.min(1)]],
-            idFuncion: [0, [Validators.required, Validators.min(1)]],
-            habilitado: [0],
+            idFuncion: [0],
         });
     }
 
     private setearFormulario(Usuario: Usuario) {
-        if (Usuario) {
+        if (Usuario && Usuario.Id) {
             this.formulario.reset({
                 id: Usuario.Id,
-                loginUsuario: Usuario.LoginUsuario,
                 apellido: Usuario.Apellido,
                 nombre: Usuario.Nombre,
                 email: Usuario.Email,
                 celular: Usuario.Celular,
-                idRol: Usuario.Rol.Id,
-                idFuncion: Usuario.Funcion.Id,
-                habilitado: Usuario.Habilitado ? 1 : 0,
+                loginUsuario: Usuario.LoginUsuario,
+                clave: Usuario.Clave,
+                vigente: Usuario.Vigente ? 1 : 0,
+                idRol: Usuario.Rol ? Usuario.Rol.Id : 0,
+                idFuncion: Usuario.Funcion ? Usuario.Funcion.Id : 0,
             });
         } else {
             this.formulario.reset({
-                id: -1,
-                loginUsuario: '',
+                id: 0,
                 apellido: '',
                 nombre: '',
                 email: '',
                 celular: '',
-                observaciones: '',
+                loginUsuario: '',
+                clave: '',
+                vigente: 1,
                 idRol: 0,
                 idFuncion: 0,
-                habilitado: 0,
             });
         }
     }
@@ -128,35 +158,43 @@ export class UsuarioComponent implements OnInit, OnDestroy {
 
         }
 
+        var rolSeleccionado = this.roles.find(item => item.Id == this.formulario.get('idRol').value);
+        var funcionSeleccioanda = this.funciones.find(item => item.Id == this.formulario.get('idFuncion').value);
+
+        if (!funcionSeleccioanda) {
+            funcionSeleccioanda = { Id: 0, Descripcion: '', Vigente: true };
+        }
+
+
+        if (rolSeleccionado && rolSeleccionado.Id > 1 && funcionSeleccioanda.Id == 0) {
+            this.funcionNoValido = true;
+            return;
+        } else {
+            this.funcionNoValido = false;
+        }
+
         let user: Usuario = {
             Id: this.formulario.get('id').value,
-            LoginUsuario: this.formulario.get('loginUsuario').value,
             Apellido: this.formulario.get('apellido').value,
-            Nombre: this.formulario.get('nombre').value,
+            Nombre: this.formulario.get('nombre').value ? this.formulario.get('nombre').value : '',
             Email: this.formulario.get('email').value,
             Celular: this.formulario.get('celular').value,
-            Habilitado: (this.formulario.get('habilitado').value == 1),
-            Rol: {
-                Id: this.formulario.get('idRol').value,
-                Descripcion: 'ROL',
-            },
-            Funcion: {
-                Id: this.formulario.get('idFuncion').value,
-                Descripcion: 'FUNCION',
-            },
+            LoginUsuario: this.formulario.get('loginUsuario').value,
+            Clave: this.formulario.get('clave').value,
+            Vigente: (this.formulario.get('vigente').value == 1),
+            Rol: rolSeleccionado,
+            Funcion: funcionSeleccioanda,
         };
 
-        this.swalService.setToastOK();
-
-        // this.usuarioService.guardarUsuario(user)
-        //     .subscribe({
-        //         next: (response: Usuario) => {
-        //             this.store.dispatch(cargarUsuarios());
-        //             this.swalService.setToastOK();
-        //             this.modalService.dismissAll();
-        //         },
-        //         error: (error) => this.swalService.setToastError(error)
-        //     });
+        this.usuarioService.actualizar(user)
+            .subscribe({
+                next: (response: Usuario) => {
+                    this.store.dispatch(cargarUsuarios());
+                    this.swalService.setToastOK();
+                    this.modalService.dismissAll();
+                },
+                error: (error) => this.swalService.setToastError(error)
+            });
 
     }
 
@@ -170,8 +208,14 @@ export class UsuarioComponent implements OnInit, OnDestroy {
         });
     }
 
-    onChangeHabilitado(event: any) {
-        this.formulario.get('habilitado').setValue(+event.target.value, {
+    onChangeFuncion(event: any) {
+        this.formulario.get('idFuncion').setValue(+event.target.value, {
+            onlySelf: true,
+        });
+    }
+
+    onChangeVigente(event: any) {
+        this.formulario.get('vigente').setValue(+event.target.value, {
             onlySelf: true,
         });
     }
