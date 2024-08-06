@@ -9,8 +9,6 @@ export interface FechaNgDateStruct {
 export interface UsuarioLogin {
     Usuario: string;
     Clave: String;
-    IdCliente?: number;
-    ProveedorAuth?: number;
     RecordarUser?: boolean;
     ClaveNueva?: String;
 }
@@ -26,14 +24,13 @@ export interface Usuario {
     Apellido?: string;
     Nombre?: string;
     Email?: any;
-    Celular?: any;    
+    Celular?: any;
     LoginUsuario?: string;
     Clave?: string;
     Vigente?: boolean;
     Rol?: Rol;
     Funcion?: Funcion;
 }
-
 
 export interface Rol {
     Id: number;
@@ -93,20 +90,6 @@ export interface TipoProyecto {
     Descripcion: string;
 }
 
-export interface Tarea {
-    Id: number;
-    Descripcion: string;
-    Profesional: Profesional;
-    FechaInicio: Date;
-    FechaFin: Date;
-    Entregado?: boolean;
-    FechaEntrega?: Date;
-    HorasPlanificadas?: number;
-    Periodo?: number;
-    FechaRegistro?: string;
-    HorasRegistro?: number;
-}
-
 export interface Profesional {
     Id: number;
     Apellido: string;
@@ -132,19 +115,28 @@ export interface RolFuncion {
 }
 
 
+export interface ProyectoDTO {
+    Id: number;
+    Codigo: string;
+    Descripcion: string;
+    DiaCierre: number;
+    Vigente: boolean;
+    TipoProyectoId: number;
+    ClienteId: number;
+    LiderProyectoId: number;
+    LiderProyectoBackupId: number;
+}
+
 export interface Proyecto {
     Id: number;
     Codigo: string;
     Descripcion?: string;
-    Cliente?: Cliente;
-    ClienteNombre?: string;
-    Tipo?: TipoProyecto;
-    TipoDescripcion?: string;
-    Producto?: Producto;
-    ProductoDescripcion?: string;
-    FechaInicio?: Date;
-    FechaFin?: Date;
     DiaCierre?: number;
+    Vigente?: boolean;
+    TipoProyecto?: TipoProyecto;
+    Cliente?: Cliente;
+    LiderProyecto?: Usuario;
+    LiderProyectoBackup?: Usuario;
     RolesAsignados?: RolFuncion[];
     RolesAsignadosFULL?: RolFuncion[];
 }

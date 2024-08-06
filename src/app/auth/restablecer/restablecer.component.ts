@@ -3,7 +3,7 @@ import { ActivatedRoute, NavigationExtras, Params, Router } from '@angular/route
 import { FormBuilder, Validators, FormGroup } from '@angular/forms';
 import Swal from 'sweetalert2'
 
-import { Usuario } from '../../models/entity.models';
+import { Usuario, UsuarioLogin } from '../../models/entity.models';
 import { UsuarioService } from '../../services/usuario.service';
 import { SwalhelperService } from '../../services/swalhelper.service';
 
@@ -16,7 +16,6 @@ import { SwalhelperService } from '../../services/swalhelper.service';
 export class RestablecerComponent {
     public mostrarNoHabilitado: boolean = false;
 
-    public usuario: Usuario;
     public ingresaUsuario: boolean = true;
 
     private paramsKey: string = '';
@@ -24,11 +23,9 @@ export class RestablecerComponent {
     public formSubmitted = false;
 
     public registerForm = this.fb.group({
-        nombre: [''],
-        email: ['', [Validators.required]],
+        clave: ['', Validators.required],
         password: ['', Validators.required],
         password2: ['', Validators.required],
-        terminos: [true],
     }, {
         validators: this.passwordsIguales('password', 'password2')
     });
@@ -37,76 +34,47 @@ export class RestablecerComponent {
         private route: ActivatedRoute,
         private router: Router,
         private fb: FormBuilder,
-        private usuarioService: UsuarioService,
+        public usuarioService: UsuarioService,
         private swalService: SwalhelperService,
     ) { }
 
     ngOnInit(): void {
 
-
         this.route.queryParams.subscribe((params: Params) => {
             if (params) {
                 this.paramsKey = params.key;
-
-                if (this.usuarioService.validarUsuarioKey(params.key)) {
-
-                    var dataKey = JSON.parse(window.atob(params.key));
-                    var idUsuario = dataKey.IdUsuario;
-                    if (idUsuario > 0) {
-                        this.cargarDatos(idUsuario);
-                    }
-
-                }
             }
         });
 
-    }
 
-    async cargarDatos(idUsuario: number) {
-        this.ingresaUsuario = true;
-        await this.obtenerUsuario(idUsuario)
-            .then(resp => {
-                if (resp) {
-                    this.usuario = resp;
-                    this.registerForm.get('email').setValue(this.usuario.LoginUsuario, { onlySelf: true, });
-                    this.ingresaUsuario = false;
-                };
-            })
-            .catch(err => {
-                this.swalService.setToastError(err)
-                console.log(err);
-            });
-    }
 
-    obtenerUsuario(idUsuario: number) {
-        return new Promise<Usuario>((resolve, reject) => {
-            this.usuarioService.obtener(idUsuario)
-                .subscribe({
-                    next: (user) => resolve(user),
-                    error: (error) => reject(<any>error)
-                });
-        });
     }
-
 
     async restablecerPassword() {
         this.formSubmitted = true;
-        console.log(this.registerForm.value);
 
         if (this.registerForm.invalid) {
             return;
         }
 
-        // const valido = await this.usuarioService.restablecerClaveUsuario({
-        //     Usuario: this.registerForm.get('email').value,
-        //     Clave: this.registerForm.get('email').value,
-        //     ClaveNueva: this.registerForm.get('password').value,
-        // });
+        let userLogin: UsuarioLogin = {
+            Usuario: this.usuarioService.usuario.LoginUsuario,
+            Clave: this.registerForm.get('clave').value,
+            ClaveNueva: this.registerForm.get('password').value,
+        };
 
-        const valido = true;
+        if(userLogin.Clave!=this.usuarioService.usuario.Clave){
+            Swal.fire('Error', 'Ocurrió un error al restablecer tu contraseña. Comunicate con el adminsitrador', 'error');
+            return;
+        }
+
+        const valido = await this.usuarioService.cambioClaveUsuario(userLogin);
 
         if (valido) {
-            this.mostrarNoHabilitado = true;
+            Swal.fire('','La contraseña se cambió correctamente!', 'success')
+                .then((result) => {
+                    this.usuarioService.logout();
+                });
 
         } else {
             Swal.fire('Error', 'Ocurrió un error al restablecer tu contraseña. Comunicate con el adminsitrador', 'error');
@@ -139,6 +107,18 @@ export class RestablecerComponent {
         const pass2 = this.registerForm.get('password2').value;
 
         if ((pass1 !== pass2) && this.formSubmitted) {
+            return true;
+        } else {
+            return false;
+        }
+
+    }
+
+    contrasenaNuevaNoValida() {
+        const pass1 = this.registerForm.get('password').value;
+        const claveACtual = this.registerForm.get('clave').value;
+
+        if ((pass1 != '') && (pass1 === claveACtual) && this.formSubmitted) {
             return true;
         } else {
             return false;

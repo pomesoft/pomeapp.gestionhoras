@@ -87,9 +87,13 @@ export class UsuarioService {
             this.router.navigateByUrl('/login');
         })
 
-        // this.auth2.signOut().then(() => {
+    }
 
-        // });
+    cambioClave() {
+        
+        this.ngZone.run(() => {
+            this.router.navigateByUrl('/cambiopass');
+        })
 
     }
 
@@ -178,12 +182,12 @@ export class UsuarioService {
 
     login(data: UsuarioLogin) {
 
-        return this.http.post<ResponseApiLogin>(`${base_url}Usuario/Login`, data)
+        return this.http.post<Usuario>(`${base_url}Login`, data)
             .pipe(
-                tap((resp: ResponseApiLogin) => {
-                    if (resp.Usuario.Id > 0) {
-                        localStorage.setItem('usuarioService', JSON.stringify(resp.Usuario));
-                        localStorage.setItem('token', this.generaToken(resp.Usuario));
+                tap((user) => {
+                    if (user.Id > 0) {
+                        localStorage.setItem('usuarioService', JSON.stringify(user));
+                        localStorage.setItem('token', this.generaToken(user));
                     }
                 })
             );
@@ -235,7 +239,7 @@ export class UsuarioService {
 
         return new Promise(resolve => {
 
-            return this.http.post(`${base_url}Usuario/CambioClave`, params, { headers: headers })
+            return this.http.post(`${base_url}Login/cc`, params, { headers: headers })
                 .subscribe({
                     next: (resp) => {
                         if (resp) {

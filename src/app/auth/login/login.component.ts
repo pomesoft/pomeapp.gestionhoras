@@ -26,8 +26,8 @@ export class LoginComponent implements OnInit {
     public auth2: any;
 
     public loginForm = this.fb.group({
-        usuario: [localStorage.getItem('usuario') || 'demo', [Validators.required, Validators.email]],
-        clave: [localStorage.getItem('password') || '123', Validators.required],
+        usuario: [localStorage.getItem('usuario') || '', [Validators.required, Validators.email]],
+        clave: [localStorage.getItem('password') || '', Validators.required],
         remember: [localStorage.getItem('password') || true]
     });
 
@@ -110,7 +110,7 @@ export class LoginComponent implements OnInit {
                     localStorage.removeItem('remember');
                 }
 
-                if (resp.OK) {
+                if (resp) {
                     // Navegar al Dashboard
                     if (this.usuarioService.usuario.Rol.Id == 1) {
                         this.router.navigateByUrl('/');
@@ -118,14 +118,15 @@ export class LoginComponent implements OnInit {
                         this.router.navigate(['/home/ctacte']);
                     }
                 } else {
-                    this.swalService.setSwalFireWarning(resp.Mensaje + ' Puede restablecer su contraseña ó consulte con el administrador del sistema.');
+                    this.swalService.setSwalFireWarning('Ocurrió un error. Puede solicitar su contraseña ó consulte con el administrador del sistema.');
                 }
 
 
 
             },
             error: (err) => {
-                this.swalService.setSwalFireError('Ocurrió un error al iniciar sesión. Consulte con el administrador del sistema.');
+                console.log('error login', err);
+                this.swalService.setSwalFireError('Ocurrió un error. Puede solicitar su contraseña ó consulte con el administrador del sistema.');
             },
         });
 

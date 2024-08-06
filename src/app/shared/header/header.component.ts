@@ -33,6 +33,12 @@ export class HeaderComponent {
         this.usuarioService.logout();
     }
 
+
+    cambioclave() {
+        this.usuarioService.cambioClave();
+    }
+
+
     onClickAbrirOffcanvas(content: TemplateRef<any>) {
         this.offcanvasService.open(content, { position: 'start', panelClass: 'filtros-panel' });
     }

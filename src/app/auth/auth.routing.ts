@@ -11,7 +11,7 @@ const routes: Routes = [
     { path: 'register', component: RegisterComponent },
     { path: 'login', component: LoginComponent },
     { path: 'accesocliente', component: AccesoclienteComponent },
-    { path: 'restablecer', component: RestablecerComponent },
+    { path: 'cambiopass', component: RestablecerComponent },
 ];
 
 @NgModule({
