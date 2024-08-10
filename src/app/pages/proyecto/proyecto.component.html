@@ -16,7 +16,7 @@
                             <i class="fa  fa-list-alt"></i>
                         </span>
                         <input type="text" class="form-control" placeholder="Ingrese código"
-                            formControlName="codigo" [class.is-invalid]="codigoNoValido">
+                            formControlName="Codigo" [class.is-invalid]="codigoNoValido">
                     </div>
                     <small *ngIf="codigoNoValido" class="text-danger">
                         Debe ingresar código para continuar
@@ -29,10 +29,9 @@
                         <span class="input-group-addon">
                             <i class="fa fa-calendar-o"></i>
                         </span>
-                        <select class="form-control custom-select" id="perido" formControlName="idTipoProyecto">
+                        <select class="form-control custom-select" id="perido" formControlName="TipoProyectoId">
                             <option value="0"></option>
                             <option *ngFor="let tipo of tiposProyecto" [value]="tipo.Id">{{tipo.Descripcion}}</option>
-
                         </select>
                     </div>
                 </div>
@@ -44,7 +43,7 @@
                             <i class="fa  fa-list-alt"></i>
                         </span>
                         <input type="text" class="form-control" placeholder="Ingrese descripcion"
-                            formControlName="descripcion">
+                            formControlName="Descripcion">
                     </div>
                 </div>
 
@@ -54,11 +53,17 @@
                         <span class="input-group-addon">
                             <i class="fa fa-user"></i>
                         </span>
-                        <input id="clienteTypeahead" type="text" class="form-control" formControlName="cliente"
-                            placeholder="Seleccione un cliente" [class.is-invalid]="clienteNoValido"
-                            [ngbTypeahead]="searchCliente" (focus)="focusCliente$.next($any($event).target.value)"
-                            (click)="clickCliente$.next($any($event).target.value)" #instanceCliente="ngbTypeahead" />
-                        <span class="input-group-addon" role="button" (click)="onClickLimpiarTypeahead('cliente')">
+                        <input id="clienteTypeahead" type="text" class="form-control" formControlName="Cliente"
+                            placeholder="Seleccione un cliente" 
+                            [class.is-invalid]="clienteNoValido"
+                            [ngbTypeahead]="searchCliente" 
+                            [inputFormatter]="formatterCliente"
+                            [resultFormatter]="formatterCliente"
+                            editable="false"
+                            (focus)="focusCliente$.next($any($event).target.value)"
+                            (click)="clickCliente$.next($any($event).target.value)" 
+                            #instanceCliente="ngbTypeahead" />
+                        <span class="input-group-addon" role="button" (click)="onClickLimpiarTypeahead('Cliente')">
                             <i class="fa fa-times"></i>
                         </span>
                     </div>
@@ -73,14 +78,22 @@
                         <span class="input-group-addon ">
                             <i class="fa fa-user-o"></i>
                         </span>
-                        <input id="typeahead-focus" type="text" class="form-control" formControlName="usuarioPL"
-                            placeholder="Seleccione un usuario" [ngbTypeahead]="searchUsuarioPL"
+                        <input id="typeahead-focus" type="text" class="form-control" formControlName="LiderProyecto"
+                            placeholder="Seleccione un usuario"
+                            [class.is-invalid]="liderProyectoNoValido" 
+                            [ngbTypeahead]="searchUsuarioPL"
+                            [inputFormatter]="formatterUsuario"
+                            [resultFormatter]="formatterUsuario"
+                            editable="false"
                             (focus)="focusUsuarioPL$.next($any($event).target.value)"
                             (click)="clickUsuarioPL$.next($any($event).target.value)" #instanceUsuarioPL="ngbTypeahead" />
-                        <span class="input-group-addon" role="button" (click)="onClickLimpiarTypeahead('usuarioPL')">
+                        <span class="input-group-addon" role="button" (click)="onClickLimpiarTypeahead('LiderProyecto')">
                             <i class="fa fa-times"></i>
                         </span>
                     </div>
+                    <small *ngIf="liderProyectoNoValido" class="text-danger">
+                        Debe seleccionar un project leader
+                    </small>
                 </div>
 
                 <label class="col-sm-2 control-label col-form-label text-right">P.L. Backup:</label>
@@ -89,26 +102,34 @@
                         <span class="input-group-addon ">
                             <i class="fa fa-user-o"></i>
                         </span>
-                        <input id="typeahead-focus" type="text" class="form-control" formControlName="usuarioPLB"
-                            placeholder="Seleccione un usuario" [ngbTypeahead]="searchUsuarioPLB"
+                        <input id="typeahead-focus" type="text" class="form-control" formControlName="LiderProyectoBackup"
+                            placeholder="Seleccione un usuario" 
+                            [ngbTypeahead]="searchUsuarioPLB"
+                            [inputFormatter]="formatterUsuario"
+                            [resultFormatter]="formatterUsuario"
+                            editable="false"
                             (focus)="focusUsuarioPLB$.next($any($event).target.value)"
                             (click)="clickUsuarioPLB$.next($any($event).target.value)" #instanceUsuarioPLB="ngbTypeahead" />
-                        <span class="input-group-addon" role="button" (click)="onClickLimpiarTypeahead('usuarioPLB')">
+                        <span class="input-group-addon" role="button" (click)="onClickLimpiarTypeahead('LiderProyectoBackup')">
                             <i class="fa fa-times"></i>
                         </span>
                     </div>
                 </div>
 
                 <label class="col-sm-2 control-label col-form-label text-right">Día de cierre</label>
-                <div class="col-sm-5">
+                <div class="col-sm-3">
                     <div class="input-group">
                         <span class="input-group-addon">
                             <i class="fa  fa-list-alt"></i>
                         </span>
                         <input type="number" class="form-control" placeholder="Ingrese día de cierre"
-                            formControlName="diaCierre">
-                    </div>
+                            formControlName="DiaCierre"  [class.is-invalid]="diaCierreNoValido">
+                    </div>                    
+                    <small *ngIf="diaCierreNoValido" class="text-danger">
+                        Debe ingresar día de cierre
+                    </small>
                 </div>
+                <label class="col-sm-2 control-label col-form-label">de cada mes</label>
 
             </div>
         </div>

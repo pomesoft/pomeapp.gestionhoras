@@ -8,7 +8,7 @@ import { AppState } from '../../store/app.reducers';
 import { Store } from '@ngrx/store';
 
 import { SwalhelperService } from '../../services/swalhelper.service';
-import { ProyectoService } from '../../services/proyecto.service';
+import { ProyectosService } from '../../services/proyectos.service';
 import { HelpersService } from '../../services/helpers.service';
 
 import { Proyecto, TipoProyecto } from '../../models/entity.models';
@@ -117,7 +117,7 @@ export class RegistrohorasmanualComponent implements OnInit, OnDestroy {
         private calendar: NgbCalendar,
         private modalService: NgbModal,
         private swalService: SwalhelperService,
-        private proyectoService: ProyectoService,
+        private proyectoService: ProyectosService,
         private helpersService: HelpersService
     ) {
 
@@ -126,10 +126,11 @@ export class RegistrohorasmanualComponent implements OnInit, OnDestroy {
     }
 
     ngOnInit(): void {
+        /*
         this.profesionales = this.proyectoService.profesionales.map(item => item.Apellido + '' + item.Nombre);
         this.clientes = this.proyectoService.clientes.map(item => item.Nombre);
         this.tiposProyecto = this.proyectoService.tiposProyecto;
-
+        */
     }
 
     ngOnDestroy(): void {
@@ -233,12 +234,14 @@ export class RegistrohorasmanualComponent implements OnInit, OnDestroy {
 
         this.formulario.get('proyecto').valueChanges.subscribe(valor => {
 
+            /*
             var _listaux = this.proyectoService.proyectos.filter(item => item.Descripcion === valor);
             this.formulario.patchValue({
                 tipoProyecto: _listaux.length == 1 ? _listaux[0].TipoDescripcion : '',
             }, {
                 emitEvent: false
             });
+            */
 
         });
 

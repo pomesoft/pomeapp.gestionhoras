@@ -4,7 +4,7 @@ import { catchError, map, mergeMap, of, tap } from "rxjs";
 
 import * as datosActions from "../actions";
 
-import { ProyectoService } from "../../services/proyecto.service";
+import { ProyectosService } from "../../services/proyectos.service";
 
 
 @Injectable()
@@ -12,7 +12,7 @@ export class ProyectosEffects {
 
     constructor(
         private actions$: Actions,
-        private datosService: ProyectoService,
+        private datosService: ProyectosService,
     ) { }
 
 

@@ -5,7 +5,6 @@ import { environment } from '../../environments/environment';
 
 import { Funcion } from '../models/entity.models';
 
-
 const base_url = environment.base_url;
 
 const headers = new HttpHeaders({
@@ -20,10 +19,6 @@ export class FuncionesService {
 
     funciones: Funcion[] = [];
 
-    constructor(
-        private http: HttpClient
-    ) { }
-
     get token(): string {
         return localStorage.getItem('token') || '';
     }
@@ -35,6 +30,11 @@ export class FuncionesService {
             }
         }
     }
+
+    constructor(
+        private http: HttpClient
+    ) { }
+
 
     inicializar() {
         return new Promise<boolean>((resolve, reject) => {

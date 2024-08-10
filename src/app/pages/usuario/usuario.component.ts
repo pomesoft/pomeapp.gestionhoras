@@ -113,6 +113,17 @@ export class UsuarioComponent implements OnInit, OnDestroy {
             idRol: [0, [Validators.required, Validators.min(1)]],
             idFuncion: [0],
         });
+
+        Object.keys(this.formulario.controls).forEach(key => {
+            if (key == 'apellido' || key == 'nombre') {
+                const yourControl = this.formulario.get(key);
+                yourControl.valueChanges.subscribe(() => {
+                    if (yourControl.value) {
+                        yourControl.patchValue(yourControl.value.toUpperCase(), { emitEvent: false });
+                    }
+                });
+            }
+        });
     }
 
     private setearFormulario(Usuario: Usuario) {

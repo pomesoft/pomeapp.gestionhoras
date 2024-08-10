@@ -2,5 +2,5 @@
 
 export const environment = {
   production: true,
-  base_url: 'https://resumencuenta.pomeapp.ar/backend/api/'
+  base_url: 'https://www.timesheets-iprat.pomeapp.ar/backend/api/'
 };

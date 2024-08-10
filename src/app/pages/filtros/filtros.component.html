@@ -53,6 +53,7 @@
                     <span class="input-group-addon">
                         <i class="fa fa-user-o"></i>
                     </span>
+                   
                     <input id="clienteTypeahead-focus" type="text" class="form-control" formControlName="cliente"
                         placeholder="Cliente" [ngbTypeahead]="searchCliente"
                         (focus)="focusCliente$.next($any($event).target.value)"

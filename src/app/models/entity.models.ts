@@ -23,6 +23,7 @@ export interface Usuario {
     Id: number;
     Apellido?: string;
     Nombre?: string;
+    ItemList?: string;
     Email?: any;
     Celular?: any;
     LoginUsuario?: string;
@@ -88,6 +89,7 @@ export interface Producto {
 export interface TipoProyecto {
     Id: number;
     Descripcion: string;
+    Vigente?: boolean;
 }
 
 export interface Profesional {

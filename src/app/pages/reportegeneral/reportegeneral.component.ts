@@ -9,7 +9,7 @@ import { AppState } from '../../store/app.reducers';
 
 
 import { SwalhelperService } from '../../services/swalhelper.service';
-import { ProyectoService } from '../../services/proyecto.service';
+import { ProyectosService } from '../../services/proyectos.service';
 import { HelpersService } from '../../services/helpers.service';
 
 import { DataFiltro, ItemListado, Profesional, RegistroHora } from '../../models/entity.models';
@@ -50,7 +50,6 @@ export class ReportegeneralComponent implements OnInit, OnDestroy {
             return (
                 item.Proyecto.Cliente.Nombre.toLowerCase().includes(term) ||
                 item.Proyecto.Descripcion.toLowerCase().includes(term) ||
-                item.Proyecto.TipoDescripcion.toLowerCase().includes(term) ||
                 item.Profesional.Apellido.toLowerCase().includes(term) ||
                 item.Profesional.Nombre.toLowerCase().includes(term) ||
                 item.Funcion.Descripcion.toLowerCase().includes(term) ||
@@ -68,10 +67,10 @@ export class ReportegeneralComponent implements OnInit, OnDestroy {
         private config: NgbPaginationConfig,
         private offcanvasService: NgbOffcanvas,
         private swalService: SwalhelperService,
-        private proyectoService: ProyectoService,
+        private proyectoService: ProyectosService,
         private helpersService: HelpersService,
     ) {
-        this.listadoFULL = this.proyectoService.horasRegistradas;
+        this.listadoFULL = [];
 
 
         this.procesarListado();
@@ -136,8 +135,9 @@ export class ReportegeneralComponent implements OnInit, OnDestroy {
     }
 
     refreshDatosFiltros() {
+        /*
         if (this.filtrosStore.IdProfesional || this.filtrosStore.IdCliente || this.filtrosStore.IdProyecto || this.filtrosStore.IdTipoProyecto) {
-
+            
             this.listadoFULL = this.proyectoService.horasRegistradas.filter(item => {
 
                 var filtrarProfesional: boolean = true;
@@ -165,6 +165,7 @@ export class ReportegeneralComponent implements OnInit, OnDestroy {
         }
 
         this.refreshDatos();
+        */
     }
 
     refreshDatos() {

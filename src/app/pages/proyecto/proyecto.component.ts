@@ -1,16 +1,17 @@
-import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { AfterContentInit, Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
-import { Observable, OperatorFunction, Subject, Subscription, debounceTime, distinctUntilChanged, filter, map, merge } from 'rxjs';
+import { Observable, OperatorFunction, Subject, Subscription, debounceTime, distinctUntilChanged, filter, map, merge, tap } from 'rxjs';
 import { NgbCalendar, NgbModal, NgbTypeahead } from '@ng-bootstrap/ng-bootstrap';
 
 import { Store } from '@ngrx/store';
 import { AppState } from '../../store/app.reducers';
-import { cargarProyectos } from '../../store/actions';
+import { cargarClientes, cargarProyectos, cargarUsuarios } from '../../store/actions';
 
-import { Proyecto, TipoProyecto } from '../../models/entity.models';
-import { ProyectoService } from '../../services/proyecto.service';
+import { ProyectosService } from '../../services/proyectos.service';
 import { SwalhelperService } from '../../services/swalhelper.service';
 import { HelpersService } from '../../services/helpers.service';
+
+import { Cliente, Proyecto, TipoProyecto, Usuario } from '../../models/entity.models';
 
 @Component({
     selector: 'app-proyecto',
@@ -18,7 +19,7 @@ import { HelpersService } from '../../services/helpers.service';
     styles: [
     ]
 })
-export class ProyectoComponent implements OnInit, OnDestroy {
+export class ProyectoComponent implements OnInit, AfterContentInit, OnDestroy {
     public tituloFormulario: string = 'Proyecto'
 
     public procesando: boolean = false;
@@ -27,74 +28,74 @@ export class ProyectoComponent implements OnInit, OnDestroy {
 
     datoSubs: Subscription;
     clientesSubs: Subscription;
+    usuariosSubs: Subscription;
 
-    clientes: string[] = [];
+    clientes: Cliente[] = [];
     tiposProyecto: TipoProyecto[];
+    usuarios: Usuario[] = [];
 
-    usuarios: string[] = [];
+    formatterCliente = (item: Cliente) => item.Nombre;
+    formatterUsuario = (item: Usuario) => (item.Apellido + ' ' + item.Nombre);
 
     @ViewChild('instanceCliente', { static: true }) instanceCliente: NgbTypeahead;
     focusCliente$ = new Subject<string>();
     clickCliente$ = new Subject<string>();
 
-    searchCliente: OperatorFunction<string, readonly string[]> = (text$: Observable<string>) => {
+    searchCliente: OperatorFunction<string, readonly Cliente[]> = (text$: Observable<string>) => {
         const debouncedText$ = text$.pipe(debounceTime(200), distinctUntilChanged());
         const clicksWithClosedPopup$ = this.clickCliente$.pipe(filter(() => false));
         const inputFocus$ = this.focusCliente$;
 
         return merge(debouncedText$, inputFocus$, clicksWithClosedPopup$)
             .pipe(
-                map((term) => {
-                    var datos = (term === '' ? this.clientes : this.clientes.filter((v) => v.toLowerCase().indexOf(term.toLowerCase()) > -1)).slice(0, 15);
-                    return [...new Set(datos)];
-                }),
-            );
+                map((term) => this.clientes.filter((item) => new RegExp(term, 'mi').test(item.Nombre)).slice(0, 10)
+                ));
     };
+
 
     @ViewChild('instanceUsuarioPL', { static: true }) instanceUsuarioPL: NgbTypeahead;
     focusUsuarioPL$ = new Subject<string>();
     clickUsuarioPL$ = new Subject<string>();
 
-    searchUsuarioPL: OperatorFunction<string, readonly string[]> = (text$: Observable<string>) => {
+    searchUsuarioPL: OperatorFunction<string, readonly Usuario[]> = (text$: Observable<string>) => {
         const debouncedText$ = text$.pipe(debounceTime(200), distinctUntilChanged());
         //const clicksWithClosedPopup$ = this.click$.pipe(filter(() => !this.instance.isPopupOpen()));
         const inputFocus$ = this.focusUsuarioPL$;
 
         //, clicksWithClosedPopup$
-        return merge(debouncedText$, inputFocus$).pipe(
-            map((term) => {
-                var datos = (term === '' ? this.usuarios : this.usuarios.filter((v) => v.toLowerCase().indexOf(term.toLowerCase()) > -1)).slice(0, 10);
-                return [...new Set(datos)];
-            }),
-        );
+        return merge(debouncedText$, inputFocus$)
+            .pipe(
+                map((term) => this.usuarios.filter((item) => new RegExp(term, 'mi').test(item.ItemList)).slice(0, 10)
+                ));
     };
 
     @ViewChild('instanceUsuarioPLB', { static: true }) instanceUsuarioPLB: NgbTypeahead;
     focusUsuarioPLB$ = new Subject<string>();
     clickUsuarioPLB$ = new Subject<string>();
 
-    searchUsuarioPLB: OperatorFunction<string, readonly string[]> = (text$: Observable<string>) => {
+    searchUsuarioPLB: OperatorFunction<string, readonly Usuario[]> = (text$: Observable<string>) => {
         const debouncedText$ = text$.pipe(debounceTime(200), distinctUntilChanged());
         //const clicksWithClosedPopup$ = this.click$.pipe(filter(() => !this.instance.isPopupOpen()));
         const inputFocus$ = this.focusUsuarioPLB$;
 
         //, clicksWithClosedPopup$
-        return merge(debouncedText$, inputFocus$).pipe(
-            map((term) => {
-                var datos = (term === '' ? this.usuarios : this.usuarios.filter((v) => v.toLowerCase().indexOf(term.toLowerCase()) > -1)).slice(0, 10);
-                return [...new Set(datos)];
-            }),
-        );
+        return merge(debouncedText$, inputFocus$)
+            .pipe(
+                map((term) => this.usuarios.filter((item) => new RegExp(term, 'mi').test(item.ItemList)).slice(0, 10)
+                ));
     };
 
     get codigoNoValido() {
-        return this.formulario.get('codigo').invalid && this.formulario.get('codigo').touched
+        return this.formulario.get('Codigo').invalid && this.formulario.get('Codigo').touched
     }
     get clienteNoValido() {
-        return this.formulario.get('cliente').invalid && this.formulario.get('cliente').touched;
+        return this.formulario.get('Cliente').invalid && this.formulario.get('Cliente').touched;
     }
-    get idTipoProyectoNoValido() {
-        return this.formulario.get('idTipoProyecto').invalid && this.formulario.get('idTipoProyecto').touched;
+    get liderProyectoNoValido() {
+        return this.formulario.get('LiderProyecto').invalid && this.formulario.get('LiderProyecto').touched;
+    }
+    get diaCierreNoValido() {
+        return this.formulario.get('DiaCierre').invalid && this.formulario.get('DiaCierre').touched
     }
 
     constructor(
@@ -103,61 +104,64 @@ export class ProyectoComponent implements OnInit, OnDestroy {
         private modalService: NgbModal,
         private calendar: NgbCalendar,
         private swalService: SwalhelperService,
-        private datosServcice: ProyectoService,
+        private datosServcice: ProyectosService,
         private helperService: HelpersService,
     ) {
 
         this.crearFormulario();
-
+        this.setearEventosControles();
     }
 
     ngOnInit(): void {
 
-        this.tiposProyecto = this.datosServcice.tiposProyecto.map(item => item);
-        this.usuarios = this.datosServcice.profesionales.map(item => item.Apellido + '' + item.Nombre);
+        this.tiposProyecto = this.datosServcice.tiposProyecto;
+
+        this.usuariosSubs = this.store.select('usuarios')
+            .subscribe(({ usuarios, loaded }) => {
+                if (loaded) {
+                    this.usuarios = usuarios;
+                }
+            });
 
         this.clientesSubs = this.store.select('clientes')
             .subscribe(({ clientes }) => {
-                this.clientes = clientes.map(item => item.Nombre);
+                this.clientes = clientes;
             });
 
         this.datoSubs = this.store.select('proyectos')
-            .subscribe(({ proyecto}) => {                
+            .subscribe(({ proyecto }) => {
                 this.setearFormulario(proyecto);
             });
 
     }
 
+    ngAfterContentInit(): void {
+        this.store.dispatch(cargarClientes({ listarVigentes: true }));
+        this.store.dispatch(cargarUsuarios());
+    }
+
     ngOnDestroy(): void {
         this.datoSubs.unsubscribe();
         this.clientesSubs.unsubscribe();
+        this.usuariosSubs.unsubscribe();
     }
 
     private crearFormulario() {
-        var fecha = {
-            year: this.calendar.getToday().year,          //this.calendar.getPrev(this.calendar.getToday(), 'm', 1).year,
-            month: this.calendar.getToday().month,      //this.calendar.getPrev(this.calendar.getToday(), 'm', 1).month + 1,
-            day: this.calendar.getToday().day,          //this.calendar.getPrev(this.calendar.getToday(), 'm', 1).day
-        };
-
+       
         this.formulario = this.formBuilder.group({
-            id: [-1],
-            codigo: ['', Validators.required],
-            descripcion: [''],
-            idTipoProyecto: [0, [Validators.required, Validators.min(1)]],
-            cliente: ['', Validators.required],
-            producto: ['', Validators.required],
-            fechaInicioNgDateStruct: [fecha],
-            fechaInicio: [this.helperService.parserNgDateStruct(fecha), Validators.required],
-            fechaFinNgDateStruct: [null],
-            fechaFin: [''],
-            diaCierre: [30],
-            usuarioPL: [''],
-            usuarioPLB: [''],
+            Id: [-1],
+            Codigo: ['', Validators.required],
+            Descripcion: [''],
+            DiaCierre: [0, [Validators.required, Validators.min(1)]],
+            Vigente: [true],
+            TipoProyectoId: [0],
+            TipoProyecto: [{}],
+            Cliente: [{}, Validators.required],
+            LiderProyecto: [{}, Validators.required],
+            LiderProyectoBackup: [{}],
         });
         Object.keys(this.formulario.controls).forEach(key => {
-            if (key != 'id' && key != 'idTipoProyecto' && key != 'diaCierre' && key.indexOf('fecha') < 0) {
-                //console.log('key', key);
+            if (key == 'Codigo' || key == 'Descripcion') {
                 const yourControl = this.formulario.get(key);
                 yourControl.valueChanges.subscribe(() => {
                     if (yourControl.value) {
@@ -172,57 +176,32 @@ export class ProyectoComponent implements OnInit, OnDestroy {
 
     private setearFormulario(dato: Proyecto) {
 
-
         if (dato) {
 
-            const _fechaInicioNgDateStruct = {
-                year: new Date(dato.FechaInicio).getFullYear(),
-                month: new Date(dato.FechaInicio).getMonth() + 1,
-                day: new Date(dato.FechaInicio).getDate(),
-            };
-
-            let _fechaFinNgDateStruct = null;
-            if (dato.FechaFin) {
-                _fechaFinNgDateStruct = {
-                    year: new Date(dato.FechaInicio).getFullYear(),
-                    month: new Date(dato.FechaInicio).getMonth() + 1,
-                    day: new Date(dato.FechaInicio).getDate(),
-                };
-            }
-
             this.formulario.reset({
-                id: dato.Id,
-                codigo: dato.Codigo,
-                descripcion: dato.Descripcion,
-                idTipoProyecto: dato.Tipo ? dato.Tipo.Id : '',
-                cliente: dato.Cliente ? dato.Cliente.Nombre : '',
-                producto: '',
-                fechaInicioNgDateStruct: _fechaInicioNgDateStruct,
-                fechaInicio: this.helperService.parserDate(dato.FechaInicio),
-                fechaFinNgDateStruct: _fechaFinNgDateStruct,
-                fechaFin: dato.FechaFin ? this.helperService.parserDate(dato.FechaFin) : null,
-                diaCierre: [dato.DiaCierre],
-                usuarioPL: '',
-                usuarioPLB: '',
+                Id: dato.Id,
+                Codigo: dato.Codigo,
+                Descripcion: dato.Descripcion,
+                DiaCierre: dato.DiaCierre,
+                Vigente: dato.Vigente,
+                TipoProyectoId: dato.TipoProyecto ? dato.TipoProyecto.Id : 0,
+                Cliente: dato.Cliente,
+                LiderProyecto: dato.LiderProyecto,
+                LiderProyectoBackup: dato.LiderProyectoBackup,
             });
+
         } else {
 
-            var fecha = {
-                year: this.calendar.getToday().year,          //this.calendar.getPrev(this.calendar.getToday(), 'm', 1).year,
-                month: this.calendar.getToday().month,      //this.calendar.getPrev(this.calendar.getToday(), 'm', 1).month + 1,
-                day: this.calendar.getToday().day,          //this.calendar.getPrev(this.calendar.getToday(), 'm', 1).day
-            };
-
             this.formulario.reset({
-                id: -1,
-                descripcion: '',
-                idTipoProyecto: 0,
-                cliente: '',
-                producto: '',
-                fechaInicioNgDateStruct: fecha,
-                fechaInicio: this.helperService.parserNgDateStruct(fecha),
-                fechaFinNgDateStruct: null,
-                fechaFin: '',
+                Id: 0,
+                Codigo: '',
+                Descripcion: '',
+                DiaCierre: 25,
+                Vigente: true,
+                TipoProyectoId: 0,
+                Cliente: null,
+                LiderProyecto: null,
+                LiderProyectoBackup: null,
             });
         }
     }
@@ -261,13 +240,22 @@ export class ProyectoComponent implements OnInit, OnDestroy {
     onClickLimpiarTypeahead(
         controlName: string,
     ) {
-        this.formulario.get(controlName).setValue('', { onlySelf: true, });
+        this.formulario.get(controlName).setValue(null, { onlySelf: true, });
     }
 
     onClickAgregar(
         controlName: string,
     ) {
         this.swalService.setSwalFireOk(`Se podrá agregar un nuevo ${controlName}`);
+    }
+
+    setearEventosControles() {
+
+        this.formulario.get('TipoProyectoId').valueChanges.subscribe(valor => {
+            let tipo: TipoProyecto = this.tiposProyecto.find(item => item.Id == valor);
+            this.formulario.get('TipoProyecto').setValue(tipo, { onlySelf: true, });
+        });
+
     }
 }
 

@@ -17,7 +17,7 @@ import { UsuarioService } from '../../services/usuario.service';
 import { DataFiltro, FechaNgDateStruct } from '../../models/entity.models';
 import { CustomAdapterService } from '../../services/custom-adapter.service';
 import { CustomDateParserFormatterService } from '../../services/custom-date-parser-formatter.service';
-import { ProyectoService } from '../../services/proyecto.service';
+import { ProyectosService } from '../../services/proyectos.service';
 
 @Component({
     selector: 'app-filtros',
@@ -31,6 +31,7 @@ import { ProyectoService } from '../../services/proyecto.service';
 export class FiltrosComponent implements OnInit, OnDestroy, AfterViewInit {
 
     filtrosSubs: Subscription;
+    clientesSubs: Subscription;
 
     fecha: NgbDateStruct;
 
@@ -109,14 +110,17 @@ export class FiltrosComponent implements OnInit, OnDestroy, AfterViewInit {
         private offcanvasService: NgbOffcanvas,
         private calendar: NgbCalendar,
         public swalService: SwalhelperService,
-        private proyectoService: ProyectoService,
-        private usuarioService: UsuarioService,
 
     ) {
         this.crearFormulario();
     }
 
     async ngOnInit(): Promise<void> {
+        /*
+        this.clientesSubs = this.store.select('clientes')
+            .subscribe(({ clientes }) => {
+                this.clientes = clientes.map(item=>item.Nombre)
+            });
 
         this.clientes = this.proyectoService.clientes.map(item => item.Nombre);
         this.proyectos = this.proyectoService.proyectos.map(item => item.Descripcion);
@@ -124,41 +128,28 @@ export class FiltrosComponent implements OnInit, OnDestroy, AfterViewInit {
 
         this.filtrosSubs = this.store.select('filtros')
             .subscribe(({ filtros }) => {
-                this.cargarDatos()
-                    .then(resp => {
-                        this.setearFormulario(filtros);
-                    });
+                this.setearFormulario(filtros);
             });
+            */
     }
 
     ngAfterViewInit() {
     }
 
-    async cargarDatos() {
-
-        await this.cargarMonedas()
-            .then(result => {
-
-            })
-            .catch(err => {
-                this.swalService.setToastError(`Ocurrió un error al cargar los datos`)
-                console.log(err);
-            });
-
+    
+    ngOnDestroy(): void {
+        this.filtrosSubs.unsubscribe();
+        this.clientesSubs.unsubscribe();
     }
 
-    cargarMonedas() {
-        return new Promise<boolean>((resolve, reject) => {
 
-            resolve(true);
 
+    onChangeCliente(event: any) {
+        this.formulario.get('c').setValue(+event.target.value, {
+            onlySelf: true,
         });
     }
 
-
-    ngOnDestroy(): void {
-        this.filtrosSubs.unsubscribe();
-    }
 
     crearFormulario() {
         this.fecha = {
@@ -169,7 +160,7 @@ export class FiltrosComponent implements OnInit, OnDestroy, AfterViewInit {
 
         this.formulario = this.formBuilder.group({
             profesional: [''],
-            cliente: [''],
+            cliente: [0],
             proyecto: [''],
             tipoProyecto: [0],
             tarea: [''],
@@ -233,7 +224,7 @@ export class FiltrosComponent implements OnInit, OnDestroy, AfterViewInit {
 
     onClickSubmit() {
 
-
+        /*
         if (this.formulario.get('periodo').value < 4) {
             //si el periodo es distinto a personalizado sete las fecha con el getdate
             this.formulario.get('fechaDesdeNgDate').setValue(this.fecha, { onlySelf: true, });
@@ -288,6 +279,7 @@ export class FiltrosComponent implements OnInit, OnDestroy, AfterViewInit {
         this.store.dispatch(setFiltros({ filtros: filtros }));
 
         this.offcanvasService.dismiss();
+        */
     }
 
     onClickCerrar() {

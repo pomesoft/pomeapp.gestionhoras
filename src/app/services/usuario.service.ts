@@ -295,8 +295,8 @@ export class UsuarioService {
     }
 
 
-    listar() {
-        const url = `${base_url}usuarios`;
+    listar(listarVigentes: boolean = true) {
+        const url = `${base_url}usuarios?listarVigentes=${listarVigentes}`;
         return this.http.get<Usuario[]>(url, this.headers);
     }
 

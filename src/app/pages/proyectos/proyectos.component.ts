@@ -11,7 +11,7 @@ import { AppState } from '../../store/app.reducers';
 
 import { Proyecto } from '../../models/entity.models';
 
-import { ProyectoService } from '../../services/proyecto.service';
+import { ProyectosService } from '../../services/proyectos.service';
 import { SwalhelperService } from '../../services/swalhelper.service';
 import { cargarProyecto, cargarProyectos } from 'src/app/store/actions';
 
@@ -44,7 +44,9 @@ export class ProyectosComponent implements OnInit, AfterContentInit, OnDestroy {
             const term = text.toLowerCase();
             return (
                 item.Codigo && item.Codigo.toLowerCase().includes(term) ||
-                item.Descripcion && item.Descripcion.toLowerCase().includes(term)
+                item.Descripcion && item.Descripcion.toLowerCase().includes(term) ||
+                item.Cliente && item.Cliente.Nombre.toLowerCase().includes(term) ||
+                item.LiderProyecto && item.LiderProyecto.ItemList.toLowerCase().includes(term)
             );
         });
     }
@@ -55,7 +57,7 @@ export class ProyectosComponent implements OnInit, AfterContentInit, OnDestroy {
         private modalService: NgbModal,
         private config: NgbPaginationConfig,
         private swalService: SwalhelperService,
-        private datosServcice: ProyectoService,
+        private datosServcice: ProyectosService,
     ) {
         // customize default values of paginations used by this component tree
         config.size = 'sm';
@@ -130,9 +132,10 @@ export class ProyectosComponent implements OnInit, AfterContentInit, OnDestroy {
             if (result.isConfirmed) {
                 this.cargando = true;
 
-                this.datosServcice.eliminar(item.Id)
+                this.datosServcice.desactivar(item.Id)
                     .subscribe({
                         next: (response: Proyecto) => {
+                            this.store.dispatch(cargarProyectos());
                             this.swalService.setToastOK();
                             this.cargando = false;
                         },

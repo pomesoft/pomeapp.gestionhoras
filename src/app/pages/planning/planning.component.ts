@@ -7,7 +7,7 @@ import { Observable, OperatorFunction, Subject, debounceTime, distinctUntilChang
 import { AppState } from '../../store/app.reducers';
 
 import { HelpersService } from '../../services/helpers.service';
-import { ProyectoService } from '../../services/proyecto.service';
+import { ProyectosService } from '../../services/proyectos.service';
 import { SwalhelperService } from '../../services/swalhelper.service';
 
 import { Proyecto, TipoProyecto } from '../../models/entity.models';
@@ -65,66 +65,14 @@ export class PlanningComponent {
     }
 
 
-    @ViewChild('instanceCliente', { static: true }) instanceCliente: NgbTypeahead;
-    focusCliente$ = new Subject<string>();
-    clickCliente$ = new Subject<string>();
+    
 
-    searchCliente: OperatorFunction<string, readonly string[]> = (text$: Observable<string>) => {
-        const debouncedText$ = text$.pipe(debounceTime(200), distinctUntilChanged());
-        const clicksWithClosedPopup$ = this.clickCliente$.pipe(filter(() => false));
-        const inputFocus$ = this.focusCliente$;
-
-        return merge(debouncedText$, inputFocus$, clicksWithClosedPopup$)
-            .pipe(
-                map((term) => {
-                    var datos = (term === '' ? this.clientes : this.clientes.filter((v) => v.toLowerCase().indexOf(term.toLowerCase()) > -1)).slice(0, 10);
-                    return [...new Set(datos)];
-                }),
-            );
-    };
-
-    @ViewChild('instanceProyecto', { static: true }) instanceProyecto: NgbTypeahead;
-    focusProyecto$ = new Subject<string>();
-    clickProyecto$ = new Subject<string>();
-
-    searchProyecto: OperatorFunction<string, readonly string[]> = (text$: Observable<string>) => {
-        const debouncedText$ = text$.pipe(debounceTime(200), distinctUntilChanged());
-        const clicksWithClosedPopup$ = this.clickProyecto$.pipe(filter(() => false));
-        const inputFocus$ = this.focusProyecto$;
-
-        return merge(debouncedText$, inputFocus$, clicksWithClosedPopup$)
-            .pipe(
-                map((term) => {
-                    var datos = (term === '' ? this.proyectos : this.proyectos.filter((v) => v.toLowerCase().indexOf(term.toLowerCase()) > -1)).slice(0, 10);
-                    return [...new Set(datos)];
-                }),
-            );
-    };
-
-
-    @ViewChild('instance', { static: true }) instance: NgbTypeahead;
-    focus$ = new Subject<string>();
-    click$ = new Subject<string>();
-
-    searchProfesional: OperatorFunction<string, readonly string[]> = (text$: Observable<string>) => {
-        const debouncedText$ = text$.pipe(debounceTime(200), distinctUntilChanged());
-        //const clicksWithClosedPopup$ = this.click$.pipe(filter(() => !this.instance.isPopupOpen()));
-        const inputFocus$ = this.focus$;
-
-        //, clicksWithClosedPopup$
-        return merge(debouncedText$, inputFocus$).pipe(
-            map((term) => {
-                var datos = (term === '' ? this.profesionales : this.profesionales.filter((v) => v.toLowerCase().indexOf(term.toLowerCase()) > -1)).slice(0, 10);
-                return [...new Set(datos)];
-            }),
-        );
-    };
 
 
     constructor(
         private formBuilder: FormBuilder,
         private modalService: NgbModal,
-        private proyectoService: ProyectoService,
+        private proyectoService: ProyectosService,
         private swalService: SwalhelperService,
     ) {
         this.listado$ = this.filtro.valueChanges.pipe(
@@ -145,6 +93,7 @@ export class PlanningComponent {
 
     ngOnInit(): void {
 
+        /*
         this.profesionales = this.proyectoService.profesionales.map(item => item.Apellido + '' + item.Nombre);
         this.clientes = this.proyectoService.clientes.map(item => item.Nombre);
 
@@ -155,6 +104,7 @@ export class PlanningComponent {
         this.countdown$.subscribe(() => {
             this.cargando = false;
         });
+        */
     }
 
     ngOnDestroy(): void {
@@ -168,8 +118,7 @@ export class PlanningComponent {
 
             this.hayDatos = item.Descripcion.toLowerCase().includes(term) ||
                 item.Cliente.Nombre.toLowerCase().includes(term) ||
-                item.Producto.Descripcion.toLowerCase().includes(term) ||
-                item.Tipo.Descripcion.toLowerCase().includes(term);
+                item.TipoProyecto.Descripcion.toLowerCase().includes(term);
 
             return this.hayDatos;
         });
@@ -346,12 +295,14 @@ export class PlanningComponent {
 
         this.formularioProyecto.get('proyecto').valueChanges.subscribe(valor => {
 
+            /*
             var _listaux = this.proyectoService.proyectos.filter(item => item.Descripcion === valor);
             this.formularioProyecto.patchValue({
                 tipoProyecto: _listaux.length == 1 ? _listaux[0].TipoDescripcion : '',
             }, {
                 emitEvent: false
             });
+            */
 
         });
 

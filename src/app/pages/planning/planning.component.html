@@ -31,20 +31,13 @@
                     <div class="col col-md-12">                       
                 
                         <div class="row">
-                            <div class="col-md-4 col-12" style="padding: 0px !important;">
+                            <div class="col-md-6 col-12" style="padding: 0px !important;">
                                 <div class="card">
                                     <div class="card-body">
                                         <div class="d-flex flex-row m-b-5">
                                             <div class="flex-grow-1">
-                                                <span class="h5 card-title">Proyectos asignados</span>
-                                            </div>
-                                            <div>
-                                                <button type="button" class="btn btn-rounded btn-outline-secondary waves-effect waves-light "
-                                                    (click)="onClickAbrirModal($event, modalDatosProyecto)">
-                                                    <i class="fa fa-plus "></i>
-                                                    Asignar
-                                                </button>
-                                            </div>                                            
+                                                <span class="h5 card-title">Proyectos vigentes</span>
+                                            </div>                                         
                                         </div>
                                         <form>
                                             <div class="input-group">
@@ -86,7 +79,7 @@
                                 </div>
                 
                             </div>
-                            <div class="col-md-8 col-12" style="padding: 0px !important;">
+                            <div class="col-md-6 col-12" style="padding: 0px !important;">
                 
                                 <div class="card">
                                     <div class="card-body"  *ngIf="proyectoSeleccionado">
@@ -95,15 +88,8 @@
                                                 <span class="h6 card-title">
                                                     {{proyectoSeleccionado.Cliente.Nombre}} - 
                                                     {{proyectoSeleccionado.Descripcion}} - 
-                                                    {{proyectoSeleccionado.Tipo.Descripcion}}
+                                                    {{proyectoSeleccionado.TipoProyecto.Descripcion}}
                                                 </span>
-                                            </div>
-                                            <div>
-                                                <button type="button" class="btn btn-rounded btn-outline-secondary waves-effect waves-light "
-                                                    (click)="onClickAbrirModal($event, modalDatosRolFunciona)">
-                                                    <i class="fa fa-plus "></i>
-                                                    Asignar
-                                                </button>
                                             </div>
                                             <div class="m-l-10">
                                                 <button type="button" class="btn btn-rounded btn-outline-success waves-effect waves-light   "
@@ -178,178 +164,5 @@
 </div>
 
 
-<ng-template #modalDatosProyecto let-modal>
-    <form autocomplete="off" [formGroup]="formularioProyecto" (ngSubmit)="onClickGuardarProyecto()">
-        <div class="modal-header">
-            <h4 class="modal-title" id="modal-basic-title">Nueva asignación de proyecto</h4>
-            <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('CancelarProyecto')"></button>
-        </div>
-        <div class="modal-body">		
-            <div class="modal-content w-100 border">
-                <div class="modal-body">
-
-                    <div class="form-group row">
-
-                        <label class="col-sm-2 control-label col-form-label text-right">Cliente:</label>
-                        <div class="col-sm-10 control-label col-form-label">
-                            <div class="input-group">
-                                <span class="input-group-addon">
-                                    <i class="fa  fa-user"></i>
-                                </span>
-                                <input id="clienteTypeahead" type="text" class="form-control"
-                                    formControlName="cliente" placeholder="Seleccione un cliente"
-                                    [class.is-invalid]="clienteNoValido" [ngbTypeahead]="searchCliente"
-                                    (focus)="focusCliente$.next($any($event).target.value)"
-                                    (click)="clickCliente$.next($any($event).target.value)"
-                                    #instanceCliente="ngbTypeahead" />
-                                <span class="input-group-addon" role="button"
-                                    (click)="onClickLimpiarTypeahead('cliente')">
-                                    <i class="fa fa-times"></i>
-                                </span>
-                                <span class="input-group-addon" role="button"
-                                    (click)="onClickAgregar('Cliente')">
-                                    <i class="fa fa-plus m-r-5"></i>Agregar
-                                </span>
-                            </div>
-                            <small *ngIf="clienteNoValido" class="text-danger">
-                                Debe seleccionar un cliente
-                            </small>
-                        </div>
 
 
-                        <label class="col-sm-2 control-label col-form-label text-right">Proyecto:</label>
-                        <div class="col-sm-10 control-label col-form-label">
-                            <div class="input-group">
-                                <span class="input-group-addon">
-                                    <i class="fa  fa-list-alt"></i>
-                                </span>
-                                <input id="proyectoTypeahead" type="text" class="form-control"
-                                    formControlName="proyecto" placeholder="Seleccione un proyecto"
-                                    [class.is-invalid]="proyectoNoValido" [ngbTypeahead]="searchProyecto"
-                                    (focus)="focusProyecto$.next($any($event).target.value)"
-                                    (click)="clickProyecto$.next($any($event).target.value)"
-                                    #instanceProyecto="ngbTypeahead" />
-                                <span class="input-group-addon" role="button"
-                                    (click)="onClickLimpiarTypeahead('proyecto')">
-                                    <i class="fa fa-times"></i>
-                                </span>
-                                <span class="input-group-addon" role="button"
-                                    (click)="onClickAgregar('Proyecto')">
-                                    <i class="fa fa-plus m-r-5"></i>Agregar
-                                </span>
-                            </div>
-                            <small *ngIf="proyectoNoValido" class="text-danger">
-                                Debe seleccionar un proyecto
-                            </small>
-                        </div>
-
-                        <label class="col-sm-2 control-label col-form-label text-right">Tipo:</label>
-                        <div class="col-sm-10 control-label col-form-label">
-                            <div class="input-group">
-                                <span class="input-group-addon">
-                                    <i class="fa fa-pencil-square-o"></i>
-                                </span>
-                                <input type="text" class="form-control" placeholder="Tipo de proyecto"
-                                    formControlName="tipoProyecto">
-                            </div>
-                            <small *ngIf="tipoProyectoNoValido" class="text-danger">
-                                Debe indicar tipo de proyecto
-                            </small>
-                        </div>
-                    </div>
-                </div>
-            </div>        
-        </div>
-        <div class="modal-footer">
-            <button type="submit" class="btn btn-rounded btn-outline-success waves-effect waves-light">
-                <i class="fa fa-save "></i>
-                Asignar Proyecto
-            </button>
-            <button type="button" class="btn btn-rounded btn-outline-secondary waves-effect waves-light" (click)="modal.dismiss('CancelarProyecto')">
-                <i class="fa fa-close "></i>
-                Cancelar
-            </button>
-        </div>
-    </form>
-</ng-template>
-
-<ng-template #modalDatosRolFunciona let-modal>
-
-    <form autocomplete="off" [formGroup]="formularioTarea" (ngSubmit)="onClickGuardarTarea()">
-
-        <div class="modal-header">
-            <h4 class="modal-title" id="modal-basic-title">Nueva asignación de Función Asociada</h4>
-            <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('CancelarProyecto')"></button>
-        </div>
-        <div class="modal-body">		
-            <div class="modal-content w-100 border">
-                <div class="modal-body">
-
-                    <span class="h6 card-title">
-                        {{proyectoSeleccionado.Cliente.Nombre}} - 
-                        {{proyectoSeleccionado.Descripcion}} - 
-                        {{proyectoSeleccionado.Tipo.Descripcion}}
-                    </span>
-                    <hr/>
-
-                    <div class="form-group row">
-
-                        <label class="col-sm-3 control-label col-form-label text-right">Función Asociada:</label>
-                        <div class="col-sm-9 control-label col-form-label">
-                            <div class="input-group">
-                                <span class="input-group-addon">
-                                    <i class="fa fa-pencil-square-o"></i>
-                                </span>
-                                <select class="form-control custom-select" id="rolFuncion" formControlName="rolFuncion">
-                                    <option value="1">EXPERTO REGULATORIO</option>
-                                    <option value="2">EXPERTO FARMACOVIGILANCIA</option>
-                                    <option value="3">EXPERTO MEDICO</option>
-                                    <option value="4">EXPERTO COMPLIANCE</option>
-                                    <option value="5">EXPERTO LEGAL</option>
-                                    <option value="6">PROJECT MANAGER</option>
-                                    <option value="7">ANALISTA SENIOR</option>
-                                    <option value="8">ANALISTA JUNIOR</option>
-                                    <option value="9">TECNICO ADMINISTRATIVO</option>
-                                    <option value="10">GESTORÍA</option>
-                                </select>
-                                
-                            </div>
-                            <small *ngIf="rolFuncionNoValido" class="text-danger">
-                                Debe seleccioinar función asociada
-                            </small>
-                        </div>
-
-
-
-                        <label class="col-sm-3 control-label col-form-label text-right">Horas Asignadas:</label>
-                        <div class="col-sm-3 control-label col-form-label">
-                            <div class="input-group">
-                                <span class="input-group-addon">
-                                    <i class="fa fa-clock-o"></i>
-                                </span>
-                                <input type="number" class="form-control" id="horas" formControlName="horas"
-                                    [class.is-invalid]="horasNoValida">
-                            </div>
-                            <small *ngIf="horasNoValida" class="text-danger">
-                                Debe ingresar horas
-                            </small>
-                        </div>
-
-                    </div>
-
-                </div>
-            </div>
-        </div>
-        <div class="modal-footer">
-            <button type="submit" class="btn btn-rounded btn-outline-success waves-effect waves-light">
-                <i class="fa fa-save "></i>
-                Asignar Proyecto
-            </button>
-            <button type="button" class="btn btn-rounded btn-outline-secondary waves-effect waves-light" (click)="modal.dismiss('CancelarTarea')">
-                <i class="fa fa-close "></i>
-                Cancelar
-            </button>
-        </div>
-
-    </form>
-</ng-template>

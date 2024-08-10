@@ -3,7 +3,9 @@ import { NgbTypeahead } from '@ng-bootstrap/ng-bootstrap';
 import { Subject, OperatorFunction, Observable, debounceTime, distinctUntilChanged, filter, merge, map } from 'rxjs';
 
 
-import { ProyectoService } from '../../services/proyecto.service';
+import { ProyectosService } from '../../services/proyectos.service';
+import { ClientesService } from 'src/app/services/clientes.service';
+
 import { Proyecto, RegistroHora } from '../../models/entity.models';
 
 @Component({
@@ -71,11 +73,12 @@ export class ReportetimesheetComponent implements OnInit, OnDestroy {
 
 
     constructor(
-        private proyectoService: ProyectoService,
+        private proyectoService: ProyectosService,
+        private clienteService: ClientesService,
     ) { }
 
     ngOnInit(): void {
-        this.clientes = this.proyectoService.clientes.map(item => item.Nombre);
+        this.clientes = [];
 
     }
 
@@ -103,7 +106,8 @@ export class ReportetimesheetComponent implements OnInit, OnDestroy {
 
     onChangeProyecto(event) {
         this.proyectoSeleccionado = this.proyectoService.proyectos.find(item => item.Descripcion == event);
-        this.listado = this.proyectoService.horasRegistradas.filter(item => item.Proyecto.Id == this.proyectoSeleccionado.Id);
+        //TODO: acá se hace el get de las horas registrados para el proyecto seleccionado "this.proyectoSeleccionado.Id"
+        this.listado = [];
 
         this.totalHoras = 0;
         this.listado.forEach(item => this.totalHoras += item.Horas);

@@ -8,7 +8,7 @@ import { NgbTypeahead } from '@ng-bootstrap/ng-bootstrap';
 import { AppState } from '../../store/app.reducers';
 
 import { SwalhelperService } from '../../services/swalhelper.service';
-import { ProyectoService } from '../../services/proyecto.service';
+import { ProyectosService } from '../../services/proyectos.service';
 
 import { Cliente, Profesional, Proyecto } from '../../models/entity.models';
 
@@ -109,7 +109,7 @@ export class RegistrohorasplanificadasComponent implements OnInit, OnDestroy {
 
     constructor(
         private store: Store<AppState>,
-        private proyectoService: ProyectoService,
+        private proyectoService: ProyectosService,
         private swalService: SwalhelperService,
     ) {
         this.listado$ = this.filtro.valueChanges.pipe(
@@ -127,6 +127,7 @@ export class RegistrohorasplanificadasComponent implements OnInit, OnDestroy {
 
     ngOnInit(): void {
 
+        /*
         this.registroHorasSubs = this.store.select('registroHoras')
             .subscribe(({ proyectoId }) => {
                 this.proyectoId = proyectoId;
@@ -138,6 +139,7 @@ export class RegistrohorasplanificadasComponent implements OnInit, OnDestroy {
 
         this.profesional = 'APELLIDO 1 NOMBRE 1';
         this.onChangeProfesional();
+        */
     }
 
     ngOnDestroy(): void {
@@ -151,8 +153,7 @@ export class RegistrohorasplanificadasComponent implements OnInit, OnDestroy {
 
             return item.Descripcion.toLowerCase().includes(term) ||
                 item.Cliente.Nombre.toLowerCase().includes(term) ||
-                item.Producto.Descripcion.toLowerCase().includes(term) ||
-                item.Tipo.Descripcion.toLowerCase().includes(term);
+                item.TipoProyecto.Descripcion.toLowerCase().includes(term);
         });
     }
 
@@ -185,11 +186,12 @@ export class RegistrohorasplanificadasComponent implements OnInit, OnDestroy {
 
     onChangeProfesional() {
 
+        /*
         if (this.profesional && this.profesional != '') {
             this.profesionalSeleccionado = this.proyectoService.profesionales.find(item => (item.Apellido + ' ' + item.Nombre) == this.profesional);
         }
+            */
 
-        console.log(this.profesionalSeleccionado);
 
     }
 
