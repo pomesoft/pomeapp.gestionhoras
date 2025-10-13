@@ -20,7 +20,13 @@ export const cargarProyectoError = createAction(
 
 //**************************************************************************** */
 //gestion del listdo de proyectos
-export const cargarProyectos = createAction('[Proyectos] Cargar Proyectos');
+export const cargarProyectos = createAction(
+    '[Proyectos] Cargar Proyectos',
+    props<{ 
+        listarVigentes: boolean,
+        usuarioId: number,  
+    }>()
+);
 
 export const cargarProyectosSuccess = createAction(
     '[Proyectos] Cargar Proyectos Success',

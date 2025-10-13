@@ -10,11 +10,17 @@
                         <span class="input-group-addon ">
                             <i class="fa fa-user-o"></i>
                         </span>
-                        <input id="typeahead-focus" type="text" class="form-control" formControlName="profesional"
-                            placeholder="Seleccione un usuario" [ngbTypeahead]="searchProfesional"
-                            (focus)="focus$.next($any($event).target.value)"
-                            (click)="click$.next($any($event).target.value)" #instanceProfesional="ngbTypeahead" />
-                        <span class="input-group-addon" role="button" (click)="onClickLimpiarTypeahead('profesional')">
+                        <input id="typeahead-focus" type="text" class="form-control" [(ngModel)]="usuarioSeleccionado"
+                            #instanceUsuario="ngbTypeahead" 
+                            placeholder="Seleccione un usuario" 
+                            [ngbTypeahead]="searchUsuario" 
+                            [inputFormatter]="formatterUsuario"
+                            [resultFormatter]="formatterUsuario"
+                            editable="false"
+                            (focus)="focusUsuario$.next($any($event).target.value)"
+                            (click)="clickUsuario$.next($any($event).target.value)"/>
+                        <span class="input-group-addon" role="button" data-toggle="tooltip" data-placement="top"
+                            title="Limpiar profesional" (click)="onClickLimpiarUsuario($event)">
                             <i class="fa fa-times"></i>
                         </span>
                     </div>

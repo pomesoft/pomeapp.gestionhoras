@@ -13,6 +13,8 @@ import { Cliente } from '../../models/entity.models';
 
 import { SwalhelperService } from '../../services/swalhelper.service';
 import { ClientesService } from '../../services/clientes.service';
+import { UsuarioService } from '../../services/usuario.service';
+import { HelpersService } from '../../services/helpers.service';
 
 
 @Component({
@@ -40,15 +42,20 @@ export class ClientesComponent implements OnInit, AfterContentInit, OnDestroy {
     filtro = new FormControl('', { nonNullable: true });
 
     listarVigentes: boolean = true;
+    listarNoVigentes: boolean = false;
 
     search(text: string): Cliente[] {
-        return this.listadoFULL.filter((item) => {
+        var listReturn = this.listadoFULL.filter((item) => {
             const term = text.toLowerCase();
             return (
                 item.Codigo && item.Codigo.toLowerCase().includes(term) ||
                 item.Nombre && item.Nombre.toLowerCase().includes(term)
             );
         });
+
+        this.total = listReturn.length;
+
+        return listReturn;
     }
 
 
@@ -58,6 +65,8 @@ export class ClientesComponent implements OnInit, AfterContentInit, OnDestroy {
         private config: NgbPaginationConfig,
         private swalService: SwalhelperService,
         private datosServcice: ClientesService,
+        private usuarioService: UsuarioService,
+        private helpersService: HelpersService,
     ) {
         // customize default values of paginations used by this component tree
         config.size = 'sm';
@@ -86,7 +95,7 @@ export class ClientesComponent implements OnInit, AfterContentInit, OnDestroy {
 
     ngAfterContentInit(): void {
         this.cargando = true;
-        this.store.dispatch(cargarClientes({ listarVigentes: this.listarVigentes }));
+        this.dispatchCargaClientes();
     }
 
     ngOnDestroy(): void {
@@ -94,6 +103,13 @@ export class ClientesComponent implements OnInit, AfterContentInit, OnDestroy {
     }
 
 
+    dispatchCargaClientes() {
+        if (this.usuarioService.usuario.Rol.NivelAcceso == 10) {
+            this.store.dispatch(cargarClientes({ listarVigentes: this.listarVigentes, usuarioId: this.usuarioService.usuario.Id }));
+        } else {
+            this.store.dispatch(cargarClientes({ listarVigentes: this.listarVigentes, usuarioId: -1 }));
+        }
+    }
 
     refreshDatos() {
         let valor = this.filtro.value;
@@ -106,11 +122,23 @@ export class ClientesComponent implements OnInit, AfterContentInit, OnDestroy {
 
         this.store.dispatch(cargarCliente({ id: id }));
 
-        this.modalService.open(content, { size: 'lg', centered: true });
+        this.modalService.open(content, { size: 'lg', centered: true }).result
+            .then(
+                (result) => {
+                    console.log(`modalService=>Closed with: ${result}`);
+                },
+                (reason) => {
+                    if (reason == 'SAVE_CLIENTE') {
+                        this.dispatchCargaClientes();
+                    }
+                },
+            );
     }
 
-    onChangeChekVigentes(event: any) {
-        this.store.dispatch(cargarClientes({ listarVigentes: this.listarVigentes }));
+    ngChangeListarVigentes(opcion: number) {
+        this.listarVigentes = (opcion == 1);
+        this.listarNoVigentes = (opcion == 2);
+        this.dispatchCargaClientes();
     }
 
     onClickEliminar(
@@ -137,11 +165,11 @@ export class ClientesComponent implements OnInit, AfterContentInit, OnDestroy {
             if (result.isConfirmed) {
                 this.cargando = true;
 
-                item.Vigente=false 
+                item.Vigente = false
                 this.datosServcice.actualizar(item)
                     .subscribe({
                         next: (response: Cliente) => {
-                            this.store.dispatch(cargarClientes({ listarVigentes: this.listarVigentes }));
+                            this.dispatchCargaClientes();
                             this.swalService.setToastOK();
                             this.cargando = false;
                         },

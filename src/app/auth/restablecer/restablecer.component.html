@@ -14,20 +14,21 @@
                 
                 <div class="form-group row">
                     <div class="col-sm-12 text-center">
-                        <a href="javascript:void(0)" class="text-center db"><img src="../assets/images/logo-icon.png"
-                                alt="Home" /><br /></a>
+                        <a href="javascript:void(0)" class="text-center db">
+                            <img src="../assets/images/logo-icon.png" alt="Home" style="height: 50px;" />
+                        </a>
                     </div>
                 </div>
     
                 <div class="form-group row">
                     <div class="col-sm-12 text-center">
-                        <h4 class="font-bold">Registro de horas</h4> 
+                        <h5 class="font-bold">Registro de horas</h5> 
                     </div>
                 </div>
 
                 <div class="form-group row">
                     <div class="col-sm-12 text-center">
-                        <span class="h5 font-bold" >
+                        <span class="h6 font-bold" >
                             <i class="fa fa-user-circle-o"></i>&nbsp;&nbsp;
                             {{ usuarioService.usuario.LoginUsuario }}
                         </span>
@@ -41,20 +42,32 @@
                 <div class="form-group ">
 
                     <div class="col-sm-12">
-                        <input class="form-control" 
-                                type="password" 
-                                placeholder="Ingresar constraseña actual"
-                                formControlName="clave">
+                        <div class="input-group">
+                            <input [type]="showClave ? 'text' : 'password'"
+                                id="clave" class="form-control" 
+                                placeholder="Ingresar constraseña actual" 
+                                formControlName="clave"/>
+                            <button type="button" class="btn btn-outline-secondary"
+                                    (click)="showClave = !showClave">
+                              <i [class]="showClave ? 'fa fa-eye-slash' : 'fa fa-eye'"></i> <!-- Icono de Bootstrap Icons -->
+                            </button>
+                        </div>
                         <small *ngIf="campoNoValido('clave')" class="text-danger">
                             Debe ingresar la contraseña actual
                         </small>
                     </div>
 
-                    <div class="col-sm-12">
-                        <input class="form-control" 
-                                type="password" 
-                                placeholder="Ingresar nueva constraseña"
-                                formControlName="password">
+                    <div class="col-sm-12  m-t-5">
+                        <div class="input-group">
+                            <input [type]="showPassword ? 'text' : 'password'"
+                                id="password" class="form-control" 
+                                placeholder="Ingresar nueva constraseña" 
+                                formControlName="password"/>
+                            <button type="button" class="btn btn-outline-secondary"
+                                    (click)="showPassword = !showPassword">
+                              <i [class]="showPassword ? 'fa fa-eye-slash' : 'fa fa-eye'"></i> <!-- Icono de Bootstrap Icons -->
+                            </button>
+                        </div>
                         <small *ngIf="campoNoValido('password')" class="text-danger">
                             Debe ingresar la nueva contraseña 
                         </small>
@@ -63,13 +76,52 @@
                         </small>
                     </div>
                 
-                    <div class="col-sm-12">
-                        <input class="form-control" 
-                                type="password" 
-                                placeholder="Repetir Nueva Constraseña"
-                                formControlName="password2">
+                    <div class="col-sm-12 m-t-5">
+                        <div class="input-group">
+                            <input [type]="showPassword2 ? 'text' : 'password'"
+                                id="password2" class="form-control" 
+                                placeholder="Rpetir nueva constraseña" 
+                                formControlName="password2"/>
+                            <button type="button" class="btn btn-outline-secondary"
+                                    (click)="showPassword2 = !showPassword2">
+                              <i [class]="showPassword2 ? 'fa fa-eye-slash' : 'fa fa-eye'"></i> <!-- Icono de Bootstrap Icons -->
+                            </button>
+                        </div>
                         <small *ngIf="contrasenasNoValidas()" class="text-danger">
                             Las contraseñas nuevas deben de ser iguales
+                        </small>
+                    </div>
+                    <div class="col-sm-12 m-t-5">
+                        <small>                            
+                            <span [class]="isMinimoCaracteres ? 'text-success' : 'text-danger'">
+                                <i [class]="isMinimoCaracteres ? 'fa fa-check m-r-10' : 'fa fa-warning m-r-10'"></i> 
+                                Mínimo 10 caracteres
+                            </span>    
+                            <br/>
+                            <span [class]="hasMayuscula ? 'text-success' : 'text-danger'">
+                                <i [class]="hasMayuscula ? 'fa fa-check m-r-10' : 'fa fa-warning m-r-10'"></i> 
+                                Al menos una mayúscula
+                            </span>
+                            <br/>
+                            <span [class]="hasMinuscula ? 'text-success' : 'text-danger'">
+                                <i [class]="hasMinuscula ? 'fa fa-check m-r-10' : 'fa fa-warning m-r-10'"></i> 
+                                Al menos una minúscula
+                            </span>
+                            <br/>                    
+                            <span [class]="hasNumber ? 'text-success' : 'text-danger'">
+                                <i [class]="hasNumber ? 'fa fa-check m-r-10' : 'fa fa-warning m-r-10'"></i> 
+                                Al menos un número
+                            </span>
+                            <br/>                    
+                            <span [class]="hasSimbolo ? 'text-success' : 'text-danger'">
+                                <i [class]="hasSimbolo ? 'fa fa-check m-r-10' : 'fa fa-warning m-r-10'"></i> 
+                                Al menos un símbolo
+                            </span>    
+                            <br/>
+                            <span [class]="isValidCaracteresComunes ? 'text-success' : 'text-danger'">
+                                <i [class]="isValidCaracteresComunes ? 'fa fa-check m-r-10' : 'fa fa-warning m-r-10'"></i> 
+                                No debe contener espacios, <', >, " o '
+                            </span>    
                         </small>
                     </div>
                 </div>

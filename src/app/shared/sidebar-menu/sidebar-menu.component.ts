@@ -25,10 +25,14 @@ export class SidebarMenuComponent {
 
     @Input() esMobile: boolean = false;
 
+    get nivelAcceso() {
+        return this.usuario && this.usuario.Rol ? this.usuario.Rol.NivelAcceso! : 0;
+    }
+
     constructor(
         private router: Router,
         private offcanvasService: NgbOffcanvas,
-        private sidebarService: SidebarService,        
+        private sidebarService: SidebarService,
         private usuarioService: UsuarioService
     ) {
 
@@ -43,14 +47,14 @@ export class SidebarMenuComponent {
 
     logout() {
         this.usuarioService.logout();
-        if(this.esMobile){
+        if (this.esMobile) {
             this.offcanvasService.dismiss();
         }
     }
 
     onClickItemMenu(url: string) {
         this.router.navigate([`/home/${url}`]);
-        if(this.esMobile){
+        if (this.esMobile) {
             this.offcanvasService.dismiss();
         }
     }

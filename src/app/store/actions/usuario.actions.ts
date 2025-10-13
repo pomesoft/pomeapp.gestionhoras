@@ -17,3 +17,8 @@ export const cargarUsuarioError = createAction(
     '[Usuario] Cargar Usuario Error',
     props<{ payload: any }>()
 );
+
+export const cargarUsuarioLogin = createAction(
+    '[Usuario] Cargar Usuario Login',
+    props<{ usuarioLogin: Usuario }>()
+);

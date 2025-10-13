@@ -36,6 +36,8 @@ export class UsuariosComponent implements OnInit, OnDestroy {
     listado$: Observable<Usuario[]>;
 
     filtro = new FormControl('', { nonNullable: true });
+    
+    listarVigentes: boolean = true;
     listarNoVigentes: boolean = false;
 
     search(text: string): Usuario[] {
@@ -124,7 +126,7 @@ export class UsuariosComponent implements OnInit, OnDestroy {
 
     getDatosListadoFull() {
         return new Promise<Usuario[]>((resolve, reject) => {
-            this.usuarioServcice.listar()
+            this.usuarioServcice.listar(this.listarVigentes)
                 .subscribe({
                     next: (response) => resolve(response),
                     error: (error) => reject(<any>error),
@@ -138,7 +140,10 @@ export class UsuariosComponent implements OnInit, OnDestroy {
         this.filtro.reset(valor);
     }
 
-    onChangeChekVigentes(event: any) {
+
+    ngChangeListarVigentes(opcion: number) {
+        this.listarVigentes = (opcion == 1);
+        this.listarNoVigentes = (opcion == 2);         
         this.cargarDatos();
     }
 
@@ -165,10 +170,10 @@ export class UsuariosComponent implements OnInit, OnDestroy {
         });
         swalWithBootstrapButtons.fire({
             title: `Desactivar Usuario`,
-            text: `¿Desea desactivar a ${item.Nombre} ${item.Apellido} (${item.LoginUsuario})?`,
+            text: `¿Desea deshabilitar a ${item.Nombre} ${item.Apellido} (${item.LoginUsuario})?`,
             showCancelButton: true,
             cancelButtonText: '<i class="fa fa-times mr-2"></i>Cancelar',
-            confirmButtonText: '<i class="fa fa-minus-square-o mr-2"></i>Desactivar',
+            confirmButtonText: '<i class="fa fa-minus-square-o mr-2"></i>Deshabilitar',
         }).then((result) => {
 
             if (result.isConfirmed) {

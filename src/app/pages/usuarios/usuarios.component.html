@@ -17,7 +17,7 @@
                 <div class="row mb-2">                    
                     <div class="col col-md-12">
                         <div class="row mb-2">
-                            <div class="col-12 col-md-6">
+                            <div class="col-12 col-md-5">
                                 <form>
                                     <div class="input-group">
                                         <input type="text" class="form-control w-50" 
@@ -45,14 +45,18 @@
                                     Agregar
                                 </button>
                             </div>
-
-                            <div class="col-12 col-md-4 p-2">
+                            <div class="col-12 col-md-2">
                                 <div class="form-group form-check">
-                                    <input type="checkbox" id="listarTodasFunciones" 
-                                            [(ngModel)]="listarNoVigentes" 
-                                            (ngModelChange)="onChangeChekVigentes($event)"
-                                                class="form-check-input" />
-                                    <label for="listarTodasFunciones" class="form-check-label">Listar usuarios deshabilitados</label>
+                                    <input type="checkbox" id="listarVigentes" class="form-check-input"
+                                        [(ngModel)]="listarVigentes" (ngModelChange)="ngChangeListarVigentes(1)"/>
+                                    <label for="listarVigentes" class="form-check-label">Habilitados</label>
+                                </div>                        
+                            </div>
+                            <div class="col-12 col-md-3">
+                                <div class="form-group form-check">
+                                    <input type="checkbox" id="listarNoVigentes" class="form-check-input"
+                                        [(ngModel)]="listarNoVigentes" (ngModelChange)="ngChangeListarVigentes(2)"/>
+                                    <label for="listarNoVigentes" class="form-check-label">No Habilitados</label>
                                 </div>
                             </div>
                             
@@ -75,7 +79,8 @@
                                                 (click)="onClickAbriModal($event, modalDatos, item.Id)">
                                                 <span class="h4 text-info"><i class="fa fa-pencil-square-o"></i></span>                                                
                                             </a>
-                                            <a href="#" class="btn btn-outline-danger btn-rounded btn-sm m-l-5" data-toggle="tooltip" data-placement="top" title="Deshabilitar"
+                                            <a href="#" class="btn btn-outline-danger btn-rounded btn-sm m-l-5" *ngIf="item.Vigente" 
+                                                data-toggle="tooltip" data-placement="top" title="Deshabilitar"
                                                 (click)="onClickEliminar($event, item)">
                                                 <span class="h4 text-danger"><i class="fa fa-minus-square-o"></i></span>                                                
                                             </a>

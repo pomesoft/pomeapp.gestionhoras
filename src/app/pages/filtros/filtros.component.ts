@@ -9,15 +9,16 @@ import { NgbOffcanvas } from '@ng-bootstrap/ng-bootstrap';
 import { Store } from '@ngrx/store';
 
 import { AppState } from '../../store/app.reducers';
-import { setFiltros } from '../../store/actions';
+import { cargarClasificacionesActividades, cargarClientes, cargarFunciones, cargarProyectos, cargarUsuarios, setFiltros } from '../../store/actions';
 
 import { SwalhelperService } from '../../services/swalhelper.service';
 import { UsuarioService } from '../../services/usuario.service';
 
-import { DataFiltro, FechaNgDateStruct } from '../../models/entity.models';
+import { ClasificacionActividad, Cliente, DataFiltro, FechaNgDateStruct, Funcion, Proyecto, Usuario } from '../../models/entity.models';
 import { CustomAdapterService } from '../../services/custom-adapter.service';
 import { CustomDateParserFormatterService } from '../../services/custom-date-parser-formatter.service';
 import { ProyectosService } from '../../services/proyectos.service';
+import { HelpersService } from 'src/app/services/helpers.service';
 
 @Component({
     selector: 'app-filtros',
@@ -31,22 +32,69 @@ import { ProyectosService } from '../../services/proyectos.service';
 export class FiltrosComponent implements OnInit, OnDestroy, AfterViewInit {
 
     filtrosSubs: Subscription;
+
+
     clientesSubs: Subscription;
+    clientes: Cliente[] = [];
+    formatterCliente = (item: Cliente) => {
+        if (item && item.Nombre) {
+            return item.Nombre.substring(0, item.Nombre.length > 30 ? 30 : item.Nombre.length);
+        } else {
+            return '';
+        }
+    };
+
+    proyectosSubs: Subscription;
+    proyectos: Proyecto[] = [];
+    proyectosFULL: Proyecto[] = [];
+    formatterProyecto = (item: Proyecto) => {
+        if (item && item.Codigo) {
+            return item.Codigo.substring(0, item.Codigo.length > 30 ? 30 : item.Codigo.length);
+        } else {
+            return '';
+        }
+    };
+
+    usuariosSubs: Subscription;
+    usuarios: Usuario[] = [];
+    formatterUsuario = (item: Usuario) => {
+        if (item && item.ItemList) {
+            return item.ItemList.substring(0, item.ItemList.length > 30 ? 30 : item.ItemList.length);
+        } else {
+            return '';
+        }
+    };
+
+    funcionesSubs: Subscription;
+    funciones: Funcion[] = [];
+    formatterFuncion = (item: Funcion) => {
+        if (item && item.Descripcion) {
+            return item.Descripcion.substring(0, item.Descripcion.length > 30 ? 30 : item.Descripcion.length);
+        } else {
+            return '';
+        }
+    };
+
+    clasificacionesSubs: Subscription;
+    clasificaciones: ClasificacionActividad[] = [];
+    formatterClasificacion = (item: ClasificacionActividad) => {
+        if (item && item.Descripcion) {
+            return item.Descripcion.substring(0, item.Descripcion.length > 30 ? 30 : item.Descripcion.length);
+        } else {
+            return '';
+        }
+    };
 
     fecha: NgbDateStruct;
 
     formulario: FormGroup;
 
-    clientes: string[] = [];
-    proyectos: string[] = [];
-    profesionales: string[] = [];
+    meses: string[] = [];
 
-    get periodo() {
-        return this.formulario.get('periodo').value;
-    }
 
-    get tipoProyecto() {
-        return this.formulario.get('tipoProyecto').value;
+
+    get periodoFechas() {
+        return this.formulario.get('periodoFechas').value;
     }
 
 
@@ -54,16 +102,14 @@ export class FiltrosComponent implements OnInit, OnDestroy, AfterViewInit {
     focusCliente$ = new Subject<string>();
     clickCliente$ = new Subject<string>();
 
-    searchCliente: OperatorFunction<string, readonly string[]> = (text$: Observable<string>) => {
+    searchCliente: OperatorFunction<string, readonly Cliente[]> = (text$: Observable<string>) => {
         const debouncedText$ = text$.pipe(debounceTime(200), distinctUntilChanged());
         const clicksWithClosedPopup$ = this.clickCliente$.pipe(filter(() => !this.instancecliente.isPopupOpen()));
         const inputFocus$ = this.focusCliente$;
 
         return merge(debouncedText$, inputFocus$, clicksWithClosedPopup$)
             .pipe(
-                map((term) =>
-                    (term === '' ? this.clientes : this.clientes.filter((v) => v.toLowerCase().indexOf(term.toLowerCase()) > -1)).slice(0, 10),
-                ),
+                map((term) => this.clientes.filter((item) => new RegExp(term, 'mi').test(item.Nombre)))
             );
     };
 
@@ -71,84 +117,136 @@ export class FiltrosComponent implements OnInit, OnDestroy, AfterViewInit {
     focusProyecto$ = new Subject<string>();
     clickProyecto$ = new Subject<string>();
 
-    searchProyecto: OperatorFunction<string, readonly string[]> = (text$: Observable<string>) => {
+    searchProyecto: OperatorFunction<string, readonly Proyecto[]> = (text$: Observable<string>) => {
         const debouncedText$ = text$.pipe(debounceTime(200), distinctUntilChanged());
         const clicksWithClosedPopup$ = this.clickProyecto$.pipe(filter(() => false));
         const inputFocus$ = this.focusProyecto$;
 
         return merge(debouncedText$, inputFocus$, clicksWithClosedPopup$)
             .pipe(
-                map((term) => {
-                    var datos = (term === '' ? this.proyectos : this.proyectos.filter((v) => v.toLowerCase().indexOf(term.toLowerCase()) > -1)).slice(0, 10);
-                    return [...new Set(datos)];
-                }),
+                map((term) => this.proyectos.filter((item) => new RegExp(term, 'mi').test(item.Codigo)))
             );
     };
 
 
-    @ViewChild('instanceProfesional', { static: true }) instanceProfesional: NgbTypeahead;
-    focusProfesional$ = new Subject<string>();
-    clickProfesional$ = new Subject<string>();
+    @ViewChild('instanceUsuario', { static: true }) instanceUsuario: NgbTypeahead;
+    focusUsuario$ = new Subject<string>();
+    clickUsuario$ = new Subject<string>();
 
-    searchProfesional: OperatorFunction<string, readonly string[]> = (text$: Observable<string>) => {
+    searchUsuario: OperatorFunction<string, readonly Usuario[]> = (text$: Observable<string>) => {
         const debouncedText$ = text$.pipe(debounceTime(200), distinctUntilChanged());
-        const clicksWithClosedPopup$ = this.clickProfesional$.pipe(filter(() => false));
-        const inputFocus$ = this.focusProfesional$;
+        const clicksWithClosedPopup$ = this.clickUsuario$.pipe(filter(() => false));
+        const inputFocus$ = this.focusUsuario$;
 
         return merge(debouncedText$, inputFocus$, clicksWithClosedPopup$)
             .pipe(
-                map((term) => {
-                    var datos = (term === '' ? this.profesionales : this.profesionales.filter((v) => v.toLowerCase().indexOf(term.toLowerCase()) > -1)).slice(0, 10);
-                    return [...new Set(datos)];
-                }),
+                map((term) => this.usuarios.filter((item) => new RegExp(term, 'mi').test(item.ItemList)))
             );
     };
+
+    @ViewChild('instanceFuncion', { static: true }) instanceFuncion: NgbTypeahead;
+    focusFuncion$ = new Subject<string>();
+    clickFuncion$ = new Subject<string>();
+
+    searchFuncion: OperatorFunction<string, readonly Funcion[]> = (text$: Observable<string>) => {
+        const debouncedText$ = text$.pipe(debounceTime(200), distinctUntilChanged());
+        const clicksWithClosedPopup$ = this.clickFuncion$.pipe(filter(() => false));
+        const inputFocus$ = this.focusFuncion$;
+
+        return merge(debouncedText$, inputFocus$, clicksWithClosedPopup$)
+            .pipe(
+                map((term) => this.funciones.filter((item) => new RegExp(term, 'mi').test(item.Descripcion)))
+            );
+    };
+
+    @ViewChild('instanceClasificacion', { static: true }) instanceClasificacion: NgbTypeahead;
+    focusClasificacion$ = new Subject<string>();
+    clickClasificacion$ = new Subject<string>();
+
+    searchClasificacion: OperatorFunction<string, readonly ClasificacionActividad[]> = (text$: Observable<string>) => {
+        const debouncedText$ = text$.pipe(debounceTime(200), distinctUntilChanged());
+        const clicksWithClosedPopup$ = this.clickClasificacion$.pipe(filter(() => false));
+        const inputFocus$ = this.focusClasificacion$;
+
+        return merge(debouncedText$, inputFocus$, clicksWithClosedPopup$)
+            .pipe(
+                map((term) => this.clasificaciones.filter((item) => new RegExp(term, 'mi').test(item.Descripcion)))
+            );
+    };
+
+
+
 
     constructor(
         private store: Store<AppState>,
         private formBuilder: FormBuilder,
         private offcanvasService: NgbOffcanvas,
         private calendar: NgbCalendar,
+        public usuarioService: UsuarioService,
         public swalService: SwalhelperService,
-
+        public helperService: HelpersService,
     ) {
         this.crearFormulario();
+        this.setearEventosControles();
     }
 
-    async ngOnInit(): Promise<void> {
-        /*
+    ngOnInit(): void {
+
         this.clientesSubs = this.store.select('clientes')
             .subscribe(({ clientes }) => {
-                this.clientes = clientes.map(item=>item.Nombre)
+                this.clientes = clientes;
             });
 
-        this.clientes = this.proyectoService.clientes.map(item => item.Nombre);
-        this.proyectos = this.proyectoService.proyectos.map(item => item.Descripcion);
-        this.profesionales = this.proyectoService.profesionales.map(item => item.Apellido.concat(" ", item.Nombre));
+        this.proyectosSubs = this.store.select('proyectos')
+            .subscribe(({ proyectos }) => {
+                this.proyectosFULL = proyectos;
+                this.proyectos = proyectos;
+                if (this.formulario.get('cliente').value) {
+                    this.seleccionarCliente(this.formulario.get('cliente').value);
+                }
+            });
+
+        this.usuariosSubs = this.store.select('usuarios')
+            .subscribe(({ usuarios }) => {
+                this.usuarios = usuarios;
+            });
+
+        this.funcionesSubs = this.store.select('funciones')
+            .subscribe(({ funciones }) => {
+                this.funciones = funciones;
+            });
+
+        this.clasificacionesSubs = this.store.select('clasificacionesActividades')
+            .subscribe(({ clasificacionesActividades }) => {
+                this.clasificaciones = clasificacionesActividades;
+            });
 
         this.filtrosSubs = this.store.select('filtros')
             .subscribe(({ filtros }) => {
                 this.setearFormulario(filtros);
             });
-            */
+
+        this.meses = this.helperService.getMeses();
     }
 
     ngAfterViewInit() {
+        console.log('ngAfterViewInit()=>this.usuarioService.usuario', this.usuarioService.usuario);
+        this.store.dispatch(cargarClientes({ listarVigentes: true, usuarioId: this.usuarioService.usuario.Id }));
+        this.store.dispatch(cargarProyectos({ listarVigentes: true, usuarioId: this.usuarioService.usuario.Id }));
+        this.store.dispatch(cargarUsuarios());
+        this.store.dispatch(cargarFunciones({ listarVigentes: true }));
+        this.store.dispatch(cargarClasificacionesActividades({ listarVigentes: true }));
     }
 
-    
     ngOnDestroy(): void {
         this.filtrosSubs.unsubscribe();
         this.clientesSubs.unsubscribe();
+        this.proyectosSubs.unsubscribe();
+        this.usuariosSubs.unsubscribe();
+        this.funcionesSubs.unsubscribe();
+        this.clasificacionesSubs.unsubscribe();
     }
 
-
-
-    onChangeCliente(event: any) {
-        this.formulario.get('c').setValue(+event.target.value, {
-            onlySelf: true,
-        });
-    }
 
 
     crearFormulario() {
@@ -159,127 +257,184 @@ export class FiltrosComponent implements OnInit, OnDestroy, AfterViewInit {
         };
 
         this.formulario = this.formBuilder.group({
-            profesional: [''],
-            cliente: [0],
-            proyecto: [''],
-            tipoProyecto: [0],
-            tarea: [''],
-            periodo: [1],
-            fechaDesdeNgDate: [this.fecha],
-            fechaHastaNgDate: [this.fecha],
+            usuario: [{}],
+            cliente: [{}],
+            proyecto: [{}],
+            funcion: [{}],
+            clasificacion: [{}],
+            periodoFechas: [1],
+            periodoRegistroMes: [''],
+            periodoRegistroAnio: [this.fecha.year.toString()],
+            fechaDesde: [this.helperService.parserNgDateStruct(this.fecha)],
+            fechaHasta: [this.helperService.parserNgDateStruct(this.fecha)],
+            // fechaDesdeNgDate: [this.fecha],
+            // fechaHastaNgDate: [this.fecha],
         });
+
     }
 
     setearFormulario(filtros: DataFiltro) {
 
-        let fechaDesde: FechaNgDateStruct;
-        let fechaHasta: FechaNgDateStruct;
+        // let fechaDesdeNgDate: FechaNgDateStruct;
+        // let fechaHastaNgDate: FechaNgDateStruct;
 
-        if (filtros.FechaDesdeNgDate) {
-            fechaDesde = {
-                year: filtros.FechaDesdeNgDate.year,
-                month: filtros.FechaDesdeNgDate.month,
-                day: filtros.FechaDesdeNgDate.day,
-            };
-        } if (filtros.FechaDesde) {
-            fechaDesde = {
-                year: +filtros.FechaDesde.substring(0, 4),
-                month: +filtros.FechaDesde.substring(5, 7),
-                day: +filtros.FechaDesde.substring(8, 10),
-            };
+        // if (filtros.FechaDesdeNgDate) {
+        //     fechaDesdeNgDate = {
+        //         year: filtros.FechaDesdeNgDate.year,
+        //         month: filtros.FechaDesdeNgDate.month,
+        //         day: filtros.FechaDesdeNgDate.day,
+        //     };
+        // } if (filtros.FechaDesde) {
+        //     fechaDesdeNgDate = {
+        //         year: +filtros.FechaDesde.getFullYear,
+        //         month: +filtros.FechaDesde.getMonth,
+        //         day: +filtros.FechaDesde.getDay,
+        //     };
+        // } else {
+        //     fechaDesdeNgDate = this.fecha;
+        // }
+
+        // if (filtros.FechaHastaNgDate) {
+        //     fechaHastaNgDate = {
+        //         year: filtros.FechaHastaNgDate.year,
+        //         month: filtros.FechaHastaNgDate.month,
+        //         day: filtros.FechaHastaNgDate.day,
+        //     };
+        // } if (filtros.FechaHasta) {
+        //     fechaHastaNgDate = {
+        //         year: +filtros.FechaHasta.getFullYear,
+        //         month: +filtros.FechaHasta.getMonth,
+        //         day: +filtros.FechaHasta.getDay,
+        //     };
+        // } else {
+        //     fechaHastaNgDate = this.fecha;
+        // }
+
+        //parserNgDateStruct2
+        let fechaDesde: string;
+        let fechaHasta: string;
+
+        if (filtros.FechaDesde == null) {
+            fechaDesde = this.helperService.parserNgDateStruct(this.fecha);
         } else {
-            fechaDesde = this.fecha;
+            fechaDesde = this.helperService.parserDate(filtros.FechaDesde);
+        }
+        if (filtros.FechaHasta == null) {
+            fechaHasta = this.helperService.parserNgDateStruct(this.fecha);
+        } else {
+            fechaHasta = this.helperService.parserDate(filtros.FechaHasta);
         }
 
-        if (filtros.FechaHastaNgDate) {
-            fechaHasta = {
-                year: filtros.FechaHastaNgDate.year,
-                month: filtros.FechaHastaNgDate.month,
-                day: filtros.FechaHastaNgDate.day,
-            };
-        } if (filtros.FechaHasta) {
-            fechaHasta = {
-                year: +filtros.FechaHasta.substring(0, 4),
-                month: +filtros.FechaHasta.substring(5, 7),
-                day: +filtros.FechaHasta.substring(8, 10),
-            };
+        let _clasificacion: ClasificacionActividad = filtros.ClasificacionActividad;
+
+        let _periodoRegistro;
+        if (filtros.PeriodoRegistro) {
+            _periodoRegistro = filtros.PeriodoRegistro.split('-');
+        }
+        let _periodoMes = _periodoRegistro ? _periodoRegistro[0] : '';
+        let _periodoAnio = _periodoRegistro ? _periodoRegistro[1] : this.fecha.year.toString();
+
+
+        console.log('this.usuarioService.usuario', this.usuarioService.usuario);
+        let usrLogin: Usuario = null;
+        if (this.usuarioService.usuario && this.usuarioService.usuario.Rol.NivelAcceso == 10) {
+            usrLogin = this.usuarioService.usuario;
         } else {
-            fechaHasta = this.fecha;
+            usrLogin = filtros.Usuario;
         }
 
         this.formulario.reset({
-            fechaDesdeNgDate: fechaDesde,
-            fechaHastaNgDate: fechaHasta,
-            profesional: filtros.Profesional,
+            usuario: usrLogin,
             cliente: filtros.Cliente,
             proyecto: filtros.Proyecto,
-            tipoProyecto: filtros.IdTipoProyecto,
-            tarea: filtros.IdProfesional,
-            periodo: filtros.Periodo,
+            funcion: filtros.Funcion,
+            clasificacion: _clasificacion,
+            periodoFechas: filtros.PeriodoFechas,
+            periodoRegistroMes: _periodoMes,
+            periodoRegistroAnio: _periodoAnio,
+            fechaDesde: fechaDesde,
+            fechaHasta: fechaHasta,
+            // fechaDesdeNgDate: fechaDesdeNgDate,
+            // fechaHastaNgDate: fechaHastaNgDate,
         })
+
+        if (this.usuarioService.usuario && this.usuarioService.usuario.Rol && this.usuarioService.usuario.Rol.NivelAcceso == 10) {
+            this.formulario.get('usuario')?.disable();
+        }
+
     }
-
-
 
 
     onClickSubmit() {
 
-        /*
-        if (this.formulario.get('periodo').value < 4) {
-            //si el periodo es distinto a personalizado sete las fecha con el getdate
-            this.formulario.get('fechaDesdeNgDate').setValue(this.fecha, { onlySelf: true, });
-            this.formulario.get('fechaHastaNgDate').setValue(this.fecha, { onlySelf: true, });
+        if (this.formulario.get('periodoFechas').value < 4) {
+            // this.formulario.get('fechaDesdeNgDate').setValue(this.fecha, { onlySelf: true, });
+            // this.formulario.get('fechaHastaNgDate').setValue(this.fecha, { onlySelf: true, });            
         }
 
-        const fechaNgDesde = this.formulario.get('fechaDesdeNgDate').value;
-        const _fechaDesde: string = fechaNgDesde.year + '-' + this.pad(fechaNgDesde.month, 2) + '-' + this.pad(fechaNgDesde.day, 2);
-
-        const fechaNgHasta = this.formulario.get('fechaHastaNgDate').value;
-        const _fechaHasta: string = fechaNgHasta.year + '-' + this.pad(fechaNgHasta.month, 2) + '-' + this.pad(fechaNgHasta.day, 2);
+        const _fechaDesde = this.helperService.getFechaDate(this.formulario.get('fechaDesde').value);
+        const _fechaHasta = this.helperService.getFechaDate(this.formulario.get('fechaHasta').value);
 
 
-        let _idProfesional = -1;
-        if (this.formulario.get('profesional').value) {
-            var _profesional = this.proyectoService.profesionales.filter(item => item.Apellido.concat(" ", item.Nombre) == this.formulario.get('profesional').value);
-            if (_profesional && _profesional.length > 0)
-                _idProfesional = _profesional[0].Id;
+        // const _fechaNgDesde = {
+        //     year: +_fechaDesde.getFullYear(),
+        //     month: +_fechaDesde.getMonth(),
+        //     day: +_fechaDesde.getDay(),
+        // };
+        // const _fechaNgHasta = {
+        //     year: +_fechaHasta.getFullYear(),
+        //     month: +_fechaHasta.getMonth(),
+        //     day: +_fechaHasta.getDay(),
+        // };
+
+
+        let _usuario: Usuario = null;
+        if (this.formulario.get('usuario').value) {
+            _usuario = this.usuarios.find(item => item.Id == this.formulario.get('usuario').value.Id);
         }
-        let _idCliente = -1;
+        let _cliente: Cliente = null;
         if (this.formulario.get('cliente').value) {
-            var _cliente = this.proyectoService.clientes.filter(item => item.Nombre == this.formulario.get('cliente').value);
-            if (_cliente && _cliente.length > 0)
-                _idCliente = _cliente[0].Id;
+            _cliente = this.clientes.find(item => item.Id == this.formulario.get('cliente').value.Id);
         }
-        let _idProyecto = -1;
+        let _proyecto: Proyecto = null;
         if (this.formulario.get('proyecto').value) {
-            var _proyecto = this.proyectoService.proyectos.filter(item => item.Descripcion == this.formulario.get('proyecto').value);
-            if (_proyecto && _proyecto.length > 0)
-                _idProyecto = _proyecto[0].Id;
+            _proyecto = this.proyectos.find(item => item.Id == this.formulario.get('proyecto').value.Id);
+        }
+        let _funcion: Funcion = null;
+        if (this.formulario.get('funcion').value) {
+            _funcion = this.funciones.find(item => item.Id == this.formulario.get('funcion').value.Id);
+        }
+        let _clasificacion: ClasificacionActividad = null;
+        if (this.formulario.get('clasificacion').value) {
+            _clasificacion = this.clasificaciones.find(item => item.Id == this.formulario.get('clasificacion').value.Id);
+        }
+        let _periodoRegistro: string = '';
+        if (this.formulario.get('periodoRegistroMes').value && this.formulario.get('periodoRegistroAnio').value) {
+            _periodoRegistro = this.formulario.get('periodoRegistroMes').value + '-' + this.formulario.get('periodoRegistroAnio').value;
         }
 
         let filtros: DataFiltro = {
-            IdProfesional: _idProfesional,
-            Profesional: this.formulario.get('profesional').value || '',
-            IdCliente: _idCliente,
-            Cliente: this.formulario.get('cliente').value || '',
-            IdProyecto: _idProyecto,
-            Proyecto: this.formulario.get('proyecto').value || '',
-            IdTipoProyecto: this.formulario.get('tipoProyecto').value,
-            Periodo: this.formulario.get('periodo').value,
+            Usuario: _usuario,
+            Cliente: _cliente,
+            Proyecto: _proyecto,
+            Funcion: _funcion,
+            ClasificacionActividad: _clasificacion,
+            PeriodoFechas: this.formulario.get('periodoFechas').value,
+            PeriodoRegistro: _periodoRegistro,
             FechaDesde: _fechaDesde,
             FechaHasta: _fechaHasta,
-            FechaDesdeNgDate: fechaNgDesde,
-            FechaHastaNgDate: fechaNgHasta,
+            // FechaDesdeNgDate: _fechaNgDesde,
+            // FechaHastaNgDate: _fechaNgHasta,
             Meses: -1,
             Pagina: -1,
             CantidadRegistros: -1,
             CargarDatos: true,
-        }
+        };
 
         this.store.dispatch(setFiltros({ filtros: filtros }));
 
         this.offcanvasService.dismiss();
-        */
+
     }
 
     onClickCerrar() {
@@ -288,22 +443,22 @@ export class FiltrosComponent implements OnInit, OnDestroy, AfterViewInit {
 
 
     onClickPeriodo(value: number) {
-        this.formulario.get('periodo').setValue(value, {
+        this.formulario.get('periodoFechas').setValue(value, {
             onlySelf: true,
         });
 
-        let fecha: NgbDateStruct = {
-            year: this.calendar.getPrev(this.calendar.getToday(), 'm', 1).year,
-            month: this.calendar.getPrev(this.calendar.getToday(), 'm', 1).month + 1,
-            day: this.calendar.getPrev(this.calendar.getToday(), 'm', 1).day
-        };
+        // let fecha: NgbDateStruct = {
+        //     year: this.calendar.getPrev(this.calendar.getToday(), 'm', 1).year,
+        //     month: this.calendar.getPrev(this.calendar.getToday(), 'm', 1).month + 1,
+        //     day: this.calendar.getPrev(this.calendar.getToday(), 'm', 1).day
+        // };
 
-        this.formulario.patchValue({
-            FechaDesdeNgDate: fecha,
-            FechaHastaNgDate: fecha,
-        }, {
-            emitEvent: false
-        });
+        // this.formulario.patchValue({
+        //     FechaDesdeNgDate: fecha,
+        //     FechaHastaNgDate: fecha,
+        // }, {
+        //     emitEvent: false
+        // });
 
     }
 
@@ -322,9 +477,41 @@ export class FiltrosComponent implements OnInit, OnDestroy, AfterViewInit {
     onClickLimpiarTypeahead(
         controlName: string,
     ) {
+        if (!this.formulario.get(controlName)?.enabled) return
+
         this.formulario.get(controlName).setValue('', {
             onlySelf: true,
         });
+        if (controlName == 'cliente') {
+            this.formulario.get('proyecto').setValue('');
+        }
     }
+
+
+    setearEventosControles() {
+
+        this.formulario.get('cliente').valueChanges.subscribe(valor => {
+            if (valor && valor.Id > 0) {
+                this.seleccionarCliente(valor);
+            }
+        });
+    }
+
+    seleccionarCliente(
+        cliente: Cliente
+    ) {
+        if (cliente.Id > 0) {
+            this.proyectos = this.proyectosFULL.filter(item => item.Cliente.Id === cliente.Id);
+            if (this.proyectos.length == 1) {
+                this.formulario.get('proyecto').setValue(this.proyectos[0]);
+            }
+        } else {
+            this.proyectos = this.proyectosFULL;
+            if (this.proyectos.length == 1) {
+                this.formulario.get('proyecto').setValue('');
+            }
+        }
+    }
+
 
 }

@@ -20,7 +20,7 @@ export class ProyectosEffects {
         return this.actions$.pipe(
             ofType(datosActions.cargarProyectos),
             mergeMap(
-                (action) => this.datosService.listar()
+                (action) => this.datosService.listar(action.listarVigentes, false, -1, action.usuarioId)
                     .pipe(
                         //tap(data => console.log('proyectos effect', data)),
                         map(data => datosActions.cargarProyectosSuccess({ proyectos: data })),

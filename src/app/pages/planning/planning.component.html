@@ -30,16 +30,42 @@
                 <div class="row mb-2">
                     <div class="col col-md-12">                       
                 
-                        <div class="row">
+                        <div class="row">                            
                             <div class="col-md-6 col-12" style="padding: 0px !important;">
                                 <div class="card">
                                     <div class="card-body">
+                                        
                                         <div class="d-flex flex-row m-b-5">
                                             <div class="flex-grow-1">
                                                 <span class="h5 card-title">Proyectos vigentes</span>
                                             </div>                                         
                                         </div>
-                                        <form>
+
+                                        <div class="d-flex flex-row m-b-5">
+                                            <div class="flex-grow-1">                                                
+                                                <div class="input-group">
+                                                    <label for="clienteTypeahead">Cliente:</label>&nbsp;&nbsp;
+                                                    <span class="input-group-addon">
+                                                        <i class="fa fa-user"></i>
+                                                    </span>
+                                                    <input id="clienteTypeahead" type="text" class="form-control" 
+                                                        [(ngModel)]="clienteSeleccionado" 
+                                                        (ngModelChange)="onChangeCliente($event)"
+                                                        placeholder="Seleccione un cliente" 
+                                                        [inputFormatter]="formatterCliente"
+                                                        [resultFormatter]="formatterCliente"
+                                                        editable="false" 
+                                                        [ngbTypeahead]="searchCliente" (focus)="focusCliente$.next($any($event).target.value)"
+                                                        (click)="clickCliente$.next($any($event).target.value)"
+                                                        #instanceCliente="ngbTypeahead" />
+                                                    <span class="input-group-addon" role="button" (click)="onClickLimpiarCliente('cliente')">
+                                                        <i class="fa fa-times"></i>
+                                                    </span>
+                                                </div>
+                                            </div>                                         
+                                        </div>
+
+                                        <!-- <form>
                                             <div class="input-group">
                                                 <input type="text" class="form-control w-30"
                                                     placeholder="Ingreso texto a buscar y presione enter......" [formControl]="filtro">
@@ -52,19 +78,17 @@
                                                     <i class="fa fa-times"></i>
                                                 </span>
                                             </div>
-                                        </form>
+                                        </form> -->
                                         <div class="list-group">
-                                            <a href="#" *ngFor="let proyecto of listado$ | async;"
+                                            <a href="#" *ngFor="let proyecto of proyectos$ | async;"
                                                 class="list-group-item list-group-item-action"
                                                 [class.active]="proyectoSeleccionado && proyecto.Id==proyectoSeleccionado.Id"
-                                                (click)="onClickSeleccionarProyecto($event, proyecto)">
+                                                (click)="onClickSeleccionarProyecto($event, proyecto.Id)">
                 
                                                 <div class="d-flex flex-row">
-                                                    <div class="flex-grow-1">
-                                                        <ngb-highlight [result]="proyecto.Cliente.Nombre"
-                                                            [term]="filtro.value"></ngb-highlight>&nbsp;-&nbsp;
-                                                        <ngb-highlight [result]="proyecto.Descripcion"
-                                                            [term]="filtro.value"></ngb-highlight>
+                                                    <div class="flex-grow-1">                                                        
+                                                        <h6>{{proyecto.Codigo}}</h6>
+                                                        <span style="font-size: small">{{proyecto.Descripcion}}</span>
                                                     </div>
                                                     <div>
                                                         <span class="h5 text-muted"><i class="mdi mdi-arrow-right-bold"></i></span>
@@ -79,25 +103,56 @@
                                 </div>
                 
                             </div>
-                            <div class="col-md-6 col-12" style="padding: 0px !important;">
+                            <div class="col-md-6 col-12">
                 
                                 <div class="card">
                                     <div class="card-body"  *ngIf="proyectoSeleccionado">
-                                        <div class="d-flex flex-row m-b-5">
-                                            <div class="flex-grow-1">
-                                                <span class="h6 card-title">
-                                                    {{proyectoSeleccionado.Cliente.Nombre}} - 
-                                                    {{proyectoSeleccionado.Descripcion}} - 
-                                                    {{proyectoSeleccionado.TipoProyecto.Descripcion}}
-                                                </span>
+
+                                        <div class="row">
+
+                                            <label class="col-sm-4 control-label col-form-label text-right">Código</label>
+                                            <label class="col-sm-8 control-label col-form-label text-left">{{proyectoSeleccionado.Codigo}}</label>
+                                            
+                                            <label class="col-sm-4 control-label col-form-label text-right">Cliente:</label>
+                                            <label class="col-sm-8 control-label col-form-label text-left">{{proyectoSeleccionado.Cliente.Nombre}}</label>
+                                            
+                                            <label class="col-sm-4 control-label col-form-label text-right">Project Leader:</label>
+                                            <label class="col-sm-8 control-label col-form-label text-left">{{proyectoSeleccionado.LiderProyecto.ItemList}}</label>
+                                            
+                                            <div class="col-md-12 p-t-10">
+                                                <div class="form-group form-check">
+                                                    <input type="checkbox" id="listarTodasFunciones" 
+                                                            [(ngModel)]="listarTodasFunciones" 
+                                                            (ngModelChange)="onChangeListarTodasFunciones($event)"
+                                                                class="form-check-input" />
+                                                    <label for="listarTodasFunciones" class="form-check-label">Listar todas las Funciones Asociadas</label>
+                                                </div>
                                             </div>
-                                            <div class="m-l-10">
+
+                                            <div class="col-12 col-md-6 text-right p-t-20">
                                                 <button type="button" class="btn btn-rounded btn-outline-success waves-effect waves-light   "
                                                     (click)="onClickGuardar($event)">
                                                     <i class="fa fa-save "></i>
                                                     Guardar
                                                 </button>
                                             </div>
+
+                                            <div class="col-12 col-md-6">
+                                                <div class="border border-info rounded">
+                                                    <div class="d-flex flex-row b-b">
+                                                        <div class="bg-info-subtle p-r-10 p-l-10">
+                                                            <h2 class="text-info box m-b-0">
+                                                                <i class="fa fa-clock-o"></i>
+                                                            </h2>
+                                                        </div>
+                                                        <div class="m-l-10 align-self-center">
+                                                            <h4 class="m-b-0">{{totalHorasAsignadas | number :'1.0-0'}}</h4>
+                                                            <span class="text-secondary m-b-0">Horas Asignadas</span>
+                                                        </div>                                
+                                                    </div>                          
+                                                </div>
+                                            </div>
+                                                
                                         </div>
 
                                         <ul class="list-group">
@@ -115,19 +170,30 @@
                                             </li>
 
                                             <li class="list-group-item border border-bottom"
-                                                *ngFor="let rolFuncion of proyectoSeleccionado.RolesAsignados; index as i; trackBy: trackByFn">
+                                                *ngFor="let proyFuncion of funcionesAsignadas; index as i; trackBy: trackByFn">
                 
                                                 <div class="d-flex flex-row">
                                                     <div class="flex-grow-1" style="width: 70% !important;">
-                                                        {{rolFuncion.Rol.Descripcion}}
+
+                                                        <span *ngIf="listarTodasFunciones"
+                                                                [class.text-muted]="funcionesAsignadas[i].Horas<=0"
+                                                                [class.h6]="funcionesAsignadas[i].Horas>0">
+                                                            {{proyFuncion.Funcion.Descripcion}}
+                                                        </span>
+
+                                                        <span *ngIf="!listarTodasFunciones">
+                                                            {{proyFuncion.Funcion.Descripcion}}
+                                                        </span>
+
                                                     </div>
                                                     <div class="p-l-10" style="width: 30% !important;">
                                                         <div class="input-group">
                                                             <span class="input-group-addon">
                                                                 <i class="fa fa-clock-o"></i>
                                                             </span>
-                                                            <input type="number" class="form-control"
-                                                                [(ngModel)]="proyectoSeleccionado.RolesAsignados[i].HorasAsignadas"
+                                                            <input type="number" class="form-control form-control-sm"
+                                                                [(ngModel)]="funcionesAsignadas[i].Horas"
+                                                                (ngModelChange)="onChangeHoras($event)"
                                                                 (focus)="onFocusHoras($event)">
                                                         </div>
                                                     </div>
@@ -135,25 +201,18 @@
                 
                                             </li>
                                         </ul>
-                
+
+                                        <div class="form-group row m-t-5" *ngIf="hayFuncionesAsignadas">
+                                            <div class="col-12 text-right">
+                                                <button type="button" class="btn btn-rounded btn-outline-success waves-effect waves-light   "
+                                                    (click)="onClickGuardar($event)">
+                                                    <i class="fa fa-save "></i>
+                                                    Guardar
+                                                </button>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
-                
-                
-                
-                            </div>
-                        </div>
-                
-                        <div class="row mb-2" *ngIf="hayDatos">
-                            <div class="col-12 col-md-10">
-                
-                            </div>
-                            <div class="col-12 col-md-2">
-                                <button type="button" class="btn btn-rounded btn-outline-success waves-effect waves-light "
-                                    (click)="onClickGuardar($event)">
-                                    <i class="fa fa-save "></i>
-                                    Guardar
-                                </button>
                             </div>
                         </div>
                     </div>
@@ -162,7 +221,3 @@
         </div>
     </div>
 </div>
-
-
-
-

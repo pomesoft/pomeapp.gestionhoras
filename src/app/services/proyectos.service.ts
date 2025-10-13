@@ -1,11 +1,12 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, from, of } from 'rxjs';
+
 
 import { environment } from '../../environments/environment';
 
-import { Proyecto, ProyectoDTO, TipoProyecto } from '../models/entity.models';
-import { HelpersService } from './helpers.service';
+import { FiltroListadoRegistroDTO, Proyecto, TipoProyecto, Usuario } from '../models/entity.models';
+
+
 
 const base_url = environment.base_url;
 
@@ -39,22 +40,36 @@ export class ProyectosService {
     }
 
 
-    inicializar() {
-        return new Promise<boolean>((resolve, reject) => {
-            this.listar()
-                .subscribe({
-                    next: (response) => {
-                        this.proyectos = response;
-                        resolve(true)
-                    },
-                    error: (error) => reject(<any>error),
-                });
-        });
+    listar(
+        listarVigentes: boolean = true,
+        listarFuncionesAsignadas: boolean = false,
+        clienteId: number = -1,
+        usuarioId: number = -1,
+    ) {
+        const url = `${base_url}Proyectos?listarVigentes=${listarVigentes}
+                                        &listarFuncionesAsignadas=${listarFuncionesAsignadas}
+                                        &clienteId=${clienteId}
+                                        &usuarioId=${usuarioId}`;
+        
+        return this.http.get<Proyecto[]>(url, this.headers)
     }
 
-    listar(listarVigentes: boolean = true) {
-        const url = `${base_url}Proyectos?listarVigentes=${listarVigentes}`;
-        return this.http.get<Proyecto[]>(url, this.headers)
+    listarRegistroHoras(filtro: FiltroListadoRegistroDTO) {
+
+        const url = `${base_url}Proyectos/ListarRegistroHoras`;
+        return this.http.post(url, filtro, this.headers);
+    }
+
+    listarPorUsuario(usuarioId: number) {
+
+        const url = `${base_url}Proyectos/ListarProyectoPorUsuario/${usuarioId}`;
+        return this.http.get<Proyecto[]>(url);
+    }
+
+    listarUsuariosPorProyecto(proyectoId: number) {
+
+        const url = `${base_url}Proyectos/ListarUsuariorPorProyecto/${proyectoId}`;
+        return this.http.get<Usuario[]>(url);
     }
 
     obtener(id: number) {
@@ -71,8 +86,7 @@ export class ProyectosService {
     }
 
 
-    actualizar(dato: ProyectoDTO) {
-        console.log('dato', JSON.stringify(dato));
+    actualizar(dato: Proyecto) {
         if (dato.Id <= 0) {
             return this.http.post(`${base_url}Proyectos`, dato, this.headers);
         } else {

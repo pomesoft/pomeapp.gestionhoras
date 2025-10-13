@@ -106,3 +106,22 @@ div.mobile {
         display: table; /* Mostrar la tabla como una tabla normal en dispositivos pequeños */
     }
 }
+
+ngb-typeahead-window {
+    max-height: 250px;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+.scroll-vertical{
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+.color-registradas{
+    color: rgba(57, 227, 126, 1);
+}
+
+.color-asignadas{
+    color: rgba(255, 159, 64, 1);
+}

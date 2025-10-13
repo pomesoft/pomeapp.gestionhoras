@@ -1,3 +1,9 @@
+export interface ResponseApi {
+    OK:      boolean;
+    Mensaje: string;
+    Data?:    null;
+}
+
 
 export interface FechaNgDateStruct {
     year: number;
@@ -31,12 +37,14 @@ export interface Usuario {
     Vigente?: boolean;
     Rol?: Rol;
     Funcion?: Funcion;
+    CambiarClave?: boolean;
 }
 
 export interface Rol {
     Id: number;
     Descripcion: string;
     Vigente?: boolean;
+    NivelAcceso?: number;
 }
 
 export interface Funcion {
@@ -52,17 +60,16 @@ export interface ClasificacionActividad {
 }
 
 export interface DataFiltro {
-    IdProfesional?: number;
-    Profesional?: string;
-    IdCliente?: number;
-    Cliente?: string;
-    IdProyecto?: number;
-    Proyecto?: string;
-    IdTipoProyecto?: number;
-    Periodo?: number;
+    Usuario?: Usuario;
+    Cliente?: Cliente;
+    Proyecto?: Proyecto;
+    Funcion?: Funcion;
+    ClasificacionActividad?: ClasificacionActividad;
+    PeriodoFechas?: number;
+    PeriodoRegistro?: string;
     Meses?: number;
-    FechaDesde?: string;
-    FechaHasta?: string;
+    FechaDesde?: Date;
+    FechaHasta?: Date;
     Pagina?: number;
     CantidadRegistros?: number;
     FechaDesdeNgDate?: FechaNgDateStruct;
@@ -78,8 +85,28 @@ export interface DashboardInfo {
 export interface ItemListado {
     Id: number;
     Descripcion: string;
+    Descripcion2?: string;
+    Valor?: number;
+    Valor2?: number;
+    Valor3?: number;
+    SubItems?: SubItemNivel1[];
+}
+
+export interface SubItemNivel1 {
+    Id: number;
+    Descripcion: string;
+    Valor?: number;
+    Valor2?: number;
+    Valor3?: number;
+    SubItemsN2?: SubItemNivel2[],
+}
+
+export interface SubItemNivel2 {
+    Id: number;
+    Descripcion: string;
     Valor?: number;
 }
+
 
 export interface Producto {
     Id: number;
@@ -116,17 +143,24 @@ export interface RolFuncion {
     RegistroHoras?: number;
 }
 
+export interface ProyectoFuncionDashboard {
+    UsuarioId: number;
+    Usuario: String;
+    ProyectoId: number;
+    Proyecto: string;
+    FuncionId: number;
+    Funcion: string;
+    HorasAsignadas: number;
+    HorasRegistradas: number;
+    HorasRegistradasUsuario: number;
+}
 
-export interface ProyectoDTO {
+export interface ProyectoFuncion {
     Id: number;
-    Codigo: string;
-    Descripcion: string;
-    DiaCierre: number;
-    Vigente: boolean;
-    TipoProyectoId: number;
-    ClienteId: number;
-    LiderProyectoId: number;
-    LiderProyectoBackupId: number;
+    Funcion: Funcion;
+    Horas: number;
+    TotalRegistradas?: number;
+    RegistroHoras?: RegistroHoraDTO[]
 }
 
 export interface Proyecto {
@@ -135,12 +169,15 @@ export interface Proyecto {
     Descripcion?: string;
     DiaCierre?: number;
     Vigente?: boolean;
+    TotalRegistradas?: number;
     TipoProyecto?: TipoProyecto;
     Cliente?: Cliente;
     LiderProyecto?: Usuario;
     LiderProyectoBackup?: Usuario;
-    RolesAsignados?: RolFuncion[];
-    RolesAsignadosFULL?: RolFuncion[];
+    FuncionesAsignadas?: ProyectoFuncion[];
+    UsuariosAsignados?: Usuario[];
+    FuncionIdSeleccionada?: number;
+    TotalAsignadas?: number;
 }
 
 
@@ -153,5 +190,84 @@ export interface RegistroHora {
     Fecha?: Date;
     FechaFormat?: string;
     Horas?: number;
+    Periodo?: string;
     Detalle?: string;
+}
+
+export interface RegistroHoraDTO {
+    Id: number,
+    Fecha: Date,
+    FechaString: string;
+    Horas: number,
+    DiaCierre: number,
+    Periodo: string;
+    Detalle: string,
+    UsuarioId: number,
+    ProyectoId: number,
+    FuncionAsignadaId: number,
+    ClasificacionActividadId: number
+}
+
+export interface FiltroListadoRegistroDTO {
+    UsuarioId?: number;
+    ProyectoId?: number;
+    ClienteId?: number
+    FuncionaAsignadaId?: number;
+    ClasificacionActividadId?: number;
+    FechaDesde?: Date;
+    FechaHasta?: Date;
+    PeriodoFechas?: number;
+    PeriodoRegistro?: string;
+}
+
+export interface ReporteItem {
+    Id: number;
+    Fecha: string;
+    Horas: number;
+    Periodo: string;
+    UsuarioId: number;
+    Usuario: string;
+    ClienteId: number;
+    CodigoCliente: string;
+    Cliente: string;
+    ProyectoId: number;
+    CodigoProyecto: string;
+    FuncionId: number;
+    FuncionaAsignada: string;
+    ClasificacionActividadId: number;
+    ClasificacionDeActividad: string;
+    DetalleYProducto: string;
+}
+
+export interface DashboardItem {
+    Id: number;
+    HorasAsignadas: number;
+    HorasRegistradas: number;
+    HorasRegistradasUsuario: number;
+    Periodo: string;
+    UsuarioId: number;
+    Usuario: string;
+    ClienteId: number;
+    CodigoCliente: string;
+    Cliente: string;
+    ProyectoId: number;
+    CodigoProyecto: string;
+    FuncionId: number;
+    FuncionaAsignada: string;
+}
+
+export interface DatosExportarExcel {
+    NombreArchivo: string;
+    NombreHoja: string;
+    Titulo: string;
+    Subtitulo: string;
+    Parametros: string[];
+    ReporteItems: string[];
+    TotalesItems: string[];
+}
+
+export interface UsuarioProyecto {
+    Id: number;
+    UsuarioId: number;
+    ProyectoId: number;
 }

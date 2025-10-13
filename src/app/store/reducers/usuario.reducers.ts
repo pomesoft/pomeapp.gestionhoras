@@ -1,10 +1,11 @@
 import { createReducer, on } from '@ngrx/store';
 import { Usuario } from '../../models/entity.models';
-import { cargarUsuario, cargarUsuarioSuccess, cargarUsuarioError } from '../actions';
+import { cargarUsuario, cargarUsuarioSuccess, cargarUsuarioError, cargarUsuarioLogin } from '../actions';
 
 export interface UsuarioState {
     id: number,
     usuario: Usuario,
+    usuarioLogin: Usuario,
     loaded: boolean,
     loading: boolean,
     error: any
@@ -13,6 +14,7 @@ export interface UsuarioState {
 export const UsuarioInitialState: UsuarioState = {
     id: -1,
     usuario: null,
+    usuarioLogin: null,
     loaded: false,
     loading: false,
     error: null
@@ -31,6 +33,13 @@ const _UsuarioReducer = createReducer(UsuarioInitialState,
         loading: false,
         loaded: true,
         usuario: { ...usuario }
+    })),
+    
+    on(cargarUsuarioLogin, (state, { usuarioLogin }) => ({
+        ...state,
+        loading: false,
+        loaded: true,
+        usuarioLogin: { ...usuarioLogin }
     })),
 
     on(cargarUsuarioError, (state, { payload }) => ({

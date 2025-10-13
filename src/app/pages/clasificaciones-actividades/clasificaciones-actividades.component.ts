@@ -39,6 +39,7 @@ export class ClasificacionesActividadesComponent implements OnInit, AfterContent
     filtro = new FormControl('', { nonNullable: true });
 
     listarVigentes: boolean = true;
+    listarNoVigentes: boolean = false;
 
     search(text: string): ClasificacionActividad[] {
         return this.listadoFULL.filter((item) => {
@@ -107,7 +108,9 @@ export class ClasificacionesActividadesComponent implements OnInit, AfterContent
         this.modalService.open(content, { size: 'lg', centered: true });
     }
 
-    onChangeChekVigentes(event: any) {
+    ngChangeListarVigentes(opcion: number) {
+        this.listarVigentes = (opcion == 1);
+        this.listarNoVigentes = (opcion == 2);         
         this.store.dispatch(cargarClasificacionesActividades({ listarVigentes: this.listarVigentes }));
     }
 

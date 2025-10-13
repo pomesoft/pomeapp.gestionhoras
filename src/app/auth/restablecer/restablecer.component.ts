@@ -7,6 +7,8 @@ import { Usuario, UsuarioLogin } from '../../models/entity.models';
 import { UsuarioService } from '../../services/usuario.service';
 import { SwalhelperService } from '../../services/swalhelper.service';
 
+import { PasswordValidators } from '../validators/password.validators';
+
 
 @Component({
     selector: 'app-restablecer',
@@ -17,6 +19,10 @@ export class RestablecerComponent {
     public mostrarNoHabilitado: boolean = false;
 
     public ingresaUsuario: boolean = true;
+
+    public showClave: boolean = false;
+    public showPassword: boolean = false;
+    public showPassword2: boolean = false;
 
     private paramsKey: string = '';
 
@@ -29,6 +35,36 @@ export class RestablecerComponent {
     }, {
         validators: this.passwordsIguales('password', 'password2')
     });
+
+
+    get password() {
+        return this.registerForm.get('password').value;
+    }
+
+    get isMinimoCaracteres() {        
+        return PasswordValidators.tieneMinimoCaracteres(this.password);
+    }
+
+    get hasSimbolo() {
+        return PasswordValidators.tieneSimbolo(this.password);
+    }
+
+    get hasNumber() {
+        return PasswordValidators.tieneNumero(this.password);
+    }
+
+    get hasMayuscula() {
+        return PasswordValidators.tieneMayuscula(this.password);
+    }
+
+    get hasMinuscula() {
+        return PasswordValidators.tieneMinuscula(this.password);
+    }
+
+    get isValidCaracteresComunes() {
+        return PasswordValidators.evitarCaracteresComunes(this.password);
+    }
+
 
     constructor(
         private route: ActivatedRoute,
@@ -46,16 +82,15 @@ export class RestablecerComponent {
             }
         });
 
-
-
     }
 
     async restablecerPassword() {
         this.formSubmitted = true;
 
-        if (this.registerForm.invalid) {
-            return;
-        }
+        if (this.registerForm.invalid) return;
+        if (!this.passwordNoValido()) return;
+        if (this.contrasenaNuevaNoValida()) return;
+        
 
         let userLogin: UsuarioLogin = {
             Usuario: this.usuarioService.usuario.LoginUsuario,
@@ -63,7 +98,7 @@ export class RestablecerComponent {
             ClaveNueva: this.registerForm.get('password').value,
         };
 
-        if(userLogin.Clave!=this.usuarioService.usuario.Clave){
+        if (userLogin.Clave != this.usuarioService.usuario.Clave) {
             Swal.fire('Error', 'Ocurrió un error al restablecer tu contraseña. Comunicate con el adminsitrador', 'error');
             return;
         }
@@ -71,7 +106,7 @@ export class RestablecerComponent {
         const valido = await this.usuarioService.cambioClaveUsuario(userLogin);
 
         if (valido) {
-            Swal.fire('','La contraseña se cambió correctamente!', 'success')
+            Swal.fire('', 'La contraseña se cambió correctamente!', 'success')
                 .then((result) => {
                     this.usuarioService.logout();
                 });
@@ -80,6 +115,15 @@ export class RestablecerComponent {
             Swal.fire('Error', 'Ocurrió un error al restablecer tu contraseña. Comunicate con el adminsitrador', 'error');
         }
 
+    }
+
+    passwordNoValido() {
+        return this.isMinimoCaracteres ||
+            this.hasSimbolo ||
+            this.hasNumber ||
+            this.hasMayuscula ||
+            this.hasMinuscula ||
+            this.isValidCaracteresComunes;
     }
 
     mostrarLogin(event: any) {
@@ -108,7 +152,8 @@ export class RestablecerComponent {
 
         if ((pass1 !== pass2) && this.formSubmitted) {
             return true;
-        } else {
+        }
+        else {
             return false;
         }
 
@@ -123,8 +168,8 @@ export class RestablecerComponent {
         } else {
             return false;
         }
-
     }
+
 
     aceptaTerminos() {
         return false;       // !this.registerForm.get('terminos').value && this.formSubmitted;
@@ -145,6 +190,21 @@ export class RestablecerComponent {
 
 
         }
+    }
+
+    passwordValidator(control: any) {
+        const password = control.value;
+
+        // Expresión regular para validar la contraseña
+        const regex = /^(?=.[A-Za-z])(?=.\d)(?=.[@$!%?&])[A-Za-z\d@$!%*?&]{12,}$/;
+
+        // Si la contraseña no cumple con el patrón, retornamos un error
+        if (!regex.test(password)) {
+            return { invalidPassword: true };
+        }
+
+        // Si la contraseña es válida, retornamos null (sin errores)
+        return null;
     }
 
 }

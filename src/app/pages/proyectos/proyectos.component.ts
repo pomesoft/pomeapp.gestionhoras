@@ -5,15 +5,15 @@ import { Subscription, Observable, startWith, map } from 'rxjs';
 
 import Swal from 'sweetalert2';
 
-
 import { Store } from '@ngrx/store';
 import { AppState } from '../../store/app.reducers';
+import { cargarProyecto, cargarProyectos } from '../../store/actions';
 
-import { Proyecto } from '../../models/entity.models';
+import { Proyecto, ResponseApi } from '../../models/entity.models';
 
 import { ProyectosService } from '../../services/proyectos.service';
 import { SwalhelperService } from '../../services/swalhelper.service';
-import { cargarProyecto, cargarProyectos } from 'src/app/store/actions';
+import { UsuarioService } from '../../services/usuario.service';
 
 @Component({
     selector: 'app-proyectos',
@@ -32,6 +32,8 @@ export class ProyectosComponent implements OnInit, AfterContentInit, OnDestroy {
 
     listadoFULL: Proyecto[];
     listado$: Observable<Proyecto[]>;
+    listarVigentes: boolean = true;
+    listarNoVigentes: boolean = false;
 
     page: number = 1;
     pageSize: number = 15;
@@ -40,7 +42,8 @@ export class ProyectosComponent implements OnInit, AfterContentInit, OnDestroy {
     filtro = new FormControl('', { nonNullable: true });
 
     search(text: string): Proyecto[] {
-        return this.listadoFULL.filter((item) => {
+
+        var listReturn = this.listadoFULL.filter((item) => {
             const term = text.toLowerCase();
             return (
                 item.Codigo && item.Codigo.toLowerCase().includes(term) ||
@@ -49,6 +52,10 @@ export class ProyectosComponent implements OnInit, AfterContentInit, OnDestroy {
                 item.LiderProyecto && item.LiderProyecto.ItemList.toLowerCase().includes(term)
             );
         });
+
+        this.total = listReturn.length;
+
+        return listReturn;
     }
 
 
@@ -58,6 +65,7 @@ export class ProyectosComponent implements OnInit, AfterContentInit, OnDestroy {
         private config: NgbPaginationConfig,
         private swalService: SwalhelperService,
         private datosServcice: ProyectosService,
+        private usuarioService: UsuarioService,
     ) {
         // customize default values of paginations used by this component tree
         config.size = 'sm';
@@ -80,18 +88,32 @@ export class ProyectosComponent implements OnInit, AfterContentInit, OnDestroy {
                 this.error = error;
                 this.listadoFULL = proyectos;
                 this.total = this.listadoFULL.length;
+                this.refreshDatos();
             });
     }
 
     ngAfterContentInit(): void {
         this.cargando = true;
-        this.store.dispatch(cargarProyectos());
+        this.dispatchCargarProyectos();
     }
 
     ngOnDestroy(): void {
         this.datosSubs.unsubscribe();
     }
 
+    ngChangeListarVigentes(opcion: number) {
+        this.listarVigentes = (opcion == 1);
+        this.listarNoVigentes = (opcion == 2);
+        this.dispatchCargarProyectos();
+    }
+
+    dispatchCargarProyectos() {
+        if (this.usuarioService.usuario.Rol.NivelAcceso == 10) {
+            this.store.dispatch(cargarProyectos({ listarVigentes: this.listarVigentes, usuarioId: this.usuarioService.usuario.Id }));
+        } else {
+            this.store.dispatch(cargarProyectos({ listarVigentes: this.listarVigentes, usuarioId: -1 }));
+        }
+    }
 
 
     refreshDatos() {
@@ -105,7 +127,17 @@ export class ProyectosComponent implements OnInit, AfterContentInit, OnDestroy {
 
         this.store.dispatch(cargarProyecto({ id: id }));
 
-        this.modalService.open(content, { size: 'lg', centered: true });
+        this.modalService.open(content, { size: 'xl', centered: true }).result
+            .then(
+                (result) => {
+                    console.log(`modalService=>Closed with: ${result}`);
+                },
+                (reason) => {
+                    if (reason == 'SAVE_PROYECTO') {
+                        this.dispatchCargarProyectos();
+                    }
+                },
+            );
     }
 
     onClickEliminar(
@@ -132,11 +164,17 @@ export class ProyectosComponent implements OnInit, AfterContentInit, OnDestroy {
             if (result.isConfirmed) {
                 this.cargando = true;
 
-                this.datosServcice.desactivar(item.Id)
+                item.Vigente = false;
+                this.datosServcice.actualizar(item)
                     .subscribe({
-                        next: (response: Proyecto) => {
-                            this.store.dispatch(cargarProyectos());
-                            this.swalService.setToastOK();
+                        next: (response: ResponseApi) => {
+
+                            if (response.OK) {
+                                this.dispatchCargarProyectos();
+                                this.swalService.setToastOK();
+                            } else {
+                                this.swalService.setSwalFireError(response.Mensaje);
+                            }                            
                             this.cargando = false;
                         },
                         error: (error) => this.swalService.setToastError(error),
