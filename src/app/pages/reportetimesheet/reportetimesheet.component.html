@@ -23,17 +23,21 @@
     <div class="col-12">
         <div class="card">
             <div class="card-body">
-                <div class="form-group row">
+                <div class="row m-b-10">
 
-                    <label class="col-sm-2 control-label col-form-label text-right">Cliente:</label>
-                    <div class="col-sm-8 control-label col-form-label">
+                    <label class="col-sm-1 control-label col-form-label text-right">Cliente</label>
+                    <div class="col-sm-5 control-label col-form-label">
                         <div class="input-group">
                             <span class="input-group-addon">
                                 <i class="fa fa-user"></i>
                             </span>
                             <input id="clienteTypeahead" type="text" class="form-control" 
-                                [(ngModel)]="cliente" (ngModelChange)="onChangeCliente($event)"
+                                [(ngModel)]="cliente" 
+                                (ngModelChange)="onChangeCliente($event)"
                                 placeholder="Seleccione un cliente" 
+                                [inputFormatter]="formatterCliente"
+                                [resultFormatter]="formatterCliente"
+                                editable="false" 
                                 [ngbTypeahead]="searchCliente" (focus)="focusCliente$.next($any($event).target.value)"
                                 (click)="clickCliente$.next($any($event).target.value)"
                                 #instanceCliente="ngbTypeahead" />
@@ -44,23 +48,55 @@
                     </div>
 
                     <div class="col-sm-2 control-label col-form-label">
+                        <div class="btn-group m-b-5" role="group" aria-label="tipoTimesheet">
+                            <button type="button" class="btn" 
+                                (click)="onClickTipoSheet(1)" [class.btn-secondary]="tipoTimesheet==1"
+                                [class.btn-outline-secondary]="tipoTimesheet!=1">
+                                Individual
+                            </button>
+                            <ng-container *ngIf="puedeVerGeneral" >
+                                <button type="button" class="btn" 
+                                    (click)="onClickTipoSheet(2)" [class.btn-secondary]="tipoTimesheet==2"
+                                    [class.btn-outline-secondary]="tipoTimesheet!=2">
+                                    General
+                                </button>
+                            </ng-container>                            
+                        </div>
+                    </div>
+
+                    <div class="col-sm-2 control-label col-form-label">
                         <div class="input-group">
-                            <button type="button" class="btn btn-rounded btn-block btn-outline-success waves-effect waves-light">
+                            <button type="button" class="btn btn-rounded btn-block btn-outline-success waves-effect waves-light"
+                                (click)="onClickAplicarFiltros()">
                                 <i class="fa fa-check"></i>
                                 Aplicar filtros
                             </button>
                         </div>
                     </div>
+
+                    <div class="col-sm-2 control-label col-form-label">
+                        <div class="input-group">
+                            <button type="button" class="btn btn-rounded btn-block btn-outline-info waves-effect waves-light"
+                                    (click)="onClickExportar()">
+                                <i class="fa fa-file-excel-o"></i>
+                                Exportar
+                            </button>
+                        </div>
+                    </div>
                     
-                    <label class="col-sm-2 control-label col-form-label text-right">Proyecto:</label>
-                    <div class="col-sm-8 control-label col-form-label">
+                    <label class="col-sm-1 control-label col-form-label text-right">Proyecto</label>
+                    <div class="col-sm-5 control-label col-form-label">
                         <div class="input-group">
                             <span class="input-group-addon">
                                 <i class="fa fa-list-alt"></i>
                             </span>
                             <input id="proyectoTypeahead" type="text" class="form-control" 
-                                [(ngModel)]="proyecto" (ngModelChange)="onChangeProyecto($event)"
+                                [(ngModel)]="proyecto" 
+                                (ngModelChange)="onChangeProyecto($event)"
                                 placeholder="Seleccione un proyecto" 
+                                [inputFormatter]="formatterProyecto"
+                                [resultFormatter]="formatterProyecto"
+                            editable="false" 
                                 [ngbTypeahead]="searchProyecto" (focus)="focusProyecto$.next($any($event).target.value)"
                                 (click)="clickProyecto$.next($any($event).target.value)"
                                 #instanceProyecto="ngbTypeahead" />
@@ -70,86 +106,137 @@
                         </div>
                     </div>
 
-                    <div class="col-sm-2 control-label col-form-label">
-                        <div class="input-group">
-                            <button type="button" class="btn btn-rounded btn-block btn-outline-secondary waves-effect waves-light">
-                                <i class="fa fa-file-excel-o"></i>
-                                Exportar
-                            </button>
-                        </div>
-                    </div>
-
-                    
-                    <label class="col-sm-2 control-label col-form-label text-right">Mes de Prestación:</label>
+                    <label class="col-sm-1 control-label col-form-label text-right">Período</label>
                     <div class="col-sm-3 control-label col-form-label">
                         <div class="input-group">
                             <span class="input-group-addon">
                                 <i class="fa fa-calendar"></i>
                             </span>
-                            <select class="form-control custom-select" >
-                                <option value="0">JULIO</option>
-                                <option value="1">ENERO</option>
-                                <option value="2">FEBRERO</option>
-                                <option value="3">MARZO</option>
-                                <option value="4">ABRIL</option>
-                                <option value="5">MAYO</option>
-                                <option value="6">JUNIO</option>
-                                <option value="7">JULIO</option>
-                                <option value="8">AGOSTO</option>
-                                <option value="9">SEPTIEMBRE</option>
-                                <option value="10">OCTUBRE</option>
-                                <option value="11">NOVIEMBRE</option>
-                                <option value="12">DICIEMBRE</option>
+                            <select class="form-control custom-select" [(ngModel)]="periodoRegistroMes">
+                                <option value=""></option>
+                                <option *ngFor="let item of meses" [value]="item">
+                                    {{item}}
+                                </option>                                
                             </select>
                         </div>
-                    </div>
-
-                    <label class="col-sm-1 control-label col-form-label text-right">Año:</label>
+                    </div>                    
                     <div class="col-sm-2 control-label col-form-label">
                         <div class="input-group">
-                            <input type="number" class="form-control" [(ngModel)]="anioPrestacion"  
+                            <input type="number" class="form-control" [(ngModel)]="periodoRegistroAnio"  
                                 (focus)="onFocus($event)">
                         </div>
                     </div>
-                    
-                    <label class="col-sm-1 control-label col-form-label">&nbsp;</label>
 
-                    <div class="col-sm-3 control-label col-form-label">
-                        <div class="border border-info rounded">
-                            <div class="d-flex flex-row b-b">
-                                <div class="bg-info-subtle p-r-10 p-l-10">
-                                    <h2 class="text-info box m-b-0">
-                                        <i class="fa fa-clock-o"></i>
-                                    </h2>
-                                </div>
-                                <div class="m-l-10 align-self-center">
-                                    <h4 class="m-b-0">{{totalHoras | number :'1.1-2'}}</h4>
-                                    <span class="text-secondary m-b-0">Tiempo Dedicado</span>
-                                </div>                                
-                            </div>                          
+                    <hr/>
+
+                    <label class="col-sm-1 control-label col-form-label text-right">&nbsp;</label>
+                    <div class="col-sm-6">
+                        <div>
+                            <ul class="list-group" style="font-size: small;">
+                                <li class="list-group-item list-group-item-action border border-bottom">
+                                    <div class="d-flex flex-row text-center">
+                                        <div class="flex-grow-1" style="width: 60% !important;">
+                                            <span class="fw-bolder">Función Asignada</span>
+                                        </div>
+                                        <div style="width: 20% !important;" *ngIf="tipoTimesheet!=1">
+                                            <span class="fw-bolder">Asignadas</span>
+                                        </div>
+                                        <div style="width: 20% !important;">
+                                            <span class="fw-bolder">Registradas</span>
+                                        </div>
+                                    </div>
+                                </li>
+                            </ul>
+                            <ul class="list-group scroll-vertical" style="font-size: small; max-height: 160px !important;">
+                                <ng-container  *ngFor="let item of totalXFuncion ">
+                                <li *ngIf="item.Valor2>0"
+                                    class="list-group-item list-group-item-action border border-bottom" >                
+                                        <div class="d-flex flex-row">
+                                            <div class="flex-grow-1" style="width: 60% !important;">
+                                                {{item.Descripcion}}
+                                            </div>
+                                            <div class="p-l-10 text-right" style="width: 20% !important;"  *ngIf="tipoTimesheet!=1">
+                                                {{item.Valor | number :'1.1-2'}}
+                                            </div>
+                                            <div class="p-l-10 text-right" style="width: 20% !important;">
+                                                {{item.Valor2 | number :'1.1-2'}}
+                                            </div>
+                                        </div>
+                                    </li>
+                                </ng-container>
+                            </ul>
                         </div>
                     </div>
-                </div>
 
-                <hr/>
+                    <div class="col-sm-3">                        
+                        <div class="border border-warning rounded" *ngIf="tipoTimesheet!=1">
+                            <div class="d-flex flex-row b-b">
+                                <div class="p-r-10 p-l-10" style="background-color: rgba(255, 159, 64, 0.2);">
+                                    <h3 class="box text-muted m-b-0">
+                                        <i class="mdi mdi-alarm-check"></i>
+                                    </h3>
+                                </div>
+                                <div class="m-l-10 align-self-center">
+                                    <h4 class="m-b-0">{{totalHorasAsignadas | number :'1.1-2'}}</h4>
+                                    <span class="text-muted m-b-0">Horas Asignadas</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="border rounded m-t-10 m-b-10"
+                            [class.border-success]="(totalHorasRegistradas-totalHorasAsignadas)>=0 || tipoTimesheet==1" 
+                            [class.border-danger]="(totalHorasRegistradas-totalHorasAsignadas)<0 && tipoTimesheet!=1"
+                        >
+                            <div class="d-flex flex-row b-b">
+                                <div class=" p-r-10 p-l-10"
+                                    [class.bg-success-subtle]="(totalHorasRegistradas-totalHorasAsignadas)>=0 || tipoTimesheet==1"
+                                    [class.bg-danger-subtle]="(totalHorasRegistradas-totalHorasAsignadas)<0 && tipoTimesheet!=1"
+                                >
+                                    <h3 class="box text-muted m-b-0">
+                                        <i class="mdi mdi-alarm-check"></i>
+                                    </h3>
+                                </div>
+                                <div class="m-l-10 align-self-center">
+                                    <h4 class="m-b-0">{{totalHorasRegistradas | number :'1.1-2'}}</h4>
+                                    <span class="text-secondary m-b-0">Horas Registradas</span>
+                                </div>
+                            </div>
+                        </div> 
+                        <div class="form-group form-check">
+                            <input type="checkbox" id="listarMisProyectos" 
+                                    class="form-check-input" 
+                                    [(ngModel)]="detallePorUsuario" 
+                                    (ngModelChange)="onChangeDetallePorUsuario()"/>
+                            <label for="listarMisProyectos" class="form-check-label">Mostrar Usuario</label>
+                        </div>                       
+                    </div>
+
+
+                    <!-- <label class="col-sm-1 control-label col-form-label">&nbsp;</label> -->
+                    
+                </div>
+                
 
                 <div class="table-responsive "  style="max-height: 450px; overflow-y: auto;">                            
-                    <table class="table table-hover ">
+                    <table class="table table-hover" style="font-size: small;">
                         <thead>
                             <tr class="table-active">
                                 <th style="width: 15%;">Fecha</th>
                                 <th style="width: 20%;">Función asociada</th>
+                                <th style="width: 20%;" *ngIf="detallePorUsuario">Usuario</th>
+                                <th style="width: 20%;">Clasificación de Actividad</th>
                                 <th style="width: 45%;">Detalle y Producto</th>
-                                <th style="width: 15%;">Tiempo dedicado</th>
+                                <th style="width: 15%;">Horas</th>
                             </tr>
                         </thead>
                         <tbody>
 
                             <ng-container *ngFor="let item of listado">
                                 <tr>
-                                    <td>{{item.FechaFormat}}</td>
-                                    <td>{{item.Funcion.Descripcion}}</td>
-                                    <td>{{item.Detalle}}</td>
+                                    <td>{{item.Fecha}}</td>
+                                    <td>{{item.FuncionaAsignada}}</td>
+                                    <td *ngIf="detallePorUsuario">{{item.Usuario}}</td>
+                                    <td>{{item.ClasificacionDeActividad}}</td>
+                                    <td>{{item.DetalleYProducto}}</td>
                                     <td class="text-right">{{item.Horas | number :'1.1-2'}}</td>
                                 </tr>
                             </ng-container>

@@ -1,16 +1,18 @@
-import { Component, ViewChild, TemplateRef } from '@angular/core';
+import { Component, ViewChild, TemplateRef, AfterContentInit, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { ModalDismissReasons, NgbCalendar, NgbDateStruct, NgbModal, NgbTypeahead } from '@ng-bootstrap/ng-bootstrap';
 import { Store } from '@ngrx/store';
-import { Observable, OperatorFunction, Subject, debounceTime, distinctUntilChanged, filter, map, merge, startWith, timer } from 'rxjs';
+import { Observable, OperatorFunction, Subject, Subscription, debounceTime, distinctUntilChanged, filter, map, merge, startWith, timer } from 'rxjs';
 
 import { AppState } from '../../store/app.reducers';
+import { cargarClientes, cargarFunciones, cargarProyectos } from '../../store/actions';
 
 import { HelpersService } from '../../services/helpers.service';
 import { ProyectosService } from '../../services/proyectos.service';
 import { SwalhelperService } from '../../services/swalhelper.service';
 
-import { Proyecto, TipoProyecto } from '../../models/entity.models';
+import { Cliente, Funcion, Proyecto, ProyectoFuncion, ResponseApi } from '../../models/entity.models';
+import { UsuarioService } from 'src/app/services/usuario.service';
 
 @Component({
     selector: 'app-planning',
@@ -18,9 +20,9 @@ import { Proyecto, TipoProyecto } from '../../models/entity.models';
     styles: [
     ]
 })
-export class PlanningComponent {
+export class PlanningComponent implements OnInit, AfterContentInit, OnDestroy {
 
-    tituloFormulario: string = "Asignación de Horas";
+    tituloFormulario: string = "Asignación de Horas Mensuales";
 
     cargando: boolean = true;
     procesando: boolean = false;
@@ -28,54 +30,55 @@ export class PlanningComponent {
 
     countdown$ = timer(500);
 
-    listadoFULL: Proyecto[] = [];
-    listado$: Observable<Proyecto[]>;
-    hayDatos: boolean = false;
+    funcionesSubs: Subscription;
+
+    clienteSeleccionado: Cliente;
+    clientes: Cliente[] = [];
+    formatterCliente = (item: Cliente) => (item && item.Nombre) ? item.Nombre : '';
+
+
+    proyectosFULL: Proyecto[] = [];
+    proyectos$: Observable<Proyecto[]>;
     proyectoSeleccionado: Proyecto;
+
+    funciones: Funcion[] = [];
+    funcionesAsignadas: ProyectoFuncion[] = [];
+    totalHorasAsignadas: number = 0;
+    listarTodasFunciones: boolean = false;
 
     mostrarBtnNovigentes: boolean = true;
 
     filtro = new FormControl('', { nonNullable: true });
 
-    profesional: any;
-    periodo: number = 1;
 
-    profesionales: string[] = [];
-    clientes: string[] = [];
-    proyectos: string[] = [];
+    @ViewChild('instanceCliente', { static: true }) instanceCliente: NgbTypeahead;
+    focusCliente$ = new Subject<string>();
+    clickCliente$ = new Subject<string>();
 
-    formularioProyecto: FormGroup;
-    formularioTarea: FormGroup;
+    searchCliente: OperatorFunction<string, readonly Cliente[]> = (text$: Observable<string>) => {
+        const debouncedText$ = text$.pipe(debounceTime(200), distinctUntilChanged());
+        const clicksWithClosedPopup$ = this.clickCliente$.pipe(filter(() => false));
+        const inputFocus$ = this.focusCliente$;
 
+        return merge(debouncedText$, inputFocus$, clicksWithClosedPopup$)
+            .pipe(
+                map((term) => this.clientes.filter((item) => new RegExp(term, 'mi').test(item.Nombre)))
+            );
+    };
 
-    get clienteNoValido() {
-        return this.formularioProyecto.get('cliente').invalid && this.formularioProyecto.get('cliente').touched;
+    get hayFuncionesAsignadas() {
+        return this.funcionesAsignadas && this.funcionesAsignadas.length > 0;
     }
-    get proyectoNoValido() {
-        return this.formularioProyecto.get('proyecto').invalid && this.formularioProyecto.get('proyecto').touched;
-    }
-    get tipoProyectoNoValido() {
-        return this.formularioProyecto.get('tipoProyecto').invalid && this.formularioProyecto.get('tipoProyecto').touched;
-    }
-    get rolFuncionNoValido() {
-        return this.formularioTarea.get('rolFuncion').invalid && this.formularioTarea.get('rolFuncion').touched;
-    }
-    get horasNoValida() {
-        return this.formularioTarea.get('horas').invalid && this.formularioTarea.get('horas').touched;
-    }
-
-
-    
-
-
 
     constructor(
+        private store: Store<AppState>,
         private formBuilder: FormBuilder,
         private modalService: NgbModal,
         private proyectoService: ProyectosService,
+        private usuarioService: UsuarioService,
         private swalService: SwalhelperService,
     ) {
-        this.listado$ = this.filtro.valueChanges.pipe(
+        this.proyectos$ = this.filtro.valueChanges.pipe(
             startWith(''),
             map((text) => this.search(text).map((item, i) => ({ id: i + 1, ...item }))
                 // .slice(
@@ -83,83 +86,100 @@ export class PlanningComponent {
                 //     (this.page - 1) * this.pageSize + this.pageSize,
                 // )
             ),
-        );
-        this.refreshDatos();
-
-        this.crearFormularios();
-        this.setearEventosControlesProyecto();
+        )
 
     }
 
     ngOnInit(): void {
 
-        /*
-        this.profesionales = this.proyectoService.profesionales.map(item => item.Apellido + '' + item.Nombre);
-        this.clientes = this.proyectoService.clientes.map(item => item.Nombre);
+        this.funcionesSubs = this.store.select('funciones')
+            .subscribe(({ funciones, loading, error }) => {
+                this.cargando = loading;
+                this.error = error;
+                this.funciones = funciones;
+            });
 
-
-        this.profesional = 'APELLIDO 1 NOMBRE 1';
-        this.onClickListarProyectos('');
-
-        this.countdown$.subscribe(() => {
-            this.cargando = false;
+        this.proyectos$.subscribe({
+            next: (proyectos) => {
+                if (proyectos && proyectos.length > 0) {
+                    this.cargarProyecto(proyectos[0].Id);
+                }
+            },
+            error: (error) => this.swalService.setToastError(error)
         });
-        */
+
+
+        this.cargarDatos();
     }
 
-    ngOnDestroy(): void {
+    ngAfterContentInit(): void {
+        this.cargando = true;
+        this.store.dispatch(cargarFunciones({ listarVigentes: true }));
+    }
 
+
+    ngOnDestroy(): void {
+        this.funcionesSubs.unsubscribe();
+    }
+
+
+    async cargarDatos() {
+        this.cargando = true;
+        this.error = false;
+
+        await this.cargarProyectos()
+            .then(result => {
+
+                this.proyectosFULL = result;
+                this.clientes = [];
+                this.proyectosFULL.forEach(item => {
+                    if (this.clientes.filter(cli => cli.Id == item.Cliente.Id).length == 0) {
+                        this.clientes.push(item.Cliente);
+                    }
+                });
+                this.clientes.sort((a, b) => a.Nombre.localeCompare(b.Nombre));
+                
+            })
+            .catch(err => {
+                this.error = true;
+                console.log(err);
+            })
+            .finally(() => this.cargando = false);
     }
 
     search(text: string): Proyecto[] {
-        this.hayDatos = false;
-        return this.listadoFULL.filter((item) => {
+        return this.proyectosFULL.filter((item) => {
             const term = text.toLowerCase();
 
-            this.hayDatos = item.Descripcion.toLowerCase().includes(term) ||
-                item.Cliente.Nombre.toLowerCase().includes(term) ||
-                item.TipoProyecto.Descripcion.toLowerCase().includes(term);
+            // return item.Codigo.toLowerCase().includes(term) ||
+            //     item.Cliente.Nombre.toLowerCase().includes(term);
 
-            return this.hayDatos;
+            return this.clienteSeleccionado && item.Cliente.Id == this.clienteSeleccionado.Id;
         });
     }
 
 
-    private crearFormularios() {
+    listarFuncionesAsignadas(
+    ) {
+        this.funcionesAsignadas = [];
 
-        this.formularioProyecto = this.formBuilder.group({
-            id: [-1],
-            profesional: ['', Validators.required],
-            cliente: ['', Validators.required],
-            proyecto: ['', Validators.required],
-            tipoProyecto: [''],
-        });
-        Object.keys(this.formularioProyecto.controls).forEach(key => {
-            if (key != 'id') {
-                const yourControl = this.formularioProyecto.get(key);
-                yourControl.valueChanges.subscribe(() => {
-                    if (yourControl.value) {
-                        yourControl.patchValue(yourControl.value.toUpperCase(), { emitEvent: false });
-                    }
-                });
+        this.funciones.forEach(item => {
+            let proyFuncion: ProyectoFuncion = this.proyectoSeleccionado.FuncionesAsignadas?.find(pfa => pfa.Funcion.Id == item.Id);
+
+            if (!proyFuncion) {
+                proyFuncion = { Id: 0, Funcion: item, Horas: 0 };
+            }
+
+            if (this.listarTodasFunciones) {
+                this.funcionesAsignadas.push(proyFuncion);
+
+            } else if (proyFuncion.Horas > 0) {
+                this.funcionesAsignadas.push(proyFuncion);
             }
         });
 
-        this.formularioTarea = this.formBuilder.group({
-            id: [-1],
-            rolFuncion: ['', Validators.required],
-            horas: ['', Validators.required],
-        });
-        Object.keys(this.formularioTarea.controls).forEach(key => {
-            if (key != 'id') {
-                const yourControl = this.formularioTarea.get(key);
-                yourControl.valueChanges.subscribe(() => {
-                    if (yourControl.value) {
-                        yourControl.patchValue(yourControl.value.toUpperCase(), { emitEvent: false });
-                    }
-                });
-            }
-        });
+        this.totalHorasAsignadas = 0;
+        this.funcionesAsignadas.forEach(item => this.totalHorasAsignadas += item.Horas);
     }
 
     refreshDatos() {
@@ -168,24 +188,53 @@ export class PlanningComponent {
         this.filtro.reset(valor);
     }
 
+    onChangeCliente(event) {
 
-    onClickListarProyectos(event: any) {
-        this.listadoFULL = this.proyectoService.proyectos;
-        if (this.listadoFULL.length > 0) {
-            this.proyectoSeleccionado = this.listadoFULL[0];
+        if (event && event.Id) {
+            this.refreshDatos();
         }
-        this.refreshDatos();
-        console.log('proyectoSeleccionado', this.proyectoSeleccionado);
     }
 
-
+    onClickLimpiarCliente(event: any) {
+        this.clienteSeleccionado = null;
+        this.proyectoSeleccionado = null;
+        this.refreshDatos();
+    }
 
     onClickSeleccionarProyecto(
         event: any,
-        proyecto: Proyecto
+        proyectoId: number
     ) {
         event.preventDefault();
-        this.proyectoSeleccionado = proyecto;
+        this.cargarProyecto(proyectoId);
+    }
+
+    cargarProyectos() {
+        return new Promise<Proyecto[]>((resolve, reject) => {
+            this.proyectoService.listar(true, true, -1, this.usuarioService.usuario.Id)
+                .subscribe({
+                    next: (response: Proyecto[]) => resolve(response),
+                    error: (error) => reject(<any>error)
+                });
+        });
+    }
+
+    cargarProyecto(
+        proyectoId: any
+    ) {
+        this.funcionesAsignadas = [];
+
+        this.proyectoService.obtener(proyectoId)
+            .subscribe({
+                next: (proyecto) => {
+                    this.proyectoSeleccionado = proyecto;
+                    this.listarFuncionesAsignadas();
+                },
+                error: (error) => {
+                    this.swalService.setToastError(`Ocurrió un error al cargar el proyecto`)
+                    console.log(error);
+                },
+            });
     }
 
     onClickAbrirModal(
@@ -209,47 +258,38 @@ export class PlanningComponent {
         );
     }
 
-    onClickGuardarProyecto() {
-        if (this.formularioProyecto.invalid) {
-            return Object.values(this.formularioProyecto.controls).forEach(control => {
-                if (control instanceof FormGroup) {
-                    Object.values(control.controls).forEach(control => control.markAsTouched());
-                } else {
-                    control.markAsTouched();
-                }
-            });
 
-        }
-        this.swalService.setToastOK();
-    }
-
-
-    onClickGuardarTarea() {
-        if (this.formularioTarea.invalid) {
-            return Object.values(this.formularioTarea.controls).forEach(control => {
-                if (control instanceof FormGroup) {
-                    Object.values(control.controls).forEach(control => control.markAsTouched());
-                } else {
-                    control.markAsTouched();
-                }
-            });
-
-        }
-        this.swalService.setToastOK();
-    }
     onClickGuardar(event: any) {
-        if (this.hayDatos)
-            this.swalService.setToastOK();
+
+        let funcAsignadas: ProyectoFuncion[] = this.funcionesAsignadas;
+
+        this.proyectoSeleccionado.FuncionesAsignadas = funcAsignadas;
+
+        this.proyectoService.actualizar(this.proyectoSeleccionado)
+            .subscribe({
+                next: (response: ResponseApi) => {
+
+                    if (response.OK) {
+                        this.onClickSeleccionarProyecto(event, this.proyectoSeleccionado.Id);
+                        this.swalService.setToastOK();
+                    } else {
+                        this.swalService.setSwalFireError(response.Mensaje);
+                    }                    
+                },
+                error: (error) => this.swalService.setToastError(error)
+            });
+
     }
 
-    onClickPeriodo(value: number) {
-        this.periodo = value;
-    }
 
     onFocusHoras(event,) {
-        console.log(event);
+
     }
 
+    onChangeHoras(event: any) {
+        this.totalHorasAsignadas = 0;
+        this.funcionesAsignadas.forEach(item => this.totalHorasAsignadas += item.Horas);
+    }
 
     trackByFn(index, item) {
         return index;
@@ -272,40 +312,12 @@ export class PlanningComponent {
         this.swalService.setSwalFireOk(`Se podrá agregar un nuevo ${controlName}`);
     }
 
-    onClickLimpiarTypeahead(
-        controlName: string,
+
+    onChangeListarTodasFunciones(
+        event: any
     ) {
-        this.formularioProyecto.get(controlName).setValue('', { onlySelf: true, });
+        this.listarFuncionesAsignadas();
     }
 
-
-    setearEventosControlesProyecto() {
-
-        this.formularioProyecto.get('cliente').valueChanges.subscribe(valor => {
-            this.proyectos = this.proyectoService.proyectos
-                .filter(item => item.Cliente.Nombre === valor)
-                .map(item => item.Descripcion);
-
-            this.formularioProyecto.patchValue({
-                proyecto: this.proyectos.length == 1 ? this.proyectos[0] : '',
-            }, {
-                emitEvent: true
-            });
-        });
-
-        this.formularioProyecto.get('proyecto').valueChanges.subscribe(valor => {
-
-            /*
-            var _listaux = this.proyectoService.proyectos.filter(item => item.Descripcion === valor);
-            this.formularioProyecto.patchValue({
-                tipoProyecto: _listaux.length == 1 ? _listaux[0].TipoDescripcion : '',
-            }, {
-                emitEvent: false
-            });
-            */
-
-        });
-
-    }
 
 }

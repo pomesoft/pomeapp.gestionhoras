@@ -86,7 +86,7 @@ export class ProfesionalComponent implements OnInit, OnDestroy {
             });
         } else {
             this.formulario.reset({
-                id: -1,
+                id: 0,
                 apellido: '',
                 nombre: '',
             });

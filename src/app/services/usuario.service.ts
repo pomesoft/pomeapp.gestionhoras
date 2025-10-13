@@ -11,8 +11,7 @@ import { RegisterForm } from '../interfaces/register-form.interface';
 import { LoginForm } from '../interfaces/login-form.interface';
 import { CargarUsuario } from '../interfaces/cargar-usuarios.interface';
 
-import { ResponseApiLogin, Usuario, UsuarioLogin } from '../models/entity.models';
-import { ResponseApi } from '../models/api.model';
+import { ResponseApi, ResponseApiLogin, Usuario, UsuarioLogin } from '../models/entity.models';
 
 const base_url = environment.base_url;
 
@@ -78,12 +77,8 @@ export class UsuarioService {
     }
 
     logout() {
-        localStorage.removeItem('token');
-        localStorage.removeItem('idUsuario');
-        localStorage.removeItem('usuarioService');
-
-
         this.ngZone.run(() => {
+            localStorage.clear()
             this.router.navigateByUrl('/login');
         })
 
@@ -251,6 +246,28 @@ export class UsuarioService {
                     error: (error) => {
                         console.log(error);
                         resolve(false);
+                    },
+                });
+
+        });
+    }
+
+
+    recuperarClave(
+        datos: UsuarioLogin
+    ) {
+        let params = JSON.stringify(datos);
+
+        return new Promise<boolean>((resolve, reject) => {
+
+            return this.http.post(`${base_url}Login/rc`, params, { headers: headers })
+                .subscribe({
+                    next: (resp) => {
+                        resolve(true);                        
+                    },
+                    error: (error) => {
+                        console.log(error);
+                        reject(<any>error);
                     },
                 });
 

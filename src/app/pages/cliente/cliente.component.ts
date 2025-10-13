@@ -11,6 +11,7 @@ import { Cliente } from '../../models/entity.models';
 
 import { ClientesService } from '../../services/clientes.service';
 import { SwalhelperService } from '../../services/swalhelper.service';
+import { UsuarioService } from '../../services/usuario.service';
 
 @Component({
     selector: 'app-cliente',
@@ -39,6 +40,7 @@ export class ClienteComponent implements OnInit, OnDestroy {
         private modalService: NgbModal,
         private swalService: SwalhelperService,
         private datosServcice: ClientesService,
+        private usuarioService: UsuarioService,
     ) {
 
         this.crearFormulario();
@@ -89,7 +91,7 @@ export class ClienteComponent implements OnInit, OnDestroy {
             });
         } else {
             this.formulario.reset({
-                Id: -1,
+                Id: 0,
                 Codigo: '',
                 Nombre: '',
                 Vigente: true,
@@ -114,10 +116,10 @@ export class ClienteComponent implements OnInit, OnDestroy {
 
         this.datosServcice.actualizar(this.formulario.value)
             .subscribe({
-                next: (response: Cliente) => {
-                    this.store.dispatch(cargarClientes({ listarVigentes: this.listarVigentes }));
+                next: (response: Cliente) => {                    
+                    //this.store.dispatch(cargarClientes({ listarVigentes: true, usuarioId: this.usuarioService.usuario.Id }));
                     this.swalService.setToastOK();
-                    this.modalService.dismissAll();
+                    this.modalService.dismissAll('SAVE_CLIENTE')
                 },
                 error: (error) => this.swalService.setToastError(error)
             });

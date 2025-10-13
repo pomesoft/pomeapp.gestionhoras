@@ -8,6 +8,18 @@
     </div>
 </div>
 
+<div class="row animated fadeIn fast" *ngIf="error">
+    <div class="col-12">
+        <div class="alert alert-danger text-center">
+            <h4 class="alert-heading">Ocurrió un error</h4>
+            <i class="fa fa-exclamation-triangle fa-4x"></i>
+            <p class="mb-0">Ocurrió un error reintente en unos minutos, si el error persiste contactarse con soporte.
+            </p>
+        </div>
+    </div>
+</div>
+
+
 
 <div class="animated fadeIn fast" *ngIf="!cargando">
 
@@ -15,117 +27,403 @@
         <div class="col-12">
             <div class="card">
                 <div class="card-body">
-                    <div class="card-title h4">Time Sheets</div>
+
+                    <div class="d-flex flex-row text-center">
+                        <div class="flex-grow-1" style="width: 50% !important;">
+                            <div class="card-title h4">{{tituloFormulario}}</div>
+                        </div>                       
+
+                        <div style="width: 10% !important;">
+                            <label class="control-label col-form-label text-right">Período:</label>
+                        </div>
+                        <div style="width: 30% !important;">
+                            <div class="input-group">
+                                <span class="input-group-addon">
+                                    <i class="fa fa-calendar"></i>
+                                </span>
+                                <select class="form-control custom-select"  [(ngModel)]="periodoRegistroMes"
+                                    style="width: 35% !important;">
+                                    <option *ngFor="let item of meses" [value]="item">
+                                        {{item}}
+                                    </option>
+                                </select><input type="number" class="form-control" [(ngModel)]="periodoRegistroAnio" >
+                                <span class="input-group-addon" (click)="onClickPeriodo()">
+                                    <i class="fa fa-refresh"></i>
+                                </span>
+                            </div>
+                            <div class="form-group form-check m-t-10" *ngIf="usuarioService.usuario.Rol.NivelAcceso>10">
+                                <input type="checkbox" id="listarMisProyectos" 
+                                        class="form-check-input" 
+                                        [(ngModel)]="listarMisMisHoras" 
+                                        (ngModelChange)="onChangeMisHoras()"/>
+                                <label for="listarMisProyectos" class="form-check-label">Mostrar solo <strong>Mis Horas</strong></label>
+                            </div>
+                        </div>
+                    
+                    </div>
+
                     <hr />
 
-                    <div class="d-flex justify-content-center">
+                    <div class="d-flex justify-content-center m-t-10">
 
-                        <div class="d-flex flex-row border rounded m-r-20" style="border-color: rgba(255, 159, 64, 1);">
+
+                        <div *ngIf="nivelAccesoUsuario>10"
+                            class="d-flex flex-row color-asignadas border rounded m-r-20">
                             <div class="p-10" style="background-color: rgba(255, 159, 64, 0.2);">
                                 <h3 class="box text-muted m-b-0">
                                     <i class="mdi mdi-alarm-check"></i>
                                 </h3>
                             </div>
-                            <div class="align-self-center m-l-10 m-r-10 ">
-                                <h3 class="m-b-0" style="color: rgba(255, 159, 64, 1);;">650</h3>
+                            <div class="align-self-center color-asignadas m-l-10 m-r-10 ">
+                                <h3 class="m-b-0">{{totalAsignadas | number :'1.1-2'}}</h3>
                                 <h6 class="text-muted m-b-0">Asignadas</h6>
                             </div>
                         </div>
 
-                        <div class="d-flex flex-row border rounded m-r-20"  style="border-color: rgba(57, 227, 126, 1);">
+
+                        <div class="d-flex flex-row color-registradas border rounded m-r-20">
                             <div class="p-10" style="background-color: rgba(57, 227, 126, 0.2);">
                                 <h3 class="box text-muted m-b-0">
                                     <i class="mdi mdi-alarm-check"></i>
                                 </h3>
                             </div>
-                            <div class="align-self-center m-l-10 m-r-10 ">
-                                <h3 class="m-b-0" style="color: rgba(57, 227, 126, 1);">400</h3>
-                                <h6 class="text-muted m-b-0">Registradas</h6>
+                            <div class="align-self-center m-l-10 m-r-10 " *ngIf="nivelAccesoUsuario==10">
+                                <h3 class="color-registradas m-b-0">{{totalRegistradasUsuario | number :'1.1-2'}}</h3>
+                                <h6 class="text-muted m-b-0">Registradas Usuario</h6>
+                            </div>
+                            <div class="align-self-center m-l-10 m-r-10 " *ngIf="nivelAccesoUsuario>10">
+                                <h3 class="color-registradas m-b-0">{{totalRegistradas | number :'1.1-2'}}</h3>
+                                <h6 class="text-muted m-b-0">Registradas Total</h6>
                             </div>
                         </div>
 
-                        <div class="input-group m-l-20">
-                            <div class="btn-group" role="group" aria-label="Periodos">
-                                <button type="button" class="btn" (click)="onClickPeriodo(1)"
-                                    [class.btn-secondary]="periodo==1" [class.btn-outline-secondary]="periodo!=1">
-                                    30 días
-                                </button>
-                                <button type="button" class="btn" (click)="onClickPeriodo(2)"
-                                    [class.btn-secondary]="periodo==2" [class.btn-outline-secondary]="periodo!=2">
-                                    60 días
-                                </button>
-                                <button type="button" class="btn" (click)="onClickPeriodo(3)"
-                                    [class.btn-secondary]="periodo==3" [class.btn-outline-secondary]="periodo!=3">
-                                    90 días
-                                </button>
-                            </div>
-                        </div>
-
-                        <div class="input-group m-l-20">
-                            <div class="btn-group" role="group" aria-label="Acciones">
-                                <button type="button" class="btn btn-outline-secondary"
-                                    routerLink="registrohoras">
-                                    <span class="h4 m-r-5"><i class="mdi mdi-calendar-clock"></i></span>
-                                    Registro de Horas
-                                </button>
-                                <button type="button" class="btn btn-outline-secondary"
-                                    routerLink="asignacion">
-                                    <span class="h4 m-r-5"><i class="mdi mdi-calendar-check"></i></span>
-                                    Asignación
-                                </button>
-                            </div>
+                        <div class="d-flex flex-row" *ngIf="nivelAccesoUsuario>10">
+                            <canvas baseChart [data]="totalHoras" [type]="'bar'" [options]="chartOptions" height="80"
+                                width="400"></canvas>
                         </div>
                     </div>
                 </div>
-            </div>
+            <!-- </div> -->
         </div>
     </div>
 
     <div class="row">
+
         <div class="col-md-12 col-12">
             <div class="card">
-                <div class="card-body">
-                    <!-- <h5 class="card-title">Total de Horas del Período</h5> -->
+                <div class="card-body" *ngIf="totalXProyecto.length>0">
+                    <h5 class="card-title">Horas por Proyecto y Función Asignada</h5>
                     <div class="row">
-                        <div class="col-md-3 col-12">
-                            <canvas baseChart [data]="totalHoras" [type]="'bar'" [options]="chartOptions"
-                                height="170"></canvas>
+                        <div class="col-12">
+                            <ul class="list-group" style="font-size: small;">
+                                <li class="list-group-item list-group-item-action border border-bottom">
+                                    <div class="d-flex flex-row text-center">
+                                        <div class="flex-grow-1" style="width: 50% !important;">
+                                            <span class="fw-bolder">Proyecto</span>
+                                        </div>
+                                        <div style="width: 12% !important;">
+                                            <span class="fw-bolder">Total horas</span><br/>
+                                            <span class="fw-bolder">Asignadas</span>
+                                        </div>
+                                        <div style="width: 12% !important;">
+                                            <span class="fw-bolder">Total de horas</span><br/>
+                                            <span class="fw-bolder">Registradas</span>
+                                        </div>
+                                        <div style="width: 12% !important;">
+                                            <span class="fw-bolder">Resta</span><br/>
+                                            <span class="fw-bolder"></span>
+                                        </div>
+                                        <div style="width: 13% !important;">
+                                            <span class="fw-bolder">Horas registradas</span><br/>
+                                            <span class="fw-bolder">por el Usuario</span>
+                                        </div>
+                                    </div>
+                                </li>
+                            </ul>
+
+                            <ul class="list-group scroll-vertical" style="font-size: small; max-height: 400px;">
+
+                                <div ngbAccordion [closeOthers]="true">
+                                    <ng-container *ngFor="let item of totalXProyecto; track item ">
+                                        <div ngbAccordionItem [collapsed]="true">
+
+                                            <li class="list-group-item list-group-item-action border border-bottom"
+                                                [class.bg-danger-subtle]="(item.Valor-item.Valor2)<0"
+                                                [class.bg-warning-subtle]="(item.Valor-item.Valor2)>0">
+                                            
+                                                <div class="d-flex flex-row">
+                                                    <div class="flex-grow-1" style="width: 50% !important;">
+                                                        {{item.Descripcion}}  {{item.Descripcion2}}
+                                                    </div>
+                                                    <div class="p-r-30 text-right" style="width: 12% !important;">
+                                                        {{item.Valor | number :'1.1-2'}}
+                                                    </div>
+                                                    <div class="p-r-30 text-right" style="width: 12% !important;">
+                                                        {{item.Valor2 | number :'1.1-2'}}
+                                                    </div>
+                                                    <div class="p-r-30 text-right" style="width: 12% !important;">
+                                                        {{item.Valor-item.Valor2 | number :'1.1-2'}}
+                                                    </div>
+                                                    <div class="p-r-30 text-right" style="width: 10% !important;">
+                                                        {{item.Valor3 | number :'1.1-2'}}
+                                                    </div>
+                                                    <div class="text-center" style="width: 3% !important;">
+                                                        <button ngbAccordionButton 
+                                                            [class.bg-danger-subtle]="(item.Valor-item.Valor2)<0"
+                                                            [class.bg-warning-subtle]="(item.Valor-item.Valor2)>0"
+                                                            style="padding: 0px !important"></button>
+                                                    </div>
+                                                </div>
+
+                                            </li>                                         
+
+                                            <div ngbAccordionCollapse>
+                                                <div ngbAccordionBody>
+                                                    <ng-template>
+
+                                                        <div style="padding-left: 120px !important;">
+                                                            <li *ngFor="let subItem of item.SubItems "
+                                                                class="list-group-item list-group-item-action border border-bottom"
+                                                                [class.bg-danger-subtle]="(subItem.Valor-subItem.Valor2)<0"
+                                                                [class.bg-warning-subtle]="(subItem.Valor-subItem.Valor2)>0">
+                                                            
+                                                                <div class="d-flex flex-row">
+                                                                    <div class="flex-grow-1" style="width: 40% !important;">
+                                                                        {{subItem.Descripcion}}
+                                                                    </div>
+                                                                    <div class="p-r-15 text-right" style="width: 15% !important;">
+                                                                        {{subItem.Valor | number :'1.1-2'}}
+                                                                    </div>
+                                                                    <div class="p-r-15 text-right" style="width: 15% !important;">
+                                                                        {{subItem.Valor2 | number :'1.1-2'}}
+                                                                    </div>
+                                                                    <div class="p-r-15 text-right" style="width: 15% !important;">
+                                                                        {{subItem.Valor-subItem.Valor2 | number :'1.1-2'}}
+                                                                    </div>
+                                                                    <div class="p-r-30 text-right" style="width: 15% !important;">
+                                                                        {{subItem.Valor3 | number :'1.1-2'}}
+                                                                    </div>
+                                                                </div>
+
+                                                            </li>
+                                                        </div>
+                                                                                                                     
+                                                    </ng-template>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </ng-container>
+                                </div>
+                            </ul>
                         </div>
-                        <div class="col-md-9 col-12">
-                            <canvas baseChart [data]="evolucionHoras" [type]="'line'" height="50"></canvas>
+                        <div class="col-12" *ngIf="nivelAccesoUsuario>10">
+                            <canvas baseChart [data]="totalHorasXProyecto" [type]="'bar'" [options]="chartOptions"
+                                height="50%"></canvas>
                         </div>
+                        <!-- <div class="col-3">
+                            <div style="width: 200px; height: 200px; margin: auto;">
+                                <canvas baseChart [data]="totalHorasRegistradasXProyecto" [type]="'pie'" [options]="chartPieOptions">
+                                </canvas>
+                            </div>                            
+                        </div> -->
                     </div>
                 </div>
             </div>
         </div>
 
-        <div class="col-md-12 col-12">
+
+
+        <!-- <div class="col-md-12 col-12">
             <div class="card">
-                <div class="card-body">                                        
-                    <h5 class="card-title">Horas por Proyecto</h5>
-                    <div class="row">
-                        <div class="col-8">
-                            <canvas baseChart [data]="totalHorasXProyecto" [type]="'bar'" [options]="chartOptions" height="100">
+                <div class="card-body" *ngIf="totalXProyecto.length>0">
+                    <h5 class="card-title">Horas por Proyecto y Función</h5>
+                    <ul class="list-group" style="font-size: small;">
+                        <li class="list-group-item list-group-item-action border border-bottom">
+                            <div class="d-flex flex-row text-center">
+                                <div class="flex-grow-1" style="width: 35% !important;">
+                                    <span class="fw-bolder">Proyecto</span>
+                                </div>
+                                <div class="flex-grow-1" style="width: 22% !important;">
+                                    <span class="fw-bolder">Función</span>
+                                </div>
+                                <div style="width: 10% !important;">
+                                    <span class="fw-bolder">Total horas</span><br/>
+                                    <span class="fw-bolder">Asignadas</span>
+                                </div>
+                                <div style="width: 10% !important;">
+                                    <span class="fw-bolder">Total de horas</span><br/>
+                                    <span class="fw-bolder">Registradas</span>
+                                </div>
+                                <div style="width: 10% !important;">
+                                    <span class="fw-bolder">Diferencia</span><br/>
+                                    <span class="fw-bolder">(Entre totales)</span>
+                                </div>
+                                <div style="width: 13% !important;">
+                                    <span class="fw-bolder">Horas registradas</span><br/>
+                                    <span class="fw-bolder">por el Usuario</span>
+                                </div>
+                            </div>
+                        </li>
+                    </ul>
+                    <ul class="list-group scroll-vertical" style="font-size: small; max-height: 180px;">
+                        <li class="list-group-item list-group-item-action border border-bottom"
+                            [class.bg-danger-subtle]="(item.HorasAsignadas - item.HorasRegistradas)<0"
+                            [class.bg-warning-subtle]="(item.HorasAsignadas - item.HorasRegistradas)>0"
+                            *ngFor="let item of totalXProyectoFuncion ">
+                            <div class="d-flex flex-row">
+                                <div class="flex-grow-1" style="width: 35% !important;">
+                                    {{item.Proyecto}}
+                                </div>
+                                <div class="flex-grow-1" style="width: 22% !important;">
+                                    {{item.Funcion}}
+                                </div>
+                                <div class="p-r-30 text-right" style="width: 10% !important;">
+                                    {{item.HorasAsignadas | number :'1.1-2'}}
+                                </div>
+                                <div class="p-r-30 text-right" style="width: 10% !important;">
+                                    {{item.HorasRegistradas | number :'1.1-2'}}
+                                </div>
+                                <div class="p-r-30 text-right" style="width: 10% !important;">
+                                    {{item.HorasAsignadas - item.HorasRegistradas | number :'1.1-2'}}
+                                </div>                                
+                                <div class="p-r-30 text-right" style="width: 13% !important;">
+                                    {{item.HorasRegistradasUsuario | number :'1.1-2'}}
+                                </div>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div> -->
+
+        <div class="col-md-8 col-12">
+            <div class="card">
+                <div class="card-body" *ngIf="totalXUsuario.length>0">
+                    <h5 class="card-title">Horas por Usuario y Proyecto</h5>
+                    <ul class="list-group" style="font-size: small;">
+                        <li class="list-group-item list-group-item-action border border-bottom">
+                            <div class="d-flex flex-row text-center">
+                                <div class="flex-grow-1" style="width: 70% !important;">
+                                    <span class="fw-bolder">Usuario</span>
+                                </div>
+                                <div style="width: 30% !important;">
+                                    <span class="fw-bolder">Horas Registradas</span>
+                                </div>
+                            </div>
+                        </li>
+                    </ul>
+                    <ul class="list-group scroll-vertical" style="font-size: small; max-height: 180px;">
+
+                        <div ngbAccordion [closeOthers]="true">
+                            <ng-container *ngFor="let item of totalXUsuario; track item ">
+                                <div ngbAccordionItem [collapsed]="true">
+
+                                    <li class="list-group-item list-group-item-action border border-bottom">
+                                        <div class="d-flex flex-row">
+                                            <div class="flex-grow-1" style="width: 70% !important;">
+                                                {{item.Descripcion}}
+                                            </div>
+                                            <div class="p-r-10 text-right" style="width: 30% !important;">
+                                                {{item.Valor2 | number :'1.1-2'}}
+                                            </div>
+                                            <div class="text-center" style="width: 3% !important;">
+                                                <button ngbAccordionButton style="padding: 0px !important"></button>
+                                            </div>
+                                        </div>
+                                    </li>                                  
+
+                                    <div ngbAccordionCollapse>
+                                        <div ngbAccordionBody>
+                                            <ng-template>
+
+                                                <div style="padding-left: 30px !important;">
+
+                                                    <li  *ngFor="let subItem of item.SubItems "
+                                                        class="list-group-item list-group-item-action border border-bottom">
+                                    
+                                                        <div class="d-flex flex-row">
+                                                            <div class="flex-grow-1" style="width: 80% !important;">
+                                                                {{subItem.Descripcion}}  {{subItem.Descripcion2}}
+                                                            </div>
+                                                            <div class="p-r-30 text-right" style="width: 20% !important;">
+                                                                {{subItem.Valor2 | number :'1.1-2'}}
+                                                            </div>
+                                                        </div>
+                
+                                                    </li>  
+                                                </div>
+                                                                                                             
+                                            </ng-template>
+                                        </div>
+                                    </div>
+                                </div>
+                            </ng-container>
+                        </div>
+                    </ul>
+                    <!-- <div class="col-md-6 col-12">
+                            <canvas baseChart [data]="totalHorasXUsuario" [type]="'bar'" [options]="chartOptions" height="100%"></canvas>
+                        </div>-->
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4 col-12">
+            <div class="card">
+                <div class="card-body" *ngIf="totalXFuncion.length>0">
+                    <h5 class="card-title">Horas por Función</h5>
+                    <ul class="list-group" style="font-size: small;">
+                        <li class="list-group-item list-group-item-action border border-bottom">
+                            <div class="d-flex flex-row text-center">
+                                <div class="flex-grow-1" style="width: 70% !important;">
+                                    <span class="fw-bolder">Funciona Asignada</span>
+                                </div>
+                                <div style="width: 30% !important;">
+                                    <span class="fw-bolder">Registradas</span>
+                                </div>
+                            </div>
+                        </li>
+                    </ul>
+                    <ul class="list-group scroll-vertical" style="font-size: small; max-height: 180px;">
+                        <li class="list-group-item list-group-item-action border border-bottom"
+                            *ngFor="let item of totalXFuncion ">
+                            <div class="d-flex flex-row">
+                                <div class="flex-grow-1" style="width: 70% !important;">
+                                    {{item.Descripcion}}
+                                </div>
+                                <div class="p-r-10 text-right" style="width: 30% !important;">
+                                    {{item.Valor2 | number :'1.1-2'}}
+                                </div>
+                            </div>
+                        </li>
+                    </ul>
+                    <!-- <div class="col-md-6 col-12">
+                            <canvas baseChart [data]="totalHorasXUsuario" [type]="'bar'" [options]="chartOptions" height="100%"></canvas>
+                        </div>-->
+                </div>
+            </div>
+        </div>
+
+        <!-- <div class="col-md-12 col-12">
+            <div class="row">
+                <div class="col-md-6 col-12">
+                    
+                </div>
+                <div class="col-md-6 col-12">
+                    <div class="card">
+                        <div class="card-body" *ngIf="totalXFuncion.length>0">
+                            <h5 class="card-title">Horas por Funcion</h5>
+                            <canvas baseChart [data]="totalHorasXFuncion" [type]="'bar'" [options]="chartOptions" height="100%">
                             </canvas>
                         </div>
-                        <div class="col-4">
-                            <div style="width: 200px; height: 200px; margin: auto;">
-                                <canvas baseChart [data]="totalHorasRegistradasXProyecto" [type]="'pie'" [options]="chartPieOptions" height="80"  >
-                                </canvas>
-                            </div>                            
-                        </div>
-                    </div>                    
+                    </div>
                 </div>
             </div>
-        </div>
-        <div class="col-md-6 col-12">
-            <div class="card">
-                <div class="card-body">
-                    <h5 class="card-title">Horas por Profesional</h5>
-                    <canvas baseChart [data]="totalHorasXProfesional" [type]="'bar'" [options]="chartOptions">
-                    </canvas>
-                </div>
-            </div>
-        </div>
+        </div> -->
+
+
+    </div>
+
+    <div class="row">
+        
     </div>
 </div>

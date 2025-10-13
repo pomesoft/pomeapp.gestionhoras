@@ -105,13 +105,14 @@ export class UsuarioComponent implements OnInit, OnDestroy {
             id: [-1],
             apellido: ['', Validators.required],
             nombre: [''],
-            email: ['', [Validators.required, Validators.email]],
+            email: ['', [Validators.email]],
             celular: [''],
             loginUsuario: ['', Validators.required],
             clave: [''],
             vigente: [1],
             idRol: [0, [Validators.required, Validators.min(1)]],
             idFuncion: [0],
+            cambiarClave: [false],
         });
 
         Object.keys(this.formulario.controls).forEach(key => {
@@ -139,6 +140,7 @@ export class UsuarioComponent implements OnInit, OnDestroy {
                 vigente: Usuario.Vigente ? 1 : 0,
                 idRol: Usuario.Rol ? Usuario.Rol.Id : 0,
                 idFuncion: Usuario.Funcion ? Usuario.Funcion.Id : 0,
+                cambiarClave: Usuario.CambiarClave ? Usuario.CambiarClave : false,
             });
         } else {
             this.formulario.reset({
@@ -152,6 +154,7 @@ export class UsuarioComponent implements OnInit, OnDestroy {
                 vigente: 1,
                 idRol: 0,
                 idFuncion: 0,
+                cambiarClave: false,
             });
         }
     }
@@ -195,18 +198,36 @@ export class UsuarioComponent implements OnInit, OnDestroy {
             Vigente: (this.formulario.get('vigente').value == 1),
             Rol: rolSeleccionado,
             Funcion: funcionSeleccioanda,
+            CambiarClave: this.formulario.get('cambiarClave').value,
         };
 
         this.usuarioService.actualizar(user)
             .subscribe({
-                next: (response: Usuario) => {
+                next: (user: Usuario) => {
+
+                    console.log('user', user);
+                    if (user && user.CambiarClave) {
+                        this.swalService.setSwalFireOk('El usuario se registró con la contraseña 123, en el primer ingreso a la aplicación deberá cambiarla');
+                    } else {
+                        this.swalService.setToastOK();
+                    }
+
                     this.store.dispatch(cargarUsuarios());
-                    this.swalService.setToastOK();
                     this.modalService.dismissAll();
                 },
                 error: (error) => this.swalService.setToastError(error)
             });
 
+    }
+
+    onClickResetarClave() {
+        this.formulario.patchValue({
+            clave: '123',
+            cambiarClave: true,
+        }, {
+            emitEvent: false
+        });
+        this.onClickGuardar();
     }
 
     onClickCerrar() {

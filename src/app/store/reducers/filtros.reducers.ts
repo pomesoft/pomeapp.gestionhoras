@@ -5,9 +5,15 @@ import { clearFiltros, setFiltros } from '../actions';
 
 const filtroInicial: DataFiltro = {
     Meses: 0,
-    Periodo: 1,
+    PeriodoFechas: 1,
+    PeriodoRegistro: null,
     FechaDesde: null,
-    FechaHasta: null,
+    FechaHasta:null,
+    Usuario: null,
+    Cliente: null,
+    Proyecto: null,
+    Funcion: null,
+    ClasificacionActividad: null,
     Pagina: 0,
     CantidadRegistros: 0,
     CargarDatos: false,
@@ -28,13 +34,13 @@ const _FiltroReducer = createReducer(FiltroInitialState,
         filtros: filtroInicial,
     })),
 
+    
     on(setFiltros, (state, { filtros }) => ({
         ...state,
         filtros: filtros
     })),
 
     
-
 );
 
 export function FiltroReducer(state, action) {

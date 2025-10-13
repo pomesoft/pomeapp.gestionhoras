@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit, PipeTransform, TemplateRef } from '@angular/core';
+import { AfterContentInit, Component, OnDestroy, OnInit, PipeTransform, TemplateRef } from '@angular/core';
 import { DecimalPipe } from '@angular/common';
 import { FormControl } from '@angular/forms';
 import { NgbModal, NgbOffcanvas, NgbPaginationConfig } from '@ng-bootstrap/ng-bootstrap';
@@ -9,10 +9,13 @@ import { AppState } from '../../store/app.reducers';
 
 
 import { SwalhelperService } from '../../services/swalhelper.service';
-import { ProyectosService } from '../../services/proyectos.service';
 import { HelpersService } from '../../services/helpers.service';
+import { RegistroHorasService } from '../../services/registro-horas.service';
+import { UsuarioService } from '../../services/usuario.service';
+import { ExcelService } from '../../services/excel.service';
 
-import { DataFiltro, ItemListado, Profesional, RegistroHora } from '../../models/entity.models';
+import { DataFiltro, DatosExportarExcel, FiltroListadoRegistroDTO, ItemListado, ReporteItem } from '../../models/entity.models';
+import { setFiltros } from 'src/app/store/actions';
 
 
 @Component({
@@ -21,7 +24,7 @@ import { DataFiltro, ItemListado, Profesional, RegistroHora } from '../../models
     styles: [
     ]
 })
-export class ReportegeneralComponent implements OnInit, OnDestroy {
+export class ReportegeneralComponent implements OnInit, AfterContentInit, OnDestroy {
     cargando: boolean = true;
     error: boolean = false;
 
@@ -35,25 +38,31 @@ export class ReportegeneralComponent implements OnInit, OnDestroy {
     labelsFiltros: string[] = [];
     filtrosStore: DataFiltro;
 
-    listadoFULL: RegistroHora[];
-    listado$: Observable<RegistroHora[]>;
+    listadoFULL: ReporteItem[];
+    listado$: Observable<ReporteItem[]>;
 
     totalHoras: number = 0;
-    totalXProfesional: ItemListado[] = [];
-    totalXFuncion: ItemListado[] = [];
-    totalXCliente: ItemListado[] = [];
+    totalXUsuario: ItemListado[] = [];
     totalXProyecto: ItemListado[] = [];
 
-    search(text: string, pipe: PipeTransform): RegistroHora[] {
+    totalXFuncion: ItemListado[] = [];
+    totalXCliente: ItemListado[] = [];
+
+    datosExcel: DatosExportarExcel;
+
+    cargarSubItems: boolean = true;
+
+    search(text: string, pipe: PipeTransform): ReporteItem[] {
         return this.listadoFULL.filter((item) => {
             const term = text.toLowerCase();
             return (
-                item.Proyecto.Cliente.Nombre.toLowerCase().includes(term) ||
-                item.Proyecto.Descripcion.toLowerCase().includes(term) ||
-                item.Profesional.Apellido.toLowerCase().includes(term) ||
-                item.Profesional.Nombre.toLowerCase().includes(term) ||
-                item.Funcion.Descripcion.toLowerCase().includes(term) ||
-                item.FechaFormat.toLowerCase().includes(term) ||
+                item.Cliente.toLowerCase().includes(term) ||
+                item.CodigoProyecto.toLowerCase().includes(term) ||
+                item.Usuario.toLowerCase().includes(term) ||
+                item.FuncionaAsignada.toLowerCase().includes(term) ||
+                item.ClasificacionDeActividad.toLowerCase().includes(term) ||
+                item.DetalleYProducto.toLowerCase().includes(term) ||
+                item.Fecha.toLowerCase().includes(term) ||
                 pipe.transform(item.Horas).startsWith(term)
             );
         });
@@ -67,8 +76,10 @@ export class ReportegeneralComponent implements OnInit, OnDestroy {
         private config: NgbPaginationConfig,
         private offcanvasService: NgbOffcanvas,
         private swalService: SwalhelperService,
-        private proyectoService: ProyectosService,
+        private registroHorasService: RegistroHorasService,
         private helpersService: HelpersService,
+        private excelService: ExcelService,
+        private usuarioService: UsuarioService,
     ) {
         this.listadoFULL = [];
 
@@ -79,22 +90,43 @@ export class ReportegeneralComponent implements OnInit, OnDestroy {
 
     ngOnInit(): void {
 
-        this.countdown$.subscribe(() => {
-            this.refreshDatos();
-            this.cargando = false;
-        });
-
         this.filtrosSubs = this.store.select('filtros')
             .subscribe(({ filtros }) => {
-                this.filtrosStore = filtros;
+                this.filtrosStore = filtros;                
                 this.labelsFiltros = this.helpersService.cargarLabelsFiltros(this.filtrosStore);
-                this.refreshDatosFiltros();
+                this.cargarDatos();
             });
 
-        this.listado$.subscribe((datos: RegistroHora[]) => {
+        this.listado$.subscribe((datos: ReporteItem[]) => {
             this.agrupar(datos);
+            this.procesarDatosExcel(datos);
         });
+
+        this.cargarDatos();
     }
+
+    ngAfterContentInit(): void {
+
+        const filtroInicial: DataFiltro = {
+            Meses: 0,
+            PeriodoFechas: 1,
+            PeriodoRegistro: null,
+            FechaDesde: null,
+            FechaHasta:null,
+            Usuario: this.usuarioService.usuario,
+            Cliente: null,
+            Proyecto: null,
+            Funcion: null,
+            ClasificacionActividad: null,
+            Pagina: 0,
+            CantidadRegistros: 0,
+            CargarDatos: false,
+        };
+
+        this.store.dispatch(setFiltros({ filtros: filtroInicial }));
+        
+    }
+
 
     ngOnDestroy(): void {
         this.filtrosSubs.unsubscribe();
@@ -108,65 +140,56 @@ export class ReportegeneralComponent implements OnInit, OnDestroy {
             ),
         );
 
-        const totalHoras$ = this.listado$.pipe(
-            map(datos => datos.reduce((acc, curr) => acc + (curr.Horas || 0), 0))
-        );
+        // const totalHoras$ = this.listado$.pipe(
+        //     map(datos => datos.reduce((acc, curr) => acc + (curr.Horas || 0.0), 0.0))
+        // );
 
-        totalHoras$.subscribe(total => {
-            console.log(`El total de horas es: ${total}`);
-            this.totalHoras = total;
-        });
+        // totalHoras$.subscribe(total => {
+        //     this.totalHoras = total;
+        // });
 
     }
 
 
     async cargarDatos() {
 
-        // await this.cargarMonedas()
-        //     .then(result => {
-        //         this.formulario.get('idMoneda').setValue(this.listadoMonedas[0].Id, { onlySelf: true, });
-        //         this.cargarClientes();
-        //     })
-        //     .catch(err => {
-        //         this.swalService.setToastError(`Ocurrió un error al cargar los datos`)
-        //         console.log(err);
-        //     });
+        this.cargando = true;
+
+        await this.listarReporte()
+            .then(result => {
+                this.listadoFULL = result;
+                this.refreshDatos();
+            })
+            .catch(err => {
+                this.swalService.setToastError(`Ocurrió un error al cargar los datos`)
+                console.log(err);
+            })
+            .finally(() => this.cargando = false);
 
     }
 
-    refreshDatosFiltros() {
-        /*
-        if (this.filtrosStore.IdProfesional || this.filtrosStore.IdCliente || this.filtrosStore.IdProyecto || this.filtrosStore.IdTipoProyecto) {
-            
-            this.listadoFULL = this.proyectoService.horasRegistradas.filter(item => {
+    listarReporte() {
+        return new Promise<ReporteItem[]>((resolve, reject) => {
 
-                var filtrarProfesional: boolean = true;
-                if (this.filtrosStore.IdProfesional && this.filtrosStore.IdProfesional > 0)
-                    filtrarProfesional = this.filtrosStore.IdProfesional == item.Profesional.Id;
+            var filtro: FiltroListadoRegistroDTO = {
+                UsuarioId: this.filtrosStore.Usuario ? this.filtrosStore.Usuario.Id : -1,
+                ClienteId: this.filtrosStore.Cliente ? this.filtrosStore.Cliente.Id : -1,
+                ProyectoId: this.filtrosStore.Proyecto ? this.filtrosStore.Proyecto.Id : -1,
+                FuncionaAsignadaId: this.filtrosStore.Funcion ? this.filtrosStore.Funcion.Id : -1,
+                FechaDesde: this.filtrosStore.FechaDesde,
+                FechaHasta: this.filtrosStore.FechaHasta,
+                PeriodoFechas: this.filtrosStore.PeriodoFechas,
+                PeriodoRegistro: this.filtrosStore.PeriodoRegistro ? this.filtrosStore.PeriodoRegistro : '',
+            };
 
-                var filtrarCliente: boolean = true;
-                if (this.filtrosStore.IdCliente && this.filtrosStore.IdCliente > 0)
-                    filtrarCliente = this.filtrosStore.IdCliente == item.Cliente.Id;
-
-                var filtrarProyecto: boolean = true;
-                if (this.filtrosStore.IdProyecto && this.filtrosStore.IdProyecto > 0)
-                    filtrarProyecto = this.filtrosStore.IdProyecto == item.Proyecto.Id;
-
-                var filtrarTipoProyecto: boolean = true;
-                if (this.filtrosStore.IdTipoProyecto && this.filtrosStore.IdTipoProyecto > 0)
-                    filtrarTipoProyecto = this.filtrosStore.IdTipoProyecto == item.Proyecto.Tipo.Id;
-
-                return filtrarProfesional && filtrarCliente && filtrarProyecto && filtrarTipoProyecto;
-
-            });
-
-        } else {
-            this.listadoFULL = this.proyectoService.horasRegistradas;
-        }
-
-        this.refreshDatos();
-        */
+            this.registroHorasService.listarReporte(filtro)
+                .subscribe({
+                    next: (response: ReporteItem[]) => resolve(response),
+                    error: (error) => reject(<any>error),
+                });
+        });
     }
+
 
     refreshDatos() {
         let valor = this.filtro.value;
@@ -175,68 +198,183 @@ export class ReportegeneralComponent implements OnInit, OnDestroy {
     }
 
     agrupar(
-        datos: RegistroHora[]
+        datos: ReporteItem[]
     ) {
-        this.totalXProfesional = [];
+        this.totalHoras = 0;
+        this.totalXUsuario = [];
         this.totalXCliente = [];
         this.totalXProyecto = [];
         this.totalXFuncion = [];
+        
+        datos.forEach(reporteItem => {
 
-        datos.forEach(registro => {
+            this.totalHoras += reporteItem.Horas;
 
-            //profesionales
-            var _indexProf = this.totalXProfesional.findIndex(item => item.Id === registro.Profesional.Id);
-            if (_indexProf >= 0)
-                this.totalXProfesional[_indexProf].Valor += registro.Horas;
-            else
-                this.totalXProfesional.push(
-                    {
-                        Id: registro.Profesional.Id,
-                        Descripcion: registro.Profesional.Apellido.concat(" ", registro.Profesional.Nombre),
-                        Valor: registro.Horas
-                    });
-
-            //clientes
-            var _indexCli = this.totalXCliente.findIndex(item => item.Id === registro.Proyecto.Cliente.Id);
-            if (_indexCli >= 0)
-                this.totalXCliente[_indexCli].Valor += registro.Horas;
-            else
-                this.totalXCliente.push(
-                    {
-                        Id: registro.Proyecto.Cliente.Id,
-                        Descripcion: registro.Proyecto.Cliente.Nombre,
-                        Valor: registro.Horas
-                    });
 
             //proyectos
-            var _indexProy = this.totalXProyecto.findIndex(item => item.Id === registro.Proyecto.Id);
+            var _indexProy = this.totalXProyecto.findIndex(item => item.Id === reporteItem.ProyectoId);
             if (_indexProy >= 0)
-                this.totalXProyecto[_indexProy].Valor += registro.Horas;
+                this.totalXProyecto[_indexProy].Valor += reporteItem.Horas;
             else
                 this.totalXProyecto.push(
                     {
-                        Id: registro.Proyecto.Id,
-                        Descripcion: `${registro.Cliente.Nombre} - ${registro.Proyecto.Descripcion}`,
-                        Valor: registro.Horas
+                        Id: reporteItem.ProyectoId,
+                        Descripcion: `${reporteItem.Cliente}`,
+                        Descripcion2: `${reporteItem.CodigoProyecto}`,
+                        Valor: reporteItem.Horas,
+                        SubItems: [],
                     });
 
 
-            //funciones
-            var _indexProy = this.totalXFuncion.findIndex(item => item.Id === registro.Funcion.Id);
-            if (_indexProy >= 0)
-                this.totalXFuncion[_indexProy].Valor += registro.Horas;
+            //usuarios
+            var _indexProf = this.totalXUsuario.findIndex(item => item.Id === reporteItem.UsuarioId);
+            if (_indexProf >= 0)
+                this.totalXUsuario[_indexProf].Valor += reporteItem.Horas;
             else
-                this.totalXFuncion.push(
+                this.totalXUsuario.push(
                     {
-                        Id: registro.Funcion.Id,
-                        Descripcion: registro.Funcion.Descripcion,
-                        Valor: registro.Horas
+                        Id: reporteItem.UsuarioId,
+                        Descripcion: reporteItem.Usuario,
+                        Valor: reporteItem.Horas,
+                        SubItems: [],
                     });
+
+            // //funciones
+            // var _indexProy = this.totalXFuncion.findIndex(item => item.Id === reporteItem.FuncionId);
+            // if (_indexProy >= 0)
+            //     this.totalXFuncion[_indexProy].Valor += reporteItem.Horas;
+            // else
+            //     this.totalXFuncion.push(
+            //         {
+            //             Id: reporteItem.FuncionId,
+            //             Descripcion: reporteItem.FuncionaAsignada,
+            //             Valor: reporteItem.Horas,
+            //             SubItems: [],
+            //         });
+
+
+            // //clientes
+            // var _indexCli = this.totalXCliente.findIndex(item => item.Id === reporteItem.ClienteId);
+            // if (_indexCli >= 0)
+            //     this.totalXCliente[_indexCli].Valor += reporteItem.Horas;
+            // else
+            //     this.totalXCliente.push(
+            //         {
+            //             Id: reporteItem.ClienteId,
+            //             Descripcion: reporteItem.Cliente,
+            //             Valor: reporteItem.Horas,
+            //             SubItems: [],
+            //         });
+
         });
+
+        this.totalXProyecto.forEach(proyecto => {
+            datos.filter(dato => dato.ProyectoId == proyecto.Id)
+                .forEach(dato => {
+
+                    var _indexFuncion = proyecto.SubItems.findIndex(item => item.Id === dato.FuncionId);
+                    if (_indexFuncion >= 0) {
+                        proyecto.SubItems[_indexFuncion].Valor += dato.Horas;
+                        
+                        var _indexUsuario = proyecto.SubItems[_indexFuncion].SubItemsN2.findIndex(item => item.Id === dato.UsuarioId);
+
+                        if (_indexUsuario >= 0)
+                            proyecto.SubItems[_indexFuncion].SubItemsN2[_indexUsuario].Valor += dato.Horas;
+                        else
+                            proyecto.SubItems[_indexFuncion].SubItemsN2.push({ Id: dato.UsuarioId, Descripcion: dato.Usuario, Valor: dato.Horas });
+
+                    }
+                    else {
+                        proyecto.SubItems.push(
+                            {
+                                Id: dato.FuncionId,
+                                Descripcion: dato.FuncionaAsignada,
+                                Valor: dato.Horas,
+                                Valor2: 0,
+                                SubItemsN2: [{ Id: dato.UsuarioId, Descripcion: dato.Usuario, Valor: dato.Horas }],
+                            });
+                    }
+                        
+                });
+        });
+
+
+        this.totalXUsuario.forEach(user => {
+            datos.filter(dato => dato.UsuarioId == user.Id)
+                .forEach(dato => {
+                    var _indexProyecto = user.SubItems.findIndex(item => item.Id === dato.ProyectoId);
+                    if (_indexProyecto >= 0) {
+                        user.SubItems[_indexProyecto].Valor += dato.Horas;
+                        
+                        var _indexFuncion = user.SubItems[_indexProyecto].SubItemsN2.findIndex(item => item.Id === dato.FuncionId);
+
+                        if (_indexFuncion >= 0)
+                            user.SubItems[_indexProyecto].SubItemsN2[_indexFuncion].Valor += dato.Horas;
+                        else
+                            user.SubItems[_indexProyecto].SubItemsN2.push({ Id: dato.FuncionId, Descripcion: dato.FuncionaAsignada, Valor: dato.Horas });
+
+                    }
+                    else {
+                        user.SubItems.push(
+                            {
+                                Id: dato.ProyectoId,
+                                Descripcion: `${dato.Cliente} - ${dato.CodigoProyecto}`,
+                                Valor: dato.Horas,
+                                Valor2: 0,
+                                SubItemsN2: [{ Id: dato.FuncionId, Descripcion: dato.FuncionaAsignada, Valor: dato.Horas }],
+                            });
+                    }
+
+                });
+        });
+
     }
 
     onClickAbrirOffcanvas(content: TemplateRef<any>) {
         this.offcanvasService.open(content, { position: 'end', panelClass: 'filtros-panel' });
+    }
+
+
+    procesarDatosExcel(
+        datos: ReporteItem[]
+    ) {
+        var itemsReporte: string[] = [];
+        datos.forEach(item => {
+            itemsReporte.push(`${item.Usuario}\t${item.Cliente}\t${item.CodigoProyecto}\t${item.FuncionaAsignada}\t${item.ClasificacionDeActividad}\t${item.DetalleYProducto}\t${item.Periodo}\t${item.Fecha}\t${item.Horas}`);
+        });
+
+        var parametros: string[] = [];
+        this.labelsFiltros.forEach(item => parametros.push(item));
+
+        this.datosExcel = {
+            NombreArchivo: `ReporteGeneral`,
+            NombreHoja: `ReporteGeneral`,
+            Titulo: `Registro de Horas - Reporte General`,
+            Subtitulo: 'Usuario\tCliente\tProyecto\tFunción Asociada\tClasificación de Actividad\tDetalle\tPeríodo\tFecha\tHoras',
+            Parametros: parametros,
+            ReporteItems: itemsReporte,
+            TotalesItems: [`\t\t\t\t\tTotal horas registradas\t\t${this.totalHoras}`],
+        };
+    }
+
+    onClickExportar() {
+        if (this.datosExcel.ReporteItems.length == 0) return;
+
+        this.excelService.exportar(this.datosExcel)
+            .subscribe({
+                next: (response: Blob) => {
+                    const url = window.URL.createObjectURL(response);
+                    const link = document.createElement('a');
+                    link.href = url;
+                    link.download = `ReporteGeneral.xlsx`;
+                    link.click();
+                    window.URL.revokeObjectURL(url);
+                },
+                error: (error) => {
+                    console.error(error);
+                    this.swalService.setToastError(`Ocurrió un error al exportar a excel`)
+                },
+            });
     }
 
 }

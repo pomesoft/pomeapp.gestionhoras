@@ -6,14 +6,19 @@ import { Store } from '@ngrx/store';
 import { NgbTypeahead } from '@ng-bootstrap/ng-bootstrap';
 
 import { AppState } from '../../store/app.reducers';
+import { cargarClasificacionesActividades, cargarClientes, cargarProyectos, cargarUsuarios } from 'src/app/store/actions';
 
 import { SwalhelperService } from '../../services/swalhelper.service';
 import { ProyectosService } from '../../services/proyectos.service';
+import { UsuarioService } from '../../services/usuario.service';
 
-import { Cliente, Profesional, Proyecto } from '../../models/entity.models';
+import { ClasificacionActividad, Cliente, Proyecto, ProyectoFuncion, RegistroHora, RegistroHoraDTO, Usuario } from '../../models/entity.models';
+import { HelpersService } from 'src/app/services/helpers.service';
+import { RegistroHorasService } from 'src/app/services/registro-horas.service';
+
+import Swal from 'sweetalert2';
 
 
-declare var $: any;
 
 @Component({
     selector: 'app-registrohorasplanificadas',
@@ -22,50 +27,62 @@ declare var $: any;
     ]
 })
 export class RegistrohorasplanificadasComponent implements OnInit, OnDestroy {
-    listadoFULL: Proyecto[] = [];
-    listado$: Observable<Proyecto[]>;
+
+    cargando: boolean = false;
     hayDatos: boolean = false;
-    proyectoSeleccionado: Proyecto;
-    proyectosCliente: Proyecto[];
-
-    profesionalSeleccionado: Profesional;
-
-    proyectoId: number = -1;
-
-    registroHorasSubs: Subscription;
-
-    mostrarBtnNovigentes: boolean = true;
 
     filtro = new FormControl('', { nonNullable: true });
 
-    profesional: any;
-    listadoProfesionales: string[] = [];
-    cliente: any;
-    clientes: string[] = [];
-    proyecto: any;
-    proyectos: string[] = [];
+    registroHorasSubs: Subscription;
+    clientesSubs: Subscription;
+    usuariosSubs: Subscription;
+    //proyectosSubs: Subscription;
+    clasificacionSubs: Subscription;
 
-    periodo: number = 1;
+    //proyectos: Proyecto[];
+    proyectosCliente: Proyecto[];
+    proyectoId: number = -1;
 
-    listarTodasFunciones: boolean = false;
+    clienteSeleccionado: Cliente
+    clientesFULL: Cliente[] = [];
+    clientes: Cliente[] = [];
+
+    usuarioSeleccionado: Usuario;
+    usuarios: Usuario[] = [];
+
+    clasificacionesActividades: ClasificacionActividad[] = [];
+
+    formatterCliente = (item: Cliente) => item.Nombre;
+    formatterUsuario = (item: Usuario) => (item.Nombre + ' ' + item.Apellido);
+
+    // listarMisProyectos: boolean = false;
+    // misProyectos: Proyecto[] = [];
 
 
-    @ViewChild('instance', { static: true }) instance: NgbTypeahead;
-    focus$ = new Subject<string>();
-    click$ = new Subject<string>();
+    fechaDesde: string = '';
+    fechaHasta: string = '';
 
-    searchProfesional: OperatorFunction<string, readonly string[]> = (text$: Observable<string>) => {
+    camposNoValidos: boolean = false;
+
+    periodoFechas: number = 1;
+    periodoActual: string = '';
+
+    usuarioDeshabilitado: boolean = false;
+
+    @ViewChild('instanceUsuario', { static: true }) instance: NgbTypeahead;
+    focusUsuario$ = new Subject<string>();
+    clickUsuario$ = new Subject<string>();
+
+    searchUsuario: OperatorFunction<string, readonly Usuario[]> = (text$: Observable<string>) => {
         const debouncedText$ = text$.pipe(debounceTime(200), distinctUntilChanged());
         //const clicksWithClosedPopup$ = this.click$.pipe(filter(() => !this.instance.isPopupOpen()));
-        const inputFocus$ = this.focus$;
+        const inputFocus$ = this.focusUsuario$;
 
         //, clicksWithClosedPopup$
-        return merge(debouncedText$, inputFocus$).pipe(
-            map((term) => {
-                var datos = (term === '' ? this.listadoProfesionales : this.listadoProfesionales.filter((v) => v.toLowerCase().indexOf(term.toLowerCase()) > -1)).slice(0, 10);
-                return [...new Set(datos)];
-            }),
-        );
+        return merge(debouncedText$, inputFocus$)
+            .pipe(
+                map((term) => this.usuarios.filter((item) => new RegExp(term, 'mi').test(item.ItemList)))
+            );
     };
 
 
@@ -73,88 +90,115 @@ export class RegistrohorasplanificadasComponent implements OnInit, OnDestroy {
     focusCliente$ = new Subject<string>();
     clickCliente$ = new Subject<string>();
 
-    searchCliente: OperatorFunction<string, readonly string[]> = (text$: Observable<string>) => {
+    searchCliente: OperatorFunction<string, readonly Cliente[]> = (text$: Observable<string>) => {
         const debouncedText$ = text$.pipe(debounceTime(200), distinctUntilChanged());
         const clicksWithClosedPopup$ = this.clickCliente$.pipe(filter(() => false));
         const inputFocus$ = this.focusCliente$;
 
         return merge(debouncedText$, inputFocus$, clicksWithClosedPopup$)
             .pipe(
-                map((term) => {
-                    var datos = (term === '' ? this.clientes : this.clientes.filter((v) => v.toLowerCase().indexOf(term.toLowerCase()) > -1)).slice(0, 10);
-                    return [...new Set(datos)];
-                }),
+                map((term) => this.clientes.filter((item) => new RegExp(term, 'mi').test(item.Nombre)))
             );
     };
 
 
-    @ViewChild('instanceProyecto', { static: true }) instanceProyecto: NgbTypeahead;
-    focusProyecto$ = new Subject<string>();
-    clickProyecto$ = new Subject<string>();
+    clasificacionActividadNoValido(clasificacionActividadId: number): boolean {
+        return clasificacionActividadId <= 0 && this.camposNoValidos;
+    }
+    detalleNoValido(detalle: string): boolean {
+        return detalle.trim().length == 0 && this.camposNoValidos;
+    }
+    fecahNoValido(fechaString: string) {
+        return fechaString == null && this.camposNoValidos;
+    }
+    horasNoValido(horas: number) {
+        return horas <= 0 && this.camposNoValidos;
+    }
+    regsitroNoValido(registroHoraDTO: RegistroHoraDTO) {
+        var camposOK: boolean = registroHoraDTO.ClasificacionActividadId > 0
+            && registroHoraDTO.Detalle.trim().length > 0
+            && registroHoraDTO.FechaString != null
+            && registroHoraDTO.Horas > 0;
+        return !camposOK;
+    }
 
-    searchProyecto: OperatorFunction<string, readonly string[]> = (text$: Observable<string>) => {
-        const debouncedText$ = text$.pipe(debounceTime(200), distinctUntilChanged());
-        const clicksWithClosedPopup$ = this.clickProyecto$.pipe(filter(() => false));
-        const inputFocus$ = this.focusProyecto$;
 
-        return merge(debouncedText$, inputFocus$, clicksWithClosedPopup$)
-            .pipe(
-                map((term) => {
-                    var datos = (term === '' ? this.proyectos : this.proyectos.filter((v) => v.toLowerCase().indexOf(term.toLowerCase()) > -1)).slice(0, 10);
-                    return [...new Set(datos)];
-                }),
-            );
-    };
-
-
+    //
     constructor(
         private store: Store<AppState>,
         private proyectoService: ProyectosService,
+        private usuarioService: UsuarioService,
         private swalService: SwalhelperService,
+        private helperService: HelpersService,
+        private registroHorasService: RegistroHorasService,
     ) {
-        this.listado$ = this.filtro.valueChanges.pipe(
-            startWith(''),
-            map((text) => this.search(text).map((item, i) => ({ id: i + 1, ...item }))
-                // .slice(
-                //     (this.page - 1) * this.pageSize,
-                //     (this.page - 1) * this.pageSize + this.pageSize,
-                // )
-            ),
-        );
-        this.refreshDatos();
 
     }
 
     ngOnInit(): void {
 
-        /*
+        this.usuarioSeleccionado = this.usuarioService.usuario;
+        this.usuarioDeshabilitado = this.usuarioSeleccionado.Rol.NivelAcceso == 10;
+        this.periodoActual = this.helperService.getPeriodoActual();
+
         this.registroHorasSubs = this.store.select('registroHoras')
             .subscribe(({ proyectoId }) => {
+                this.cargando = false;
                 this.proyectoId = proyectoId;
             });
 
-        this.listadoFULL = this.proyectoService.proyectos;
-        this.listadoProfesionales = this.proyectoService.profesionales.map(item => item.Apellido + ' ' + item.Nombre);
-        this.clientes = this.proyectoService.clientes.map(item => item.Nombre);
+        this.usuariosSubs = this.store.select('usuarios')
+            .subscribe(({ usuarios, loaded }) => {
+                if (loaded) {
+                    this.cargando = false;
+                    this.usuarios = usuarios;
+                }
+            });
 
-        this.profesional = 'APELLIDO 1 NOMBRE 1';
-        this.onChangeProfesional();
-        */
+        this.clientesSubs = this.store.select('clientes')
+            .subscribe(({ clientes, loaded }) => {
+                if (loaded) {
+                    this.cargando = false;
+                    this.clientes = clientes;
+                    this.clientesFULL = clientes;
+                    //this.onChangeListaClientesMisProyectos()
+                }
+            });
+
+        // this.proyectosSubs = this.store.select('proyectos')
+        //     .subscribe(({ proyectos, loaded }) => {
+        //         if (loaded) {
+        //             this.cargando = false;
+        //             this.proyectos = proyectos;
+        //         }
+        //     });
+
+        this.clasificacionSubs = this.store.select('clasificacionesActividades')
+            .subscribe(({ clasificacionesActividades, loaded }) => {
+                if (loaded) {
+                    this.cargando = false;
+                    this.clasificacionesActividades = clasificacionesActividades;
+                }
+            });
+
+        this.fechaDesde = this.helperService.getFechaActual();
+        this.fechaHasta = this.helperService.getFechaActual();
+    }
+
+    ngAfterContentInit(): void {
+
+        this.store.dispatch(cargarUsuarios());
+        this.store.dispatch(cargarClientes({ listarVigentes: true, usuarioId: this.usuarioService.usuario.Id }));
+        this.store.dispatch(cargarProyectos({ listarVigentes: true, usuarioId: this.usuarioService.usuario.Id }));
+        this.store.dispatch(cargarClasificacionesActividades({ listarVigentes: true }));
+        //this.cargarMisProyectos();
     }
 
     ngOnDestroy(): void {
-
-    }
-
-    search(text: string): Proyecto[] {
-        this.hayDatos = false;
-        return this.listadoFULL.filter((item) => {
-            const term = text.toLowerCase();
-
-            return item.Descripcion.toLowerCase().includes(term) ||
-                item.Cliente.Nombre.toLowerCase().includes(term) ||
-                item.TipoProyecto.Descripcion.toLowerCase().includes(term);
-        });
+        this.clientesSubs.unsubscribe();
+        this.usuariosSubs.unsubscribe();
+        //this.proyectosSubs.unsubscribe();
+        this.clasificacionSubs.unsubscribe();
     }
 
 
@@ -165,74 +209,238 @@ export class RegistrohorasplanificadasComponent implements OnInit, OnDestroy {
     }
 
 
-    onClickListarProyectos(event: any) {
-        if (this.listadoFULL.length > 0) {
-            if (this.proyectoId > 0) {
-                this.proyectoSeleccionado = this.listadoFULL.find(item => item.Id === this.proyectoId);
-            } else {
-                this.proyectoSeleccionado = this.listadoFULL[0];
-            }
-        }
-        this.refreshDatos();
-    }
-
-    onClickLimpiarProfesional(event: any) {
+    onClickLimpiarUsuario(event: any) {
         event.preventDefault();
-        this.profesional = '';
-        this.cliente = '';
-        this.proyectoSeleccionado = null;
-        this.profesionalSeleccionado = null;
+        if (!this.usuarioDeshabilitado) {
+            this.usuarioSeleccionado = null;
+            this.clienteSeleccionado = null;
+        }
     }
 
-    onChangeProfesional() {
 
-        /*
-        if (this.profesional && this.profesional != '') {
-            this.profesionalSeleccionado = this.proyectoService.profesionales.find(item => (item.Apellido + ' ' + item.Nombre) == this.profesional);
+    onChangeCliente(event: any) {
+        if (event && event.Id) {
+            this.onRefreshProyectos();
         }
-            */
+    }
+
+    onChangeListarTodasFunciones() {
+        this.proyectosCliente.forEach(proyectoItem => {
+            proyectoItem.TotalAsignadas = 0;
+            proyectoItem.TotalRegistradas = 0;
+            proyectoItem.FuncionesAsignadas.forEach(rolFuncion => {
+                proyectoItem.TotalRegistradas += rolFuncion.TotalRegistradas;
+                proyectoItem.TotalAsignadas += rolFuncion.Horas;
+            });
+        });
+    }
+
+    // //este metodo filtra todos los clientes de Mis Proyectos
+    // onChangeListaClientesMisProyectos() {
+    //     this.clienteSeleccionado = null;
+    //     this.proyectosCliente = [];
+    //     this.clientes = [];
+    //     if (this.listarMisProyectos) {
+    //         this.misProyectos.forEach(mp => {
+    //             if (this.clientes.filter(item => item.Id == mp.Cliente.Id).length == 0) {
+    //                 this.clientes.push(mp.Cliente);
+    //             }
+    //         });
+    //         this.clientes.sort((a, b) => a.Nombre.localeCompare(b.Nombre));
+    //     } else {
+    //         this.clientes = this.clientesFULL;
+    //     }
+    // }
+
+    // cargarMisProyectos() {
+    //     return new Promise<boolean>((resolve, reject) => {
+    //         this.proyectoService.listarPorUsuario(this.usuarioService.usuario.Id)
+    //             .subscribe({
+    //                 next: (response: Proyecto[]) => {
+    //                     this.misProyectos = response;
+    //                     this.listarMisProyectos = (this.misProyectos.length > 0);
+    //                     this.onChangeListaClientesMisProyectos()
+    //                     resolve(true);
+    //                 },
+    //                 error: (error) => reject(<any>error)
+    //             });
+    //     });
+    // }
+
+    onChangeHoras(
+        event: any,
+        rolFuncion: ProyectoFuncion,
+    ) {
+        this.proyectosCliente.forEach(proyectoItem => {
+            var funcion = proyectoItem.FuncionesAsignadas.find(item => item.Id == rolFuncion.Id);
+            if (funcion) {
+                funcion.TotalRegistradas = 0;
+                funcion.RegistroHoras.forEach(item => funcion.TotalRegistradas += item.Horas)
+            }
+        });
+
+        this.onChangeListarTodasFunciones();
+    }
+
+
+
+    onRefreshProyectos() {
+
+        if (!this.clienteSeleccionado) return;
+
+        this.cargando = true;
+        this.proyectosCliente = [];
+
+
+
+        let filtro = {
+            ClienteId: this.clienteSeleccionado.Id,
+            UsuarioId: this.usuarioSeleccionado.Id,
+            FechaDesde: this.helperService.getFechaDate(this.fechaDesde),
+            FechaHasta: this.helperService.getFechaDate(this.fechaHasta),
+            PeriodoFechas: this.periodoFechas,
+        }
+
+        this.proyectoService.listarRegistroHoras(filtro).subscribe({
+            next: (proyectos: Proyecto[]) => {
+
+                proyectos.forEach(proyecto => {
+                    proyecto.FuncionIdSeleccionada = this.usuarioSeleccionado.Funcion.Id;
+                    // if (this.listarMisProyectos) {
+                    //     if (this.misProyectos.filter(item => item.Id == proyecto.Id).length > 0) {
+                    //         this.proyectosCliente.push(proyecto);
+                    //     }
+                    // } else {
+                        this.proyectosCliente.push(proyecto);
+                    //}
+                });
+
+                this.onChangeListarTodasFunciones();
+            },
+            error: (error) => this.swalService.setToastError(error),
+            complete: () => this.cargando = false,
+        });
 
 
     }
 
-    onChangeCliente(event) {
 
-        this.proyectosCliente = this.proyectoService.proyectos
-            .filter(item => item.Cliente.Nombre === event);
 
-        this.proyectos = this.proyectosCliente.map(item => item.Descripcion);
+    onClickGuardarHoras(
+        event: any,
+        item: Proyecto
+    ) {
+        event.preventDefault();
+        console.log('Proyecto', item);
+    }
 
-        if (this.proyectos.length == 1) {
-            this.proyecto = this.proyectos[0];
-            this.onChangeProyecto(this.proyecto);
+    onClickGuardarItem(
+        event: any,
+        proyectoFuncion: ProyectoFuncion,
+        registroHoraDTO: RegistroHoraDTO,
+        index: number,
+    ) {
+        event.preventDefault();
+
+        if (!this.regsitroNoValido(registroHoraDTO)) {
+
+            registroHoraDTO.Fecha = this.helperService.getFechaDate(registroHoraDTO.FechaString);
+            this.camposNoValidos = false;
+
+            this.registroHorasService.actualizar(registroHoraDTO)
+                .subscribe({
+                    next: (response: RegistroHoraDTO) => {
+                        if (response) {
+                            proyectoFuncion.RegistroHoras[index].Id = response.Id;
+                            if (this.ultimoRegistroHora(proyectoFuncion, index)) {
+                                this.agregarRegistroHora(proyectoFuncion, registroHoraDTO);
+                            }
+                        }
+                        this.swalService.setToastOK();
+                    },
+                    error: (error) => this.swalService.setToastError(error)
+                });
+
+        } else {
+            this.camposNoValidos = true;
         }
+    }
+
+
+
+
+    onClickEliminarItem(
+        event: any,
+        proyectoFuncion: ProyectoFuncion,
+        index: number,
+    ) {
+        event.preventDefault();
+
+        const item = proyectoFuncion.RegistroHoras[index];
+
+        const swalWithBootstrapButtons = Swal.mixin({
+            customClass: {
+                confirmButton: 'btn btn-danger m-2 p-2',
+                cancelButton: 'btn btn-secondary m-2 p-2',
+            },
+            buttonsStyling: false,
+        });
+        swalWithBootstrapButtons.fire({
+            title: `Eliminar horas`,
+            text: `¿Desea eliminar las horas?`,
+            showCancelButton: true,
+            cancelButtonText: '<i class="fa fa-times mr-2"></i>Cancelar',
+            confirmButtonText: '<i class="fa fa-minus-square-o mr-2"></i>Eliminar',
+
+        }).then((result) => {
+
+            if (result.isConfirmed) {
+                this.registroHorasService.eliminar(item.Id)
+                    .subscribe({
+                        next: () => {
+                            proyectoFuncion.RegistroHoras.splice(index, 1);
+                            this.onChangeHoras(event, proyectoFuncion);
+                            this.swalService.setToastOK();
+                        },
+                        error: (error) => this.swalService.setToastError(error),
+                    });
+            }
+        });
+    }
+
+    ultimoRegistroHora(
+        proyectoFuncion: ProyectoFuncion,
+        index: number,
+    ) {
+        return proyectoFuncion.RegistroHoras.length == (index + 1);
+    }
+
+    agregarRegistroHora(
+        proyectoFuncion: ProyectoFuncion,
+        registroHoraDTO: RegistroHoraDTO,
+    ) {
+        proyectoFuncion.RegistroHoras.push({
+            Id: 0,
+            Fecha: new Date(this.helperService.getFechaActual()),
+            FechaString: this.helperService.getFechaActual(),
+            Horas: 0,
+            ClasificacionActividadId: 0,
+            Detalle: '',
+            DiaCierre: registroHoraDTO.DiaCierre,
+            Periodo: '',
+            UsuarioId: registroHoraDTO.UsuarioId,
+            ProyectoId: registroHoraDTO.ProyectoId,
+            FuncionAsignadaId: registroHoraDTO.FuncionAsignadaId,
+        });
     }
 
     onClickLimpiarCliente(event: any) {
         event.preventDefault();
-        this.cliente = '';
-        this.onClickLimpiaProyecto(event);
-    }
-
-    onChangeProyecto(event) {
-        this.proyectoSeleccionado = this.listadoFULL.find(item => item.Descripcion == event);
-        this.hayDatos = this.proyectoSeleccionado != null;
+        this.clienteSeleccionado = null;
+        this.proyectosCliente = [];
     }
 
 
-    onClickLimpiaProyecto(event: any) {
-        event.preventDefault();
-        this.proyecto = '';
-        this.proyectoSeleccionado = null;
-    }
-
-    onClickSeleccionarProyecto(
-        event: any,
-        proyecto: Proyecto
-    ) {
-        event.preventDefault();
-        this.proyectoSeleccionado = proyecto;
-    }
 
     onClickAbrirProyectoModal(event: any) {
         event.preventDefault();
@@ -244,7 +452,8 @@ export class RegistrohorasplanificadasComponent implements OnInit, OnDestroy {
     }
 
     onClickPeriodo(value: number) {
-        this.periodo = value;
+        this.periodoFechas = value;
+        this.onRefreshProyectos();
     }
 
     onFocus(event: FocusEvent) {
@@ -252,32 +461,19 @@ export class RegistrohorasplanificadasComponent implements OnInit, OnDestroy {
         input.select();
     }
 
-    onKeyPress(event: KeyboardEvent, controlFocus: string) {
-
-        console.log('event', event);
-
-        if (event.keyCode == 13) {
-
-            $('#' + controlFocus).focus();
-            $('#' + controlFocus).select();
-
-            event.preventDefault();
-        }
-    }
-
-    onKeyPressInputHoras(event: KeyboardEvent, contorlId: number) {
-
-        if (event.keyCode == 13) {
-
-            $('#inputHoras_' + (contorlId + 1).toString()).focus();
-            $('#inputHoras_' + (contorlId + 1).toString()).select();
-
-            event.preventDefault();
-        }
-    }
-
     trackByFn(index, item) {
         return index;
     }
 
+    preventNegative(event: KeyboardEvent) {
+        if (event.key === '-') {
+            event.preventDefault(); // Evita que se ingrese el símbolo negativo
+        }
+    }
+
+    onChangeFuncion(
+        event: any
+    ) {
+
+    }
 }

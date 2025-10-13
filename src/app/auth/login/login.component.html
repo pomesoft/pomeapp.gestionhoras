@@ -40,8 +40,16 @@
                         <span class="text-muted">Usuario: </span>
                         <span class="h5 font-bold">{{usuario.LoginUsuario}}</span> 
                     </div>
-                    <div class="col-xs-12">
-                        <input class="form-control" type="password" placeholder="Contraseña" formControlName="clave">
+                    <div class="col-xs-12">                        
+                        <div class="input-group">
+                            <input [type]="showPassword ? 'text' : 'password'"
+                                id="password" class="form-control" 
+                                placeholder="Contraseña" formControlName="clave"/>
+                            <button type="button" class="btn btn-outline-secondary"
+                                    (click)="togglePasswordVisibility()">
+                              <i [class]="showPassword ? 'fa fa-eye-slash' : 'fa fa-eye'"></i> <!-- Icono de Bootstrap Icons -->
+                            </button>
+                        </div>
                     </div>
                 </div>
                 <div class="form-group row">
@@ -65,7 +73,18 @@
                 <div class="form-group m-b-0">
                     <div class="col-sm-12 text-center">
                         <p>¿Te olvidaste la contraseña?</p>
-                        <a href="#" class="text-info m-l-5" (click)="mostrarRestablecer($event)"><b>Solicitar Contraseña</b></a>
+                        <a href="#" class="text-info m-l-5" (click)="recuperarClave($event)" *ngIf="!procesando"><b>Solicitar Contraseña</b></a>                        
+                    </div>
+                    <div class="col-sm-12 text-center m-t-10" *ngIf="procesando">
+                        <div class="alert alert-info" role="alert">
+                            <i class="fa fa-spin fa-refresh fa-2x"></i>
+                            <p class="mb-0">Por favor espere...</p>
+                        </div>
+                    </div>
+                    <div class="col-sm-12 text-center m-t-10" *ngIf="recuperaClaveOK">
+                        <div class="alert alert-info" role="alert">
+                            La solicitud se realizó correctamente, recibirás un correo electrónico. 
+                        </div>
                     </div>
                 </div>
 

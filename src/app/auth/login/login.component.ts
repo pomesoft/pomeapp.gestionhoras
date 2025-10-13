@@ -19,6 +19,10 @@ export class LoginComponent implements OnInit {
 
     public usuario: Usuario;
     public ingresaUsuario: boolean = true;
+    public recuperaClaveOK: boolean = false;
+    public procesando: boolean = false;
+
+    public showPassword: boolean = false;
 
     private paramsKey: string = '';
 
@@ -26,8 +30,8 @@ export class LoginComponent implements OnInit {
     public auth2: any;
 
     public loginForm = this.fb.group({
-        usuario: [localStorage.getItem('usuario') || '', [Validators.required, Validators.email]],
-        clave: [localStorage.getItem('password') || '', Validators.required],
+        usuario: [localStorage.getItem('usuario') || '', Validators.required],
+        clave: ['', Validators.required],
         remember: [localStorage.getItem('password') || true]
     });
 
@@ -63,7 +67,7 @@ export class LoginComponent implements OnInit {
                 }
 
             }
-        );
+            );
     }
 
     async cargarDatos(idUsuario: number) {
@@ -94,11 +98,14 @@ export class LoginComponent implements OnInit {
 
 
     login() {
+
+        if (this.loginForm.invalid) return;
+
         this.usuarioService.login({
             Usuario: this.loginForm.get('usuario').value,
             Clave: this.loginForm.get('clave').value,
         }).subscribe({
-            next: (resp) => {
+            next: (userLogin) => {
 
                 if (this.loginForm.get('remember').value) {
                     localStorage.setItem('usuario', this.loginForm.get('usuario').value);
@@ -110,13 +117,14 @@ export class LoginComponent implements OnInit {
                     localStorage.removeItem('remember');
                 }
 
-                if (resp) {
-                    // Navegar al Dashboard
-                    if (this.usuarioService.usuario.Rol.Id == 1) {
-                        this.router.navigateByUrl('/');
+                if (userLogin) {
+
+                    if (userLogin.CambiarClave) {
+                        this.router.navigateByUrl('/cambiopass');
                     } else {
-                        this.router.navigate(['/home/ctacte']);
+                        this.router.navigateByUrl('/');
                     }
+
                 } else {
                     this.swalService.setSwalFireWarning('Ocurrió un error. Puede solicitar su contraseña ó consulte con el administrador del sistema.');
                 }
@@ -156,7 +164,7 @@ export class LoginComponent implements OnInit {
         this.registroUsurio();
     }
 
-    registroUsurio(){
+    registroUsurio() {
         const navigationExtras: NavigationExtras = {
             queryParams: {
                 key: this.paramsKey
@@ -165,14 +173,30 @@ export class LoginComponent implements OnInit {
         this.router.navigate(['/register'], navigationExtras);
     }
 
-    mostrarRestablecer(event: any) {
+    recuperarClave(event: any) {
         event.preventDefault();
-        const navigationExtras: NavigationExtras = {
-            queryParams: {
-                key: this.paramsKey
-            }
-        };
-        this.router.navigate(['/restablecer'], navigationExtras);
+
+        console.log('this.loginForm.get(usuario).value', this.loginForm.get('usuario').value);
+        if (this.loginForm.get('usuario').value == '') return;
+
+        this.procesando = true;
+
+        this.usuarioService.recuperarClave({
+            Usuario: this.loginForm.get('usuario').value,
+            Clave: this.loginForm.get('clave').value,
+        })
+            .then(result => {                
+                this.recuperaClaveOK = result;
+            })
+            .catch(err => this.swalService.setToastError(err))
+            .finally(() => this.procesando = false);
+
+
     }
+
+
+    togglePasswordVisibility() {
+        this.showPassword = !this.showPassword; // Cambia el estado de visibilidad
+      }
 
 }

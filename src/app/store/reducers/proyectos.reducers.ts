@@ -7,7 +7,9 @@ export interface ProyectosState {
     proyecto: Proyecto,
     loaded: boolean,
     loading: boolean,
-    error: any
+    error: any,
+    listarVigentes: boolean,
+    usuarioId: number,
 }
 
 export const ProyectosInitialState: ProyectosState = {
@@ -15,7 +17,9 @@ export const ProyectosInitialState: ProyectosState = {
     proyecto: null,
     loaded: false,
     loading: false,
-    error: null
+    error: null,
+    listarVigentes: true,
+    usuarioId: -1,
 }
 
 const _ProyectosReducer = createReducer(ProyectosInitialState,
@@ -37,8 +41,12 @@ const _ProyectosReducer = createReducer(ProyectosInitialState,
         error: payload,
     })),
 
-    //gestion del listado de proyectos
-    on(cargarProyectos, state => ({ ...state, loading: true })),
+    on(cargarProyectos, (state, { listarVigentes, usuarioId }) => ({
+        ...state,
+        loading: true,
+        listarVigentes: listarVigentes,
+        usuarioId: usuarioId,
+    })),
 
     on(cargarProyectosSuccess, (state, { proyectos }) => ({
         ...state,

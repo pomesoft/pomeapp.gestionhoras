@@ -27,7 +27,7 @@
 
                     <div class="col-md-9">
                         <div class="row">
-                            <div class="col-12 col-md-9">
+                            <div class="col-12 col-md-6">
                                 <form>
                                     <div class="input-group">
                                         <input type="text" class="form-control w-20" 
@@ -49,10 +49,17 @@
                                 </form>
                             </div>                            
                             <div class="col-6 col-md-3">
-                                <button type="button" class="btn btn-outline-secondary btn-block"
+                                <button type="button" class="btn btn-outline-secondary btn-block waves-effect waves-light"
                                     (click)="onClickAbrirOffcanvas(offcanvasFiltros)">
                                     <i class="fa fa-list-alt"></i>
                                     Filtros
+                                </button>                        
+                            </div>
+                            <div class="col-6 col-md-3">
+                                <button type="button" class="btn btn-outline-info btn-block waves-effect waves-light"
+                                    (click)="onClickExportar()">
+                                    <i class="fa fa-file-excel-o"></i>
+                                    Exportar
                                 </button>                        
                             </div>
                         </div>
@@ -67,8 +74,8 @@
                                     </h2>
                                 </div>
                                 <div class="m-l-10 align-self-center">
-                                    <h4 class="m-b-0">{{totalHoras | number :'1.0-0'}}</h4>
-                                    <span class="text-secondary m-b-0">Total de Horas</span>
+                                    <h4 class="m-b-0">{{totalHoras | number :'1.1-2'}}</h4>
+                                    <span class="text-secondary m-b-0">Horas Registradas</span>
                                 </div>                                
                             </div>                          
                         </div>
@@ -88,153 +95,204 @@
                     </div>                    
                 </div>
 
-                <div class="row" style="max-height: 200px; overflow-y: auto;">
+                <div class="row m-t-5" style="max-height: 400px; overflow-y: auto;">
 
                     <div class="d-flex flex-row">
-                        <div class="flex-grow-1" style="width: 40% !important;">
-                            <div class="card">
-                                <div class="card-body">
-                                    <div class="d-flex flex-row m-b-5">
-                                        <div class="flex-grow-1">
-                                            <span class="h6 card-title">
-                                                Total de horas por cliente y proyecto
-                                            </span>
+                        <div class="flex-grow-1" style="width: 50% !important;">
+                                    
+                            <ul class="list-group" style="font-size: small">
+                                <li class="list-group-item list-group-item-action border border-bottom">                    
+                                    <div class="d-flex flex-row text-center">
+                                        <div class="flex-grow-1" style="width: 65% !important;">
+                                            <span class="fw-bolder">Cliente - Proyecto</span>
                                         </div>
-                                    </div> 
-                                    <ul class="list-group">
-                                        <li class="list-group-item list-group-item-action border border-bottom">                    
-                                            <div class="d-flex flex-row">
-                                                <div class="flex-grow-1" style="width: 85% !important;">
-                                                    <h6>Cliente - Proyecto</h6>
-                                                </div>
-                                                <div style="width: 15% !important;">
-                                                    <h6>Horas</h6>
-                                                </div>
-                                            </div>                    
-                                        </li>
-                                        <li class="list-group-item list-group-item-action border border-bottom"
-                                            *ngFor="let item of totalXProyecto ">
-        
-                                            <div class="d-flex flex-row">
-                                                <div class="flex-grow-1" style="width: 85% !important;">
-                                                    <ngb-highlight [result]="item.Descripcion" [term]="filtro.value"></ngb-highlight>
-                                                </div>
-                                                <div class="p-l-10 text-right" style="width: 15% !important;">
-                                                    <ngb-highlight [result]="item.Valor" [term]="filtro.value"></ngb-highlight>
-                                                </div>
-                                            </div>                        
-                                        </li>                                                
-                                    </ul>                
-                                </div>
-                            </div>
-                        </div>
-
-
-                        <div style="width: 30% !important;">
-                            <div class="card">
-                                <div class="card-body">
-                                    <div class="d-flex flex-row m-b-5">
-                                        <div class="flex-grow-1">
-                                            <span class="h6 card-title">
-                                                Total de horas por función asignada
-                                            </span>
+                                        <div class="text-center" style="width: 30% !important;">
+                                            <span class="fw-bolder">Horas Registradas</span>
                                         </div>
-                                    </div>
-                                    <ul class="list-group">
-                                        <li class="list-group-item list-group-item-action border border-bottom">
-                                            <div class="d-flex flex-row">
-                                                <div class="flex-grow-1" style="width: 80% !important;">
-                                                    <h6>Función Asignada</h6>
+                                    </div>                    
+                                </li>
+
+                                <div ngbAccordion [closeOthers]="true">
+                                    <ng-container *ngFor="let item of totalXProyecto; track item ">
+                                        <div ngbAccordionItem [collapsed]="true">
+
+                                            <li class="list-group-item list-group-item-action ">
+                                                <div class="d-flex flex-row">
+                                                    <div class="flex-grow-1" style="width: 80% !important;">
+                                                        <ngb-highlight [result]="item.Descripcion" [term]="filtro.value"></ngb-highlight><br/>
+                                                        <ngb-highlight [result]="item.Descripcion2" [term]="filtro.value"></ngb-highlight>
+                                                    </div>
+                                                    <div class="p-r-10 text-right" style="width: 20% !important;">
+                                                        {{item.Valor | number :'1.1-2'}}
+                                                    </div>
+                                                    <div class="text-center" style="width: 5% !important;">
+                                                        <button ngbAccordionButton style="padding: 0px !important"></button>
+                                                    </div>
                                                 </div>
-                                                <div style="width: 20% !important;">
-                                                    <h6>Horas</h6>
+                                            </li>                                                
+
+                                            <div ngbAccordionCollapse>
+                                                <div ngbAccordionBody>
+                                                    <ng-template>
+                                                        <ul class="list-group" style="font-size: small;">
+
+                                                            <div *ngFor="let subItem of item.SubItems ">
+
+                                                                <li class="list-group-item list-group-item-action border border-bottom bg-secondary-subtle fw-semibold">
+                                                                    <div class="d-flex flex-row">
+                                                                        <div class="flex-grow-1" style="width: 70% !important;">
+                                                                            {{subItem.Descripcion}}
+                                                                        </div>                                      
+                                                                        <div class="p-r-20 text-right" style="width: 30% !important;">
+                                                                            <span *ngIf="subItem.Valor>0">{{subItem.Valor | number :'1.1-2'}}</span>
+                                                                        </div>
+                                                                    </div>
+                                                                </li>
+
+                                                                <ul class="list-group" style="font-size: small;">
+                                                                    <li *ngFor="let subItemN2 of subItem.SubItemsN2"
+                                                                        class="list-group-item list-group-item-action border border-bottom">
+                                                                        <div class="d-flex flex-row">
+                                                                            <div class="flex-grow-1" style="width: 20% !important;">
+                                                                                
+                                                                            </div>
+                                                                            <div class="flex-grow-1" style="width: 60% !important;">
+                                                                                {{subItemN2.Descripcion}}
+                                                                            </div>
+                                                                            <div class="p-r-20 text-right" style="width: 20% !important;">
+                                                                                <span *ngIf="subItemN2.Valor>0">{{subItemN2.Valor | number :'1.1-2'}}</span>
+                                                                            </div>
+                                                                        </div>
+                                                                    </li>
+                                                                </ul>
+                                                            </div>
+
+                                                        </ul>                                                               
+                                                    </ng-template>
                                                 </div>
                                             </div>
-                                        </li>
-                                        <li class="list-group-item list-group-item-action border border-bottom" 
-                                            *ngFor="let item of totalXFuncion ">                
-                                            <div class="d-flex flex-row">
-                                                <div class="flex-grow-1" style="width: 80% !important;">
-                                                    <ngb-highlight [result]="item.Descripcion" [term]="filtro.value"></ngb-highlight>
-                                                </div>
-                                                <div class="p-l-10 text-right" style="width: 20% !important;">
-                                                    <ngb-highlight [result]="item.Valor" [term]="filtro.value"></ngb-highlight>
-                                                </div>
-                                            </div>                    
-                                        </li>
-                                    </ul>                
+                                        </div>
+                                    </ng-container>
                                 </div>
-                            </div>                                    
+                            </ul>
+
                         </div>
 
+                        <div class="m-l-5" style="width: 50% !important;">
 
-                        <div style="width: 30% !important;">
-                            <div class="card">
-                                <div class="card-body">
-                                    <div class="d-flex flex-row m-b-5">
-                                        <div class="flex-grow-1">
-                                            <span class="h6 card-title">
-                                                Total de horas por profesional
-                                            </span>
+                            <ul class="list-group" style="font-size: small;">
+                                <li class="list-group-item list-group-item-action border border-bottom">                    
+                                    <div class="d-flex flex-row text-ceneter">
+                                        <div class="flex-grow-1" style="width: 65% !important;">
+                                            <span class="fw-bolder">Usuario</span>
+                                        </div>
+                                        <div class="text-center" style="width: 30% !important;">
+                                            <span class="fw-bolder">Horas Registradas</span>
+                                        </div>
+                                        <div class="text-center" style="width: 5% !important;">
+                                            <span class="fw-bolder"></span>
                                         </div>
                                     </div>
-                                    <ul class="list-group">
-                                        <li class="list-group-item list-group-item-action border border-bottom">                    
-                                            <div class="d-flex flex-row">
-                                                <div class="flex-grow-1" style="width: 80% !important;">
-                                                    <h6>Profesional</h6>
+                                </li>
+
+                                <div ngbAccordion [closeOthers]="true">
+                                    <ng-container *ngFor="let item of totalXUsuario ">
+                                        <div ngbAccordionItem [collapsed]="true">
+
+                                            <li class="list-group-item list-group-item-action ">
+                                                <div class="d-flex flex-row">
+                                                    <div class="flex-grow-1" style="width: 80% !important;">
+                                                        <ngb-highlight [result]="item.Descripcion" [term]="filtro.value"></ngb-highlight>
+                                                    </div>
+                                                    <div class="p-r-20 text-right" style="width: 20% !important;">
+                                                        {{item.Valor | number :'1.1-2'}}
+                                                    </div>
+                                                    <div class="text-center" style="width: 5% !important;">
+                                                        <button ngbAccordionButton style="padding: 0px !important"></button>
+                                                    </div>
                                                 </div>
-                                                <div style="width: 20% !important;">
-                                                    <h6>Horas</h6>
+                                            </li>                                                
+
+                                            <div ngbAccordionCollapse>
+                                                <div ngbAccordionBody>
+                                                    <ng-template>
+                                                        <ul class="list-group" style="font-size: small;">
+
+                                                            <div *ngFor="let subItem of item.SubItems ">
+
+                                                                <li class="list-group-item list-group-item-action border border-bottom bg-secondary-subtle fw-semibold">
+                                                                    <div class="d-flex flex-row">
+                                                                        <div class="flex-grow-1" style="width: 70% !important;">
+                                                                            {{subItem.Descripcion}}
+                                                                        </div>                                      
+                                                                        <div class="p-r-20 text-right" style="width: 30% !important;">
+                                                                            <span *ngIf="subItem.Valor>0">{{subItem.Valor | number :'1.1-2'}}</span>
+                                                                        </div>
+                                                                    </div>
+                                                                </li>
+
+                                                                <ul class="list-group" style="font-size: small;">
+                                                                    <li *ngFor="let subItemN2 of subItem.SubItemsN2"
+                                                                        class="list-group-item list-group-item-action border border-bottom">
+                                                                        <div class="d-flex flex-row">
+                                                                            <div class="flex-grow-1" style="width: 20% !important;">
+                                                                                
+                                                                            </div>
+                                                                            <div class="flex-grow-1" style="width: 60% !important;">
+                                                                                {{subItemN2.Descripcion}}
+                                                                            </div>
+                                                                            <div class="p-r-20 text-right" style="width: 20% !important;">
+                                                                                <span *ngIf="subItemN2.Valor>0">{{subItemN2.Valor | number :'1.1-2'}}</span>
+                                                                            </div>
+                                                                        </div>
+                                                                    </li>
+                                                                </ul>
+                                                            </div>
+
+                                                        </ul>
+
+                                                    </ng-template>
                                                 </div>
                                             </div>
-                                        </li>
-                                        <li class="list-group-item list-group-item-action border border-bottom" 
-                                            *ngFor="let item of totalXProfesional ">
-        
-                                            <div class="d-flex flex-row">
-                                                <div class="flex-grow-1" style="width: 80% !important;">
-                                                    <ngb-highlight [result]="item.Descripcion" [term]="filtro.value"></ngb-highlight>
-                                                </div>
-                                                <div class="p-l-10 text-right" style="width: 20% !important;">
-                                                    <ngb-highlight [result]="item.Valor" [term]="filtro.value"></ngb-highlight>
-                                                </div>
-                                            </div>                    
-                                        </li>
-                                    </ul>                
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                                        </div>
+                                    </ng-container>
+                                </div>  
+                            </ul>
 
+                        </div>                        
+                    </div>                    
                 </div> 
 
                 <hr/>
-
+                
                 <div class="table-responsive" style="max-height: 450px; overflow-y: auto;">
-                    <table class="table table-hover ">
+                    <table class="table table-hover" style="font-size: small;">
                         <thead>
                             <tr class="table-active">
-                                <th style="width: 20%;">Profesional</th>
-                                <th style="width: 20%;">Cliente</th>
-                                <th style="width: 20%;">Proyecto</th>
-                                <th style="width: 20%;">Función Asociada</th>
-                                <th style="width: 15%;">Fecha</th>
-                                <th style="width: 10%;">Horas</th>
+                                <th style="width: 10%;">Usuario</th>
+                                <th style="width: 15%;">Cliente</th>
+                                <th style="width: 15%;">Proyecto</th>
+                                <th style="width: 10%;">Función Asociada</th>
+                                <th style="width: 10%;">Clasificación Actividad</th>
+                                <th style="width: 15%;">Detalle</th>
+                                <th style="width: 8%;">Período</th>
+                                <th style="width: 10%;">Fecha</th>
+                                <th style="width: 8%;">Horas Registradas</th>
                             </tr>
                         </thead>
                         <tbody>
                             <ng-container *ngFor="let item of listado$ | async;">
                                 <tr>
-                                    <td>
-                                        <ngb-highlight [result]="item.Profesional.Nombre" [term]="filtro.value"></ngb-highlight>&nbsp;
-                                        <ngb-highlight [result]="item.Profesional.Apellido" [term]="filtro.value"></ngb-highlight>
-                                    </td>
-                                    <td><ngb-highlight [result]="item.Cliente.Nombre" [term]="filtro.value"></ngb-highlight></td>
-                                    <td><ngb-highlight [result]="item.Proyecto.Descripcion" [term]="filtro.value"></ngb-highlight></td>
-                                    <td><ngb-highlight [result]="item.Funcion.Descripcion" [term]="filtro.value"></ngb-highlight></td>
-                                    <td><ngb-highlight [result]="item.FechaFormat" [term]="filtro.value"></ngb-highlight></td>
-                                    <td class="text-right"><ngb-highlight [result]="item.Horas" [term]="filtro.value"></ngb-highlight></td>
+                                    <td><ngb-highlight [result]="item.Usuario" [term]="filtro.value"></ngb-highlight></td>
+                                    <td><ngb-highlight [result]="item.Cliente" [term]="filtro.value"></ngb-highlight></td>
+                                    <td><ngb-highlight [result]="item.CodigoProyecto" [term]="filtro.value"></ngb-highlight></td>
+                                    <td><ngb-highlight [result]="item.FuncionaAsignada" [term]="filtro.value"></ngb-highlight></td>
+                                    <td><ngb-highlight [result]="item.ClasificacionDeActividad" [term]="filtro.value"></ngb-highlight></td>
+                                    <td><ngb-highlight [result]="item.DetalleYProducto" [term]="filtro.value"></ngb-highlight></td>
+                                    <td><ngb-highlight [result]="item.Periodo" [term]="filtro.value"></ngb-highlight></td>
+                                    <td><ngb-highlight [result]="item.Fecha" [term]="filtro.value"></ngb-highlight></td>
+                                    <td class="text-right p-r-10"><span>{{item.Horas | number :'1.1-2'}}</span></td>
+                                    
                                 </tr>
                             </ng-container>
                         </tbody>
@@ -250,3 +308,67 @@
 <ng-template #offcanvasFiltros let-offcanvas>
     <app-filtros></app-filtros>	    
 </ng-template>
+
+
+
+<!-- <li class="list-group-item list-group-item-action border border-bottom"
+                                            *ngFor="let item of totalXProyecto ">
+        
+                                            <div class="d-flex flex-row">
+                                                <div class="flex-grow-1" style="width: 65% !important;">
+                                                    <ngb-highlight [result]="item.Descripcion" [term]="filtro.value"></ngb-highlight>
+                                                </div>
+                                                <div class="p-r-10 text-right" style="width: 30% !important;">
+                                                    {{item.Valor | number :'1.1-2'}}
+                                                </div>
+                                                <div class="text-center" style="width: 5% !important;">
+                                                    <span class="fw-bolder">+</span>
+                                                </div>
+                                            </div>
+                                            <ul class="list-group m-t-10" style="font-size: small;">
+                                                <li class="list-group-item list-group-item-action border border-bottom" 
+                                                    *ngFor="let subItem of item.SubItems ">                
+                                                    <div class="d-flex flex-row">
+                                                        <div class="flex-grow-1" style="width: 80% !important;">
+                                                            <ngb-highlight [result]="subItem.Descripcion" [term]="filtro.value"></ngb-highlight>
+                                                        </div>
+                                                        <div class="p-l-10 text-right" style="width: 20% !important;">
+                                                            {{subItem.Valor | number :'1.1-2'}}
+                                                        </div>
+                                                    </div>
+                                                </li>
+                                            </ul>                        
+                                        </li>-->
+
+
+
+
+                                        <!-- <li class="list-group-item list-group-item-action border border-bottom" 
+                                            *ngFor="let item of totalXUsuario ">
+        
+                                            <div class="d-flex flex-row">
+                                                <div class="flex-grow-1" style="width: 65% !important;">
+                                                    <ngb-highlight [result]="item.Descripcion" [term]="filtro.value"></ngb-highlight>
+                                                </div>
+                                                <div class="p-l-10 text-right" style="width: 30% !important;">
+                                                    {{item.Valor | number :'1.1-2'}}
+                                                </div>
+                                                <div class="text-center" style="width: 5% !important;">
+                                                    <span class="fw-bolder">+</span>
+                                                </div>
+                                            </div>
+                                            
+                                            <ul class="list-group m-t-10" style="font-size: small;">
+                                                <li class="list-group-item list-group-item-action border border-bottom" 
+                                                    *ngFor="let subItem of item.SubItems ">                
+                                                    <div class="d-flex flex-row">
+                                                        <div class="flex-grow-1" style="width: 80% !important;">
+                                                            <ngb-highlight [result]="subItem.Descripcion" [term]="filtro.value"></ngb-highlight>
+                                                        </div>
+                                                        <div class="p-l-10 text-right" style="width: 20% !important;">
+                                                            {{subItem.Valor | number :'1.1-2'}}
+                                                        </div>
+                                                    </div>
+                                                </li>
+                                            </ul>
+                                        </li> -->

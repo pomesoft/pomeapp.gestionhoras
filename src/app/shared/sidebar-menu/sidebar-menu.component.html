@@ -5,19 +5,20 @@
             <a class="waves-effect waves-dark" 
                 style="text-decoration: none;" 
                 href="#" aria-expanded="false">
-                <!-- <img [src]="usuario.imagenUrl" alt="user" /> -->
                 <i class="fa fa-user-circle-o"></i>
-                <span class="hide-menu">{{ usuario.LoginUsuario }}  </span>
+                <span class="hide-menu">{{usuario.Nombre}} {{usuario.Apellido}}</span><br/>
+                <span class="hide-menu m-l-30">({{usuario.LoginUsuario}})</span>
             </a>
         </li>
         
-        <li class="nav-devider"></li>
+        <li class="nav-devider" style="margin: 0px !important;"></li>
 
 
-        <ng-container *ngIf="userAdmin">
-            <li *ngFor="let item of menuItems">
+        <ng-container *ngFor="let item of menuItems">
 
-                <a class="has-arrow waves-effect waves-dark"  
+            <li *ngIf="nivelAcceso >= item.nivelAcceso  ">
+
+                <a  class="has-arrow waves-effect waves-dark"  
                     style="text-decoration: none;"
                     (click)="onClickItemMenu(item.url)" 
                     aria-expanded="false">
@@ -29,7 +30,9 @@
                 
             </li>
 
-            <li>
+        </ng-container>
+
+            <li  *ngIf="nivelAcceso >= 30  ">
                 <a class="has-arrow waves-effect waves-dark"  
                     style="text-decoration: none;"
                     (click)="collapseConfiguracion.toggle()"
@@ -76,33 +79,11 @@
                 
             </li>
 
-        </ng-container>
+        <!-- 
+            <ng-container *ngIf="userAdmin"></ng-container>
         
-        <ng-container *ngIf="!userAdmin">
-            <li>
-                <a class="has-arrow waves-effect waves-dark"  
-                    style="text-decoration: none;"
-                    aria-expanded="false"
-                    (click)="onClickItemMenu('ctacte')">
-                    <i class="mdi mdi-file-document"></i>
-                    <span class="hide-menu">
-                        Mi Cuenta Corriente
-                    </span>
-                </a>                        
-            </li>
-            <li>
-                <a class="has-arrow waves-effect waves-dark"  
-                    style="text-decoration: none;"
-                    aria-expanded="false"
-                    (click)="onClickItemMenu('solicitudes')">
-                    <i class="mdi mdi-clipboard-text"></i>
-                    <span class="hide-menu">
-                        Mis Solicitudes
-                    </span>
-                </a>                        
-            </li>                    
-
-        </ng-container>
+            <ng-container *ngIf="!userAdmin"></ng-container> 
+        -->
 
         <li class="nav-devider"></li>
         <li>

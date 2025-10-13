@@ -9,6 +9,7 @@ export interface ClientesState {
     loading: boolean,
     error: any,
     listarVigentes: boolean,
+    usuarioId: number,
 }
 
 export const ClientesInitialState: ClientesState = {
@@ -18,6 +19,7 @@ export const ClientesInitialState: ClientesState = {
     loading: false,
     error: null,
     listarVigentes: true,
+    usuarioId: -1
 }
 
 const _ClientesReducer = createReducer(ClientesInitialState,
@@ -40,10 +42,11 @@ const _ClientesReducer = createReducer(ClientesInitialState,
     })),
 
     //gestion del listado de clientes
-    on(cargarClientes, (state, { listarVigentes }) => ({
+    on(cargarClientes, (state, { listarVigentes, usuarioId }) => ({
         ...state,
         loading: true,
         listarVigentes: listarVigentes,
+        usuarioId: usuarioId,
     })),
 
     on(cargarClientesSuccess, (state, { clientes }) => ({

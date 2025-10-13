@@ -1,254 +1,356 @@
+<div class="row animated fadeIn fast" *ngIf="cargando">
+    <div class="col-12">
+        <div class="alert alert-info text-center">
+            <h4 class="alert-heading">Cargando</h4>
+            <i class="fa fa-spin fa-refresh fa-4x"></i>
+            <p class="mb-0">Por favor espere...</p>
+        </div>
+    </div>
+</div>
+
+
 <div class="row mb-2">
     <div class="col col-md-12">
         <div class="form-group row" style="margin-bottom: 5px !important;">
-            <label class="col-md-2 control-label col-form-label text-center">Usuario:</label>
-            <div class="col-md-6">
+            <label class="col-md-1 control-label col-form-label text-right ">Usuario:</label>
+            <div class="col-md-7">
                 <div class="input-group">
                     <span class="input-group-addon ">
                         <i class="fa fa-user-o"></i>
                     </span>
-                    <input id="typeahead-focus" type="text" class="form-control" [(ngModel)]="profesional"
-                        [ngbTypeahead]="searchProfesional" (focus)="focus$.next($any($event).target.value)"
-                        (click)="click$.next($any($event).target.value)" #instance="ngbTypeahead" (ngModelChange)="onChangeProfesional()"/>
+                    <input id="typeahead-focus" type="text" class="form-control" [(ngModel)]="usuarioSeleccionado"
+                        #instanceUsuario="ngbTypeahead" 
+                        placeholder="Seleccione un usuario" 
+                        [ngbTypeahead]="searchUsuario" 
+                        [inputFormatter]="formatterUsuario"
+                        [resultFormatter]="formatterUsuario"
+                        editable="false"
+                        [disabled]="usuarioDeshabilitado"
+                        (focus)="focusUsuario$.next($any($event).target.value)"
+                        (click)="clickUsuario$.next($any($event).target.value)"/>
                     <span class="input-group-addon" role="button" data-toggle="tooltip" data-placement="top"
-                        title="Limpiar profesional" (click)="onClickLimpiarProfesional($event)">
+                        title="Limpiar profesional" 
+                        (click)="onClickLimpiarUsuario($event)">
                         <i class="fa fa-times"></i>
                     </span>
                 </div>
             </div>
-            <div class="col-12 col-md-4 p-t-5">
-                <div class="input-group">
-                    <button type="button" class="btn btn-rounded btn-block btn-outline-success waves-effect waves-light"
-                        (click)="onClickGuardar($event)">
-                        <i class="fa fa-save"></i>
-                        Guardar
-                    </button>
-                </div>
-            </div>
-        </div>
-        <div class="form-group row">
+            <!-- <label class="col-md-2 control-label col-form-label text-right ">Función Asociada:</label> -->
+            <!-- <label class="col-md-2 control-label col-form-label text-left ">
+                <span class="h6" *ngIf="usuarioSeleccionado && usuarioSeleccionado.Funcion">{{usuarioSeleccionado.Funcion.Descripcion}}</span> 
+            </label> -->
 
-            <label class="col-md-2 control-label col-form-label text-center">Cliente:</label>
-            <div class="col-md-6">
+            <div class="col-md-4 p-t-10">
+                
+            </div>
+            
+        </div>       
+
+        <div class="form-group row"  style="margin-bottom: 5px !important;">
+            <label class="col-md-1 control-label col-form-label text-right ">Cliente:</label>
+            <div class="col-md-7">
                 <div class="input-group">
                     <span class="input-group-addon ">
                         <i class="fa fa-user"></i>
                     </span>
-                    <input id="clienteTypeahead" type="text" class="form-control" [(ngModel)]="cliente"
-                        placeholder="Seleccione un cliente" #instanceCliente="ngbTypeahead" 
-                        [ngbTypeahead]="searchCliente" (focus)="focusCliente$.next($any($event).target.value)"
-                        (click)="clickCliente$.next($any($event).target.value)" (ngModelChange)="onChangeCliente($event)"/>
+                    <input id="clienteTypeahead" type="text" class="form-control" 
+                        [(ngModel)]="clienteSeleccionado"
+                        (ngModelChange)="onChangeCliente($event)"
+                        #instanceCliente="ngbTypeahead"
+                        placeholder="Seleccione un cliente" 
+                        [inputFormatter]="formatterCliente"
+                        [resultFormatter]="formatterCliente"
+                        editable="false" 
+                        [ngbTypeahead]="searchCliente" 
+                        (focus)="focusCliente$.next($any($event).target.value)"
+                        (click)="clickCliente$.next($any($event).target.value)" />
                     <span class="input-group-addon" role="button" (click)="onClickLimpiarCliente($event)">
                         <i class="fa fa-times"></i>
                     </span>
-                </div>
-            </div>
-
-            <div class="col-12 col-md-4 p-t-10">
-                <div class="form-group form-check">
-                    <input type="checkbox" id="listarTodasFunciones" [(ngModel)]="listarTodasFunciones"
-                                class="form-check-input" />
-                    <label for="listarTodasFunciones" class="form-check-label">Todas las Funciones Asociadas</label>
-                </div>
-            </div>
-
-            <!-- <label class="col-md-1 control-label col-form-label text-center">Proyecto</label>
-            <div class="col-md-5">
-                <div class="input-group">
-                    <span class="input-group-addon ">
-                        <i class="fa fa-list-alt"></i>
+                    <span class="input-group-addon" (click)="onRefreshProyectos()">
+                        <i class="fa fa-refresh"></i>
                     </span>
-                    <input id="proyectoTypeahead" type="text" class="form-control" [(ngModel)]="proyecto"
-                            placeholder="Seleccione un proyecto"  #instanceProyecto="ngbTypeahead"
-                            [ngbTypeahead]="searchProyecto" (focus)="focusProyecto$.next($any($event).target.value)"
-                            (click)="clickProyecto$.next($any($event).target.value)"  (ngModelChange)="onChangeProyecto($event)" />
-                        <span class="input-group-addon" role="button" (click)="onClickLimpiaProyecto($event)">
-                            <i class="fa fa-times"></i>
-                        </span>
                 </div>
-            </div> -->
+            </div>
 
+            <div class="col-md-4 p-t-10">
+                <!-- <div class="form-group form-check">
+                    <input type="checkbox" id="listarMisProyectos" 
+                            class="form-check-input"                             
+                            [(ngModel)]="listarMisProyectos" 
+                            (ngModelChange)="onChangeListaClientesMisProyectos()"
+                            [disabled]="usuarioDeshabilitado"/>
+                    <label for="listarMisProyectos" class="form-check-label">Listar solo Mis Proyectos</label>
+                </div> -->
+            </div>           
         </div>
         
+        <div class="form-group row"  style="margin-bottom: 5px !important;">
+            <label class="col-md-1 control-label col-form-label text-right ">Período:</label>
+            <div class="col-md-3">
+                <div class="btn-group m-b-5" role="group" aria-label="Periodos">
+                    <button type="button" class="btn" (click)="onClickPeriodo(1)" [class.btn-secondary]="periodoFechas==1"
+                        [class.btn-outline-secondary]="periodoFechas!=1">
+                        Personalizado
+                    </button>
+                    <button type="button" class="btn" (click)="onClickPeriodo(2)" [class.btn-secondary]="periodoFechas==2"
+                        [class.btn-outline-secondary]="periodoFechas!=2">
+                        Período Actual
+                    </button>
+                </div>    
+            </div>
+            
+            <ng-container *ngIf="periodoFechas==1">
+                <label class="col-md-1 control-label col-form-label text-right ">Desde:</label>
+                <div class="col-md-3">
+                    <div class="input-group">
+                        <input class="form-control form-control-sm" 
+                            placeholder="dd/mm/yyyy"                                                        
+                            name="dteFechaDesde" ngbDatepicker #dteFechaDesde="ngbDatepicker"
+                            [(ngModel)]="fechaDesde"/>
+                        <span class="input-group-addon" (click)="dteFechaDesde.toggle()">
+                            <i class="fa fa-calendar"></i>
+                        </span>
+                        <span class="input-group-addon" (click)="onRefreshProyectos()">
+                            <i class="fa fa-refresh"></i>
+                        </span>
+                    </div>
+                </div>
+                <label class="col-md-1 control-label col-form-label text-right ">Hasta:</label>
+                <div class="col-md-3">
+                    <div class="input-group">
+                        <input class="form-control form-control-sm" 
+                            placeholder="dd/mm/yyyy"                                                        
+                            name="dteFechaHasta" ngbDatepicker #dteFechaHasta="ngbDatepicker"
+                            [(ngModel)]="fechaHasta"/>
+                        <span class="input-group-addon" (click)="dteFechaHasta.toggle()">
+                            <i class="fa fa-calendar"></i>
+                        </span>
+                        <span class="input-group-addon" (click)="onRefreshProyectos()">
+                            <i class="fa fa-refresh"></i>
+                        </span>
+                    </div>
+                </div>
+            </ng-container>
+        </div>
 
         <div class="row">
             <div class="col-12" style="padding-top: 0px !important;">
 
                 <ng-container *ngFor="let itemProyecto of proyectosCliente">
 
-                    <div class="card border">
+                    <div class="card shadow ">
                         <div class="card-header">
-                            <h6 class="card-title">
-                                {{itemProyecto.Cliente.Nombre}} - 
-                                {{itemProyecto.Descripcion}} - 
-                                {{itemProyecto.Tipo.Descripcion}}
-                            </h6>
-                            
+                            <div class="d-flex flex-row">
+                                <div class="form-horizontal" style="width: 80%;">
+                                    <div class="card-title">
+                                        <span class="text-muted">Proyecto: </span>
+                                        <span class="h5">{{itemProyecto.Codigo}} - Día de cierre: {{itemProyecto.DiaCierre}} de cada mes.</span>                                        
+                                    </div>
+                                    <span style="font-size: small;">{{itemProyecto.Descripcion}}</span>
+                                </div>
+                                <div class="form-horizontal" style="width: 20%;">
+                                    <h5>Total: {{itemProyecto.TotalRegistradas | number :'1.1-2'}}</h5>
+                                </div>
+                            </div>
+                            <div class="d-flex flex-row">
+                                <div class="form-horizontal" style="width: 15%;">
+                                    <span class="text-muted">Función Asociada: </span>
+                                </div>
+                                <div class="form-horizontal text-left" style="width: 35%;">
+                                    <div class="input-group">
+                                        <select class="custom-select" style="width: 100%;"
+                                            id="idFuncion"
+                                            [(ngModel)]="itemProyecto.FuncionIdSeleccionada"
+                                            (change)="onChangeFuncion($event)">                                        
+                                            <option *ngFor="let item of itemProyecto.FuncionesAsignadas "
+                                                [value]="item.Funcion.Id">
+                                                {{item.Funcion.Descripcion}}
+                                            </option>
+                                        </select>
+                                    </div>                                    
+                                </div>
+                            </div>
                         </div>
-                        <div class="card-body" >                            
+                        <div class="card-body" style="padding: 0px !important;" >                            
 
                             <ul class="list-group" >
-                                <!-- <li class="list-group-item border border-bottom">                    
-                                    <div class="d-flex flex-row">
-                                        <div class="text-center"  style="width: 30%;">
-                                            <h6>Función Asociada</h6>
-                                        </div>                                        
-                                        <div class="text-center"  style="width: 70%;">
-                                            <h6>Clasificación de Actividad</h6>
-                                        </div>
-                                        <div class="text-center" style="width: 45%;">
-                                            <h6>Detalle y Producto</h6>
-                                        </div>
+
+                                <li class="list-group-item shadow-sm m-b-10" *ngIf="itemProyecto.FuncionesAsignadas.length == 0">
+                                    <div class="alert alert-warning text-center">
+                                        <i class="fa fa-exclamation-triangle fa-2x"></i>
+                                        <span class="m-l-10">Proyecto sin horas asignadas</span>
+                                        <p class="m-b-0">Debe asignarlas desde Asignación de Horas Mensuales</p>
                                     </div>
-                                </li> -->
+                                </li>
 
-                                <ng-container *ngFor="let rolFuncion of itemProyecto.RolesAsignados; index as i; trackBy: trackByFn">
-
-                                    <li class="list-group-item border m-b-10" *ngIf="rolFuncion.Rol.Id == profesionalSeleccionado.Funcion.Id || listarTodasFunciones">
+                                <ng-container *ngFor="let rolFuncion of itemProyecto.FuncionesAsignadas">
+                                   
+                                    <li class="list-group-item shadow-sm m-b-10" *ngIf="(rolFuncion.Funcion.Id == itemProyecto.FuncionIdSeleccionada)">
 
                                         <div class="d-flex flex-row">
-                                            <div class="form-horizontal" style="width: 25%;">
-                                                <div class="form-group row">
-                                                    <label class="text-left control-label col-form-label h6">
-                                                        {{rolFuncion.Rol.Descripcion}}
-                                                    </label>
-                                                </div>
+                                            <div class="form-horizontal text-center" style="width: 35%;">
+                                                <span class="control-label col-form-label col-form-label-sm">
+                                                    Clasificación Actividad
+                                                </span>
                                             </div>
-                                            <div class="form-horizontal" style="width: 70%;">
-                                                <div class="form-group row" style="padding: 0px !important;">
-                                                    <label for="clasificacionActividad" class="col-sm-4 text-right control-label col-form-label">Clasificación Actividad:</label>
-                                                    <div class="col-sm-8">
-                                                        <select class="form-control custom-select" id="clasificacionActividad">
-                                                            <option value="0"></option>
-                                                            <option value="1">NUEVO REGISTRO</option>
-                                                            <option value="2">VARIACIONES TECNICAS ALTA COMPLEJIDAD</option>
-                                                            <option value="3">VARIACIONES TECNICAS BAJA COMLEJIDAD</option>
-                                                            <option value="4">IP Y ROTULOS ALTA COMPLEJIDAD</option>
-                                                            <option value="5">IP Y ROTULOS ALTA COMPLEJIDAD</option>
-                                                            <option value="6">RENOVACIONES </option>
-                                                            <option value="7">BÚSQUEDAS BIBLIOGRÁFICAS</option>
-                                                            <option value="8">IPAS NUEVO</option>
-                                                            <option value="9">IPAS REVISIÓN</option>
-                                                            <option value="10">PGR NUEVO</option>
-                                                            <option value="11">PGR REVISION</option>
-                                                            <option value="12">GESTION DE CASOS</option>
-                                                            <option value="13">PROYECTO ESPECIFICO</option>
-                                                            <option value="14">ENTRENAMIENTO</option>
-                                                            <option value="15">REUNION DE EQUIPO, PRIORIDADES</option>
-                                                        </select>    
-                                                    </div>                                                    
-                                                    <label for="detalleProducto" class="col-sm-4 text-right control-label col-form-label m-t-5">Detalle y Producto: </label>
-                                                    <div class="col-sm-8 m-t-5">
-                                                        <textarea class="form-control" ID="detalleProducto" rows="2" (focus)="onFocus($event)"></textarea>    
-                                                    </div>
-                                                </div>
+                                            <div class="form-horizontal text-center" style="width: 40%;">
+                                                <span class="control-label col-form-label col-form-label-sm">
+                                                    Detalle y Producto
+                                                </span>
+                                            </div>
+                                            <div class="form-horizontal text-center" style="width: 15%;">
+                                                <span class="control-label col-form-label col-form-label-sm">
+                                                    Fecha
+                                                </span>
+                                            </div>
+                                            <div class="form-horizontal text-center" style="width: 8%;">
+                                                <span class="control-label col-form-label col-form-label-sm">
+                                                    Hora
+                                                </span>
+                                            </div>
+                                            <div class="form-horizontal text-center" style="width: 8%;">
+                                                
                                             </div>
                                         </div>
 
-                                        <div class="d-flex flex-row">
-
-                                            <div class="text-center m-t-10 p-r-20"  style="width: 30%;">
-                                                <div class="input-group">
-                                                    <span (click)="dteFecha.toggle()">
-                                                        Fecha:&nbsp;&nbsp;
-                                                    </span>
-                                                    <input id="fechaNgDateStruct" class="form-control" placeholder="dd/mm/yyyy"
-                                                        name="dteFecha" ngbDatepicker #dteFecha="ngbDatepicker"
-                                                        [(ngModel)]="itemProyecto.RolesAsignados[i].RegistroFecha" />
-                                                    <span class="input-group-addon" (click)="dteFecha.toggle()">
-                                                        <i class="fa fa-calendar"></i>
-                                                    </span>
+                                        <ng-container *ngFor="let registro of rolFuncion.RegistroHoras; index as i; trackBy: trackByFn">
+                                            
+                                            <div class="d-flex flex-row shadow-sm" style="padding-top: 3px;">
+                                                <div class="form-horizontal" style="width: 35%;">
+                                                    <select class="form-control form-control-sm custom-select" id="clasificacionActividad"
+                                                        [(ngModel)]="registro.ClasificacionActividadId"
+                                                        [class.is-invalid]="clasificacionActividadNoValido(registro.ClasificacionActividadId)">
+                                                        <option value="0"></option>                                                            
+                                                        <option *ngFor="let ca of clasificacionesActividades" [value]="ca.Id">
+                                                            {{ca.Descripcion}}
+                                                        </option>
+                                                    </select>                                                    
                                                 </div>
-                                                <div class="input-group m-t-5">
-                                                    <span>Semana 14/07/2024 al 20/07/2024</span>
+                                                <div class="form-horizontal text-center" style="width: 40%;">
+                                                    <textarea class="form-control form-control-sm" ID="detalleProducto" rows="2" 
+                                                        data-toggle="tooltip" data-placement="top"
+                                                        [title]="registro.Detalle"
+                                                        [(ngModel)]="registro.Detalle"
+                                                        [class.is-invalid]="detalleNoValido(registro.Detalle)"
+                                                        (focus)="onFocus($event)"></textarea>
+                                                    <small *ngIf="regsitroNoValido(registro) && camposNoValidos" class="text-danger">
+                                                        * Debe completar todos los campos
+                                                    </small>
                                                 </div>
-                                            </div>
-
-                                            <div class="text-center"  style="width: 70%;">
-                                                <div class="table-responsive ">
-                                                    <table class="table">
-                                                        <tbody>
-                                                            <!-- <tr *ngFor="let item of listadoFULL;"> -->
-                                                            <tr>                                                                       
-                                                                <td class="bg-secondary-subtle text-center">
-                                                                    <span>Dom 14</span>
-                                                                    <input type="number" id="inputHoras_{{rolFuncion.Id}}" class="form-control"
-                                                                        (focus)="onFocus($event)"
-                                                                        (keypress)="onKeyPressInputHoras($event, rolFuncion.Id)">
-                                                                </td>
-                                                                <td class="text-center">
-                                                                    <span>Lun 15</span>
-                                                                    <input type="number" id="inputHoras_{{rolFuncion.Id}}" class="form-control"
-                                                                        (focus)="onFocus($event)"
-                                                                        (keypress)="onKeyPressInputHoras($event, rolFuncion.Id)">
-                                                                </td>
-                                                                <td class="text-center">
-                                                                    <span>Mar 16</span>
-                                                                    <input type="number" id="inputHoras_{{rolFuncion.Id}}" class="form-control"
-                                                                        (focus)="onFocus($event)"
-                                                                        (keypress)="onKeyPressInputHoras($event, rolFuncion.Id)">
-                                                                </td>
-                                                                <td class="text-center">
-                                                                    <span>Mie 17</span>
-                                                                    <input type="number" id="inputHoras_{{rolFuncion.Id}}" class="form-control"
-                                                                        (focus)="onFocus($event)"
-                                                                        (keypress)="onKeyPressInputHoras($event, rolFuncion.Id)">
-                                                                </td>
-                                                                <td class="text-center">
-                                                                    <span>Jue 18</span>
-                                                                    <input type="number" id="inputHoras_{{rolFuncion.Id}}" class="form-control"
-                                                                        (focus)="onFocus($event)"
-                                                                        (keypress)="onKeyPressInputHoras($event, rolFuncion.Id)">
-                                                                </td>
-                                                                <td class="text-center">
-                                                                    <span>Vie 19</span>
-                                                                    <input type="number" id="inputHoras_{{rolFuncion.Id}}" class="form-control"
-                                                                        (focus)="onFocus($event)"
-                                                                        (keypress)="onKeyPressInputHoras($event, rolFuncion.Id)">
-                                                                </td>
-                                                                <td class="bg-secondary-subtle text-center">
-                                                                    <span>Sab 20</span>
-                                                                    <input type="number" id="inputHoras_{{rolFuncion.Id}}" class="form-control"                                                                        
-                                                                        (focus)="onFocus($event)"
-                                                                        (keypress)="onKeyPressInputHoras($event, rolFuncion.Id)">
-                                                                </td>
-                                                                <td>
-                                                                    <a href="#" class="btn btn-outline-success btn-rounded m-t-10" data-toggle="tooltip"
-                                                                        data-placement="top" title="Guardar"
-                                                                        (click)="onClickGuardar($event)">
-                                                                        <span class="h5 text-success"><i class="fa fa-save"></i></span>
-                                                                    </a>                                                
-                                                                </td>
-                                                            </tr>
-                                                        </tbody>
-                                                    </table> 
-                                                </div>
-                                            </div>
-                                                                         
-                                            <!-- <div class="form-horizontal">
-                                                <div class="form-group row">
-                                                    <div class="col-sm-4">
-                                                        
+                                                <div class="form-horizontal text-center" style="width: 15%;">
+                                                    <div class="input-group">
+                                                        <input id="fechaNgDateStruct" class="form-control form-control-sm" 
+                                                            placeholder="dd/mm/yyyy"                                                        
+                                                            name="dteFecha" ngbDatepicker #dteFecha="ngbDatepicker"
+                                                            [(ngModel)]="registro.FechaString"
+                                                            [class.is-invalid]="fecahNoValido(registro.FechaString)"/>
+                                                        <span class="input-group-addon" (click)="dteFecha.toggle()">
+                                                            <i class="fa fa-calendar"></i>
+                                                        </span>
                                                     </div>
-                                                    <div class="col-sm-8">
-                                                        
-                                                    </div>                                                    
                                                 </div>
-                                            </div> -->
+                                                <div class="form-horizontal text-center" style="width: 8%;">
+                                                    <input type="number" id="inputHoras_{{rolFuncion.Id}}" class="form-control form-control-sm text-right"
+                                                            (keypress)="preventNegative($event)" min="0"
+                                                            [(ngModel)]="registro.Horas"
+                                                            (ngModelChange)="onChangeHoras($event, rolFuncion)"
+                                                            [class.is-invalid]="horasNoValido(registro.Horas)"
+                                                            (focus)="onFocus($event)">
+                                                </div>
+                                                <div class="form-horizontal text-left " style="width: 8%;">
+                                                                                                        
+                                                    <a href="#" class="btn btn-outline-success btn-rounded btn-xs" 
+                                                        data-toggle="tooltip"
+                                                        data-placement="top" title="Guardar registro"
+                                                        (click)="onClickGuardarItem($event, rolFuncion, registro, i)">
+                                                        <span class="h5 text-success"><i class="fa fa-save"></i></span>
+                                                    </a>
+
+                                                    <a href="#" class="btn btn-outline-danger btn-rounded btn-xs" *ngIf="!ultimoRegistroHora(rolFuncion, i)"
+                                                        data-toggle="tooltip"
+                                                        data-placement="top" title="Eliminar registro"
+                                                        (click)="onClickEliminarItem($event, rolFuncion, i)">
+                                                        <span class="h5 text-danger"><i class="fa fa-trash"></i></span>
+                                                    </a>
+
+                                                </div>
+                                            </div>
+                                        </ng-container>
+
+                                        <div class="d-flex flex-row shadow-sm p-t-10" 
+                                            [class.alert]="rolFuncion.TotalRegistradas>rolFuncion.Horas"
+                                            [class.alert-danger]="rolFuncion.TotalRegistradas>rolFuncion.Horas">
+                                            
+                                            <div class="form-horizontal text-center " style="width: 5%;">
+                                                <i class="fa fa-exclamation-triangle" *ngIf="rolFuncion.TotalRegistradas>rolFuncion.Horas"></i>    
+                                            </div>
+                                            <div class="form-horizontal text-right" style="width: 40%;">
+                                                <span class="control-label col-form-label h6">
+                                                    Total {{rolFuncion.Funcion.Descripcion}}
+                                                </span>
+                                            </div>
+                                            <div class="form-horizontal text-right" style="width: 20%;">
+                                                <span class="control-label col-form-label h6">
+                                                    Horas Asignadas: 
+                                                </span>
+                                                <span class="text-left control-label col-form-label h6">
+                                                    {{rolFuncion.Horas | number :'1.1-2'}}
+                                                </span>
+                                            </div>
+                                            <div class="form-horizontal text-right" style="width: 25%;">
+                                                <span class="text-right control-label col-form-label h5">
+                                                    Horas Registradas: 
+                                                </span>
+                                                <span class="text-left control-label col-form-label h5">
+                                                    {{rolFuncion.TotalRegistradas | number :'1.1-2'}}
+                                                </span>
+                                            </div>
+                                            <div class="form-horizontal text-left " style="width: 10%;">
+                                                         
+                                            </div>
                                         </div>
 
                                     </li>
-
                                 </ng-container>
-                            </ul>
 
+                            </ul>
+                        </div>
+                        <div class="card-footer">
+                            <div class="d-flex flex-row shadow-sm p-t-10" 
+                            [class.alert]="itemProyecto.TotalRegistradas>itemProyecto.TotalAsignadas "
+                            [class.alert-danger]="itemProyecto.TotalRegistradas>itemProyecto.TotalAsignadas ">
+                                <div class="form-horizontal text-center " style="width: 5%;">
+                                    <i class="fa fa-exclamation-triangle" *ngIf="itemProyecto.TotalRegistradas>itemProyecto.TotalAsignadas"></i>    
+                                </div>
+                                <div class="form-horizontal text-right" style="width: 40%;">
+                                    <span class="control-label col-form-label h5">
+                                        Total {{itemProyecto.Codigo}}
+                                    </span>
+                                </div>
+                                <div class="form-horizontal text-right" style="width: 20%;">
+                                    <span class="control-label col-form-label h5">
+                                        Horas Asignadas: 
+                                    </span>
+                                    <span class="text-right control-label col-form-label h5">
+                                        {{itemProyecto.TotalAsignadas | number :'1.1-2'}}
+                                    </span>
+                                </div>
+                                <div class="form-horizontal text-right" style="width: 25%;">
+                                    <span class="text-right control-label col-form-label h5">
+                                        Horas Registradas: 
+                                    </span>
+                                    <span class="text-right control-label col-form-label h5">
+                                        {{itemProyecto.TotalRegistradas | number :'1.1-2'}}
+                                    </span>
+                                </div>
+                                <div class="form-horizontal text-left " style="width: 10%;">
+                                             
+                                </div>
+                            </div>               
                         </div>
                     </div>
-
                 </ng-container>
-
-
-
             </div>
         </div>
 

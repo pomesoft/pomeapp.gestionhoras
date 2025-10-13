@@ -40,6 +40,7 @@ export class FuncionesComponent implements OnInit, AfterContentInit, OnDestroy {
     filtro = new FormControl('', { nonNullable: true });
 
     listarVigentes: boolean = true;
+    listarNoVigentes: boolean = false;
 
     search(text: string): Funcion[] {
         return this.listadoFULL.filter((item) => {
@@ -92,7 +93,9 @@ export class FuncionesComponent implements OnInit, AfterContentInit, OnDestroy {
         this.datosSubs.unsubscribe();
     }
 
-    onChangeChekVigentes(event: any) {
+    ngChangeListarVigentes(opcion: number) {
+        this.listarVigentes = (opcion == 1);
+        this.listarNoVigentes = (opcion == 2);         
         this.store.dispatch(cargarFunciones({ listarVigentes: this.listarVigentes }));
     }
 

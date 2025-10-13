@@ -11,7 +11,7 @@ import { SwalhelperService } from '../../services/swalhelper.service';
 import { ProyectosService } from '../../services/proyectos.service';
 import { HelpersService } from '../../services/helpers.service';
 
-import { Proyecto, TipoProyecto } from '../../models/entity.models';
+import { Proyecto, TipoProyecto, Usuario } from '../../models/entity.models';
 
 @Component({
     selector: 'app-registrohorasmanual',
@@ -28,7 +28,10 @@ export class RegistrohorasmanualComponent implements OnInit, OnDestroy {
 
     fecha: NgbDateStruct;
 
-    profesionales: string[] = [];
+    usuarioSeleccionado: Usuario;
+    usuarios: Usuario[] = [];
+    formatterUsuario = (item: Usuario) => (item.Apellido + ' ' + item.Nombre);
+
     clientes: string[] = [];
     proyectos: string[] = [];
 
@@ -55,22 +58,20 @@ export class RegistrohorasmanualComponent implements OnInit, OnDestroy {
     }
 
 
-    @ViewChild('instanceProfesional', { static: true }) instanceProfesional: NgbTypeahead;
-    focus$ = new Subject<string>();
-    click$ = new Subject<string>();
+    @ViewChild('instanceUsuario', { static: true }) instance: NgbTypeahead;
+    focusUsuario$ = new Subject<string>();
+    clickUsuario$ = new Subject<string>();
 
-    searchProfesional: OperatorFunction<string, readonly string[]> = (text$: Observable<string>) => {
+    searchUsuario: OperatorFunction<string, readonly Usuario[]> = (text$: Observable<string>) => {
         const debouncedText$ = text$.pipe(debounceTime(200), distinctUntilChanged());
         //const clicksWithClosedPopup$ = this.click$.pipe(filter(() => !this.instance.isPopupOpen()));
-        const inputFocus$ = this.focus$;
+        const inputFocus$ = this.focusUsuario$;
 
         //, clicksWithClosedPopup$
-        return merge(debouncedText$, inputFocus$).pipe(
-            map((term) => {
-                var datos = (term === '' ? this.profesionales : this.profesionales.filter((v) => v.toLowerCase().indexOf(term.toLowerCase()) > -1)).slice(0, 10);
-                return [...new Set(datos)];
-            }),
-        );
+        return merge(debouncedText$, inputFocus$)
+            .pipe(
+                map((term) => this.usuarios.filter((item) => new RegExp(term, 'mi').test(item.ItemList)))
+            );
     };
 
     @ViewChild('instanceCliente', { static: true }) instanceCliente: NgbTypeahead;
@@ -148,10 +149,9 @@ export class RegistrohorasmanualComponent implements OnInit, OnDestroy {
 
         this.formulario = this.formBuilder.group({
             id: [-1],
-            profesional: ['APELLIDO 1 NOMBRE 1', Validators.required],
-            proyecto: ['', Validators.required],
-            tipoProyecto: [''],
-            cliente: [''],
+            usuario: [{}, Validators.required],
+            proyecto: [{}, Validators.required],
+            cliente: [{}],
             rolFuncion: [0, Validators.required],
             detalle: [''],
             fechaNgDateStruct: [this.fecha, Validators.required],
@@ -210,6 +210,11 @@ export class RegistrohorasmanualComponent implements OnInit, OnDestroy {
         controlName: string,
     ) {
         this.formulario.get(controlName).setValue('', { onlySelf: true, });
+    }
+
+    onClickLimpiarUsuario(event: any) {
+        event.preventDefault();
+        this.usuarioSeleccionado = null;
     }
 
     onFocus(event: FocusEvent) {

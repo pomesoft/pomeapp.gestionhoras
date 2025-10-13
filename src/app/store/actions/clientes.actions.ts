@@ -22,7 +22,10 @@ export const cargarClienteError = createAction(
 //gestion del listdo de clientes
 export const cargarClientes = createAction(
     '[Clientes] Cargar Clientes',
-    props<{ listarVigentes: boolean }>()
+    props<{ 
+        listarVigentes: boolean,
+        usuarioId: number, 
+    }>()
 );
 
 export const cargarClientesSuccess = createAction(

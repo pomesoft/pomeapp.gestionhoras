@@ -43,8 +43,12 @@ export class ClientesService {
         });
     }
 
-    listar(listarVigentes: boolean = true) {
-        const url = `${base_url}Clientes?listarVigentes=${listarVigentes}`;
+    listar(
+        listarVigentes: boolean = true,
+        usuarioId: number = -1,
+    ) {
+        const url = `${base_url}Clientes?listarVigentes=${listarVigentes}&usuarioId=${usuarioId}`;
+        console.log('url', url);
         return this.http.get<Cliente[]>(url, this.headers)
     }
 

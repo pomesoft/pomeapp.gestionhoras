@@ -14,7 +14,7 @@
             <div class="card-body">
                 <div class="card-title h6">{{tituloFormulario}}</div>
                 <div class="row mb-2">
-                    <div class="col-12 col-md-6">
+                    <div class="col-12 col-md-5">
                         <form>
                             <div class="input-group">
                                 <input type="text" class="form-control w-50"
@@ -40,25 +40,20 @@
                         </button>
                     </div>
 
-                    <div class="col-12 col-md-4 p-2">
+                    <div class="col-12 col-md-2 p-2">
                         <div class="form-group form-check">
-                            <input type="checkbox" id="listarTodasFunciones" 
-                                    [(ngModel)]="listarVigentes" 
-                                    (ngModelChange)="onChangeChekVigentes($event)"
-                                        class="form-check-input" />
-                            <label for="listarTodasFunciones" class="form-check-label">Listar Vigentes</label>
-                        </div>
-                        <!-- <ngb-pagination
-                            [collectionSize]="total"
-                            [(page)]="page"                                    
-                            [pageSize]="pageSize"
-                            [maxSize]="3"
-                            [rotate]="true"
-                            [boundaryLinks]="true"
-                            (pageChange)="refreshDatos()">
-                        </ngb-pagination> -->
+                            <input type="checkbox" id="listarVigentes" class="form-check-input"
+                                [(ngModel)]="listarVigentes" (ngModelChange)="ngChangeListarVigentes(1)"/>
+                            <label for="listarVigentes" class="form-check-label">Listar Vigentes</label>
+                        </div>                        
                     </div>
-
+                    <div class="col-12 col-md-3 p-2">
+                        <div class="form-group form-check">
+                            <input type="checkbox" id="listarNoVigentes" class="form-check-input"
+                                [(ngModel)]="listarNoVigentes" (ngModelChange)="ngChangeListarVigentes(2)"/>
+                            <label for="listarNoVigentes" class="form-check-label">Listar No Vigentes</label>
+                        </div>
+                    </div>
                 </div>
                 <div class="table-responsive ">
                     <table class="table table-hover">

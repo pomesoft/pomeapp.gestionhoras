@@ -1,0 +1,128 @@
+<div class="row animated fadeIn fast" *ngIf="cargando">
+    <div class="col-12">
+        <div class="alert alert-info text-center">
+            <h4 class="alert-heading">Cargando</h4>
+            <i class="fa fa-spin fa-refresh fa-4x"></i>
+            <p class="mb-0">Por favor espere...</p>
+        </div>
+    </div>
+</div>
+
+<div class="row animated fadeIn fast" *ngIf="error">
+    <div class="col-12">
+        <div class="alert alert-danger text-center">
+            <h4 class="alert-heading">Ocurrió un error</h4>
+            <i class="fa fa-exclamation-triangle fa-4x"></i>
+            <p class="mb-0">Ocurrió un error reintente en unos minutos, si el error persiste contactarse con soporte.
+            </p>
+        </div>
+    </div>
+</div>
+
+<div class="row animated fadeIn fast" *ngIf="!cargando">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <div class="card-title h4 desktop">{{tituloFormulario}}</div>
+                <div class="card-title h5 mobile">{{tituloFormulario}}</div>
+                <hr />
+                
+                <div class="row mb-2">                            
+                    
+                    <div class="col-md-6 col-12">
+        
+                        <div class="card">
+                            <div class="card-body" >
+
+                                <div class="d-flex flex-row m-b-5">
+                                    <div class="flex-grow-1">
+                                        <span class="h5 card-title">Mis Proyectos</span>
+                                    </div>                                         
+                                </div>
+                                <ul class="list-group">                                            
+
+                                    <li class="list-group-item border border-bottom"
+                                        *ngFor="let proyecto of misProyectos">
+        
+                                        <div class="d-flex flex-row">
+                                            <div class="flex-grow-1" style="width: 90% !important;">
+
+                                                {{proyecto.Cliente.Nombre}} {{proyecto.Codigo}}
+
+                                            </div>
+                                            <div class="p-l-10" style="width: 10% !important;">
+                                                <a href="#" class="btn btn-outline-danger btn-rounded btn-sm m-l-5" 
+                                                    data-toggle="tooltip" data-placement="top" title="Quitar de mis proyectos"
+                                                    (click)="onClickEliminar($event, proyecto)">
+                                                    <span class="h4 text-danger"><i class="fa fa-minus-square-o"></i></span>                                                
+                                                </a>
+                                            </div>
+                                        </div>
+                                        
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6 col-12" style="padding: 0px !important;">
+                        <div class="card">
+                            <div class="card-body">
+                                
+                                <div class="d-flex flex-row m-b-5">
+                                    <div class="flex-grow-1">
+                                        <span class="h5 card-title">Proyectos vigentes</span>
+                                    </div>                                         
+                                </div>
+
+                                <div class="d-flex flex-row m-b-5">
+                                    <div class="flex-grow-1">                                                
+                                        <div class="input-group">
+                                            <label for="clienteTypeahead">Cliente:</label>&nbsp;&nbsp;
+                                            <span class="input-group-addon">
+                                                <i class="fa fa-user"></i>
+                                            </span>
+                                            <input id="clienteTypeahead" type="text" class="form-control" 
+                                                [(ngModel)]="clienteSeleccionado" 
+                                                (ngModelChange)="onChangeCliente($event)"
+                                                placeholder="Seleccione un cliente" 
+                                                [inputFormatter]="formatterCliente"
+                                                [resultFormatter]="formatterCliente"
+                                                editable="false" 
+                                                [ngbTypeahead]="searchCliente" (focus)="focusCliente$.next($any($event).target.value)"
+                                                (click)="clickCliente$.next($any($event).target.value)"
+                                                #instanceCliente="ngbTypeahead" />
+                                            <span class="input-group-addon" role="button" (click)="onClickLimpiarCliente('cliente')">
+                                                <i class="fa fa-times"></i>
+                                            </span>
+                                        </div>
+                                    </div>                                         
+                                </div>
+
+                                <div class="list-group">
+                                    <a href="#" *ngFor="let proyecto of proyectos$ | async;"
+                                        class="list-group-item list-group-item-action"
+                                        (click)="onClickAgregarAMisProyecto($event, proyecto.Id)">
+        
+                                        <div class="d-flex flex-row">
+                                            <div class="p-r-10">
+                                                <span class="h5 text-muted"><i class="mdi mdi-arrow-left-bold"></i></span>
+                                            </div>
+                                            <div class="flex-grow-1">                                                        
+                                                <h6>{{proyecto.Codigo}}</h6>
+                                                <span style="font-size: small">{{proyecto.Descripcion}}</span>
+                                            </div>
+                                        </div>
+                                    </a>
+        
+                                </div>
+                            </div>
+                        </div>        
+                    </div>
+
+                </div>
+                    
+            </div>
+        </div>
+    </div>
+</div>
